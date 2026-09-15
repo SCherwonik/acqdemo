@@ -1,0 +1,29 @@
+# ============================================================
+# NEVER COMMIT: PII / CUI source documents (defense layer 1)
+# Layer 2 is tools/hooks/scan_pii.py (pre-commit content scan)
+# ============================================================
+Important, Current Documents/
+**/Actual Appraisal/
+*SF-50*
+*SF-52*
+*SF50*
+*SF52*
+*[Rr]esume*
+*SalaryAppraisal*
+
+# Office lock/temp files
+~$*
+*.tmp
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Backtest drafts never feed the current-year harvest (kept local)
+tests/backtest-*/scratch/
+
+# Python caches
+__pycache__/
+.pytest_cache/
+

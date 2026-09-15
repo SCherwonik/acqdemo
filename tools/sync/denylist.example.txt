@@ -1,0 +1,20 @@
+# Copy to tools/sync/denylist.txt in YOUR private workspace and edit.
+# Terms that must never appear in a public file (whole word, case-insensitive).
+# Sync aborts before writing if any mirrored file contains one.
+
+# Your name (last, first, nicknames, OS username)
+Lastname
+Firstname
+
+# Birth year, contact details, IDs
+1990
+you@example.com
+
+# Salary figures
+100,000
+
+# Supervisors, coworkers, contractors named in your notes
+Coworker
+
+# Your program and project names
+ProjectName

@@ -1,0 +1,20 @@
+# Copy to tools/sync/personal-paths.txt in YOUR private workspace and edit.
+# PRIVATE ONLY: paths never mirrored to a public repo.
+# Rules: trailing "/" = folder (wildcards ok, anchored at repo root);
+#        pattern containing "/" = full path glob; otherwise = file name glob.
+
+# Your prior submissions
+prior/
+
+# Your position description
+PRD*.docx
+
+# Personal notes
+docs/personal/
+
+# Personal workspace files
+profile.md
+paypool.md
+roster.md
+FY*/
+tests/backtest-*/

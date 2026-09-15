@@ -1,0 +1,5 @@
+#!/bin/sh
+# PII guard. See tools/hooks/scan_pii.py
+root="$(git rev-parse --show-toplevel)"
+if command -v python >/dev/null 2>&1; then py=python; elif command -v python3 >/dev/null 2>&1; then py=python3; else echo "PII GUARD: python not found; commit blocked"; exit 1; fi
+exec "$py" "$root/tools/hooks/scan_pii.py"
