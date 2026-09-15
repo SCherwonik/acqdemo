@@ -4,7 +4,6 @@ A recipe, a set of Claude Code skills, and supporting tools that help a Departme
 
 You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready C-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
 
-
 ---
 
 ## Table of contents
@@ -43,7 +42,6 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | **Wave 2 skills:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan` | Planned |
 
 Wave 1 skills are installable as a Claude Code plugin (Section 10.5). Wave 2 skills and the validation records come next. The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
-
 
 ---
 
@@ -376,7 +374,6 @@ skills/
 templates/            profile.md, paypool.md
 ```
 
-
 ---
 
 ## 10. Getting started
@@ -430,7 +427,6 @@ To update later:
 
 Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
 
-
 ---
 
 ## 11. Privacy and safety
@@ -476,7 +472,7 @@ LOCAL_PATH = "C:/Users/me/private"
 ```
 
 ### 12.2 Personal paths and the denylist
-- `tools/sync/personal-paths.txt`: files and folders that never sync. A trailing `/` means a folder (wildcards allowed, anchored at the repo root); a pattern containing `/` matches the full path; anything else matches file names.
+- `tools/sync/personal-paths.txt`: files and folders that never sync. A trailing `/` means a folder (wildcards allowed, anchored at the repo root); a leading `/` means a file at the repo root only (use it for `/profile.md`, `/paypool.md`, `/roster.md`, whose blank templates under `skills/` must stay public); a pattern containing `/` matches the full path; anything else matches file names in any folder.
 - `tools/sync/denylist.txt`: terms that must never appear in a public file, matched as whole words, case-insensitive. A GitHub handle that merely contains a surname does not match.
 
 Both files are always excluded from the mirror. Example versions ship publicly.

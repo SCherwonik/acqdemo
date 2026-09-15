@@ -76,10 +76,12 @@ def is_excluded(rel: str, patterns: list[str]) -> bool:
     dir_prefixes = ["/".join(parts[: k + 1]) for k in range(len(parts))]
     for pat in patterns:
         p = pat.replace("\\", "/").lower()
+        anchored = p.startswith("/")  # "/name" matches only at the repo root
+        p = p.lstrip("/")
         if p.endswith("/"):
             if any(fnmatch.fnmatchcase(d, p[:-1]) for d in dir_prefixes):
                 return True
-        elif "/" in p:
+        elif anchored or "/" in p:
             if fnmatch.fnmatchcase(low, p):
                 return True
         elif fnmatch.fnmatchcase(name, p):
