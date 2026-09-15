@@ -60,6 +60,21 @@ def test_skill_frontmatter(skill):
 
 
 @pytest.mark.parametrize("skill", skill_files(), ids=lambda p: p.parent.name)
+def test_frontmatter_values_are_plain_yaml(skill):
+    """A ": " or a quote inside an unquoted value breaks the loader's YAML parse."""
+    _, text = frontmatter(skill)
+    body = FRONTMATTER.match(text).group(1)
+    for line in body.splitlines():
+        if ":" not in line:
+            continue
+        value = line.split(":", 1)[1].strip()
+        if value.startswith(("'", '"')):
+            continue
+        # A colon plus space inside a plain scalar ends the value and breaks the parse.
+        assert ": " not in value, f"{skill}: unquoted value contains ': ' -> {line[:80]}"
+
+
+@pytest.mark.parametrize("skill", skill_files(), ids=lambda p: p.parent.name)
 def test_skill_relative_paths_exist(skill):
     _, text = frontmatter(skill)
     missing = [rel for rel in REL_PATH.findall(text) if not (skill.parent / rel).exists()]
