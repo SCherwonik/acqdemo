@@ -144,6 +144,7 @@ SEVERITY_ORDER = {"CRITICAL": 0, "WARNING": 1, "INFO": 2}
 
 LABEL_RE = re.compile(r"^\s*(W|R|I)\s*:\s?(.*)$")
 LABEL_PREFIX_RE = re.compile(r"^\s*[WRI]\s*:\s?", re.M)
+WRONG_LABEL_RE = re.compile(r"^\s*C\s*:", re.M)
 SUPERVISOR_RE = re.compile(
     r"I supervise \d+ military, \d+ civilians?,? and manage \d+ contractors?\.?", re.I
 )
@@ -269,6 +270,15 @@ def test_incomplete_entry_and_minimum(tmp_path):
     assert "MIN_WRI" in codes(findings, "CRITICAL")
 
 
+def test_contribution_labels_flagged_as_wrong_label(tmp_path):
+    ja = "C: Built the tool.\nR: Shipped it.\nI: Saved time.\n\n" * 3
+    found = check.run_checks(write_dir(tmp_path, ja=ja), min_wri=3)
+    critical = codes(found, "CRITICAL")
+    assert "WRONG_LABEL" in critical
+    assert "MIN_WRI" in critical
+    assert "3 line(s)" in next(f.message for f in found if f.code == "WRONG_LABEL")
+
+
 def test_midpoint_minimum_is_one(tmp_path):
     folder = write_dir(tmp_path, ja=factor_text("alpha", 1), ct=factor_text("bravo", 1), ms=factor_text("charlie", 1))
     assert "MIN_WRI" not in codes(check.run_checks(folder, min_wri=1))
@@ -337,6 +347,10 @@ Append to `skills/acqdemo-review/scripts/check.py`:
 
 def check_structure(factor: Factor, min_wri: int) -> list[Finding]:
     out: list[Finding] = []
+    wrong = len(WRONG_LABEL_RE.findall(factor.text))
+    if wrong:
+        out.append(Finding("CRITICAL", "WRONG_LABEL", factor.key,
+                           f"{wrong} line(s) start with 'C:'; W-R-I uses 'W:' (What), 'R:', 'I:'"))
     for entry in factor.entries:
         if not entry.complete:
             missing = ", ".join(k for k in ("W", "R", "I") if not getattr(entry, k).strip())
@@ -412,7 +426,7 @@ def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False,
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 15 passed.
+Expected: 16 passed.
 
 - [ ] **Step 5: Commit**
 
@@ -514,7 +528,7 @@ def test_what_too_long(tmp_path):
 - [ ] **Step 2: Run the tests to verify they fail**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: new tests FAIL with `TypeError: run_checks() got an unexpected keyword argument 'prior'` (or `'names'`), `AttributeError: ... 'roster_names'`, and missing style warnings; earlier 15 still pass.
+Expected: new tests FAIL with `TypeError: run_checks() got an unexpected keyword argument 'prior'` (or `'names'`), `AttributeError: ... 'roster_names'`, and missing style warnings; earlier 16 still pass.
 
 - [ ] **Step 3: Insert repeat, name, and style checks above the orchestration section**
 
@@ -678,7 +692,7 @@ def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False, 
 - [ ] **Step 5: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 23 passed.
+Expected: 24 passed.
 
 - [ ] **Step 6: Commit**
 
@@ -812,7 +826,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 28 passed.
+Expected: 29 passed.
 
 - [ ] **Step 5: Smoke-test the CLI by hand**
 

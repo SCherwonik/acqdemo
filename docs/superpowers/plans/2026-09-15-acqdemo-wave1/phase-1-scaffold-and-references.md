@@ -1243,6 +1243,7 @@ Create `skills/acqdemo/templates/profile.md`:
     due_date:
     points_earned:
     points_required:
+    points_remaining:
     cycle_end:
 
 ## Promotions and position changes
