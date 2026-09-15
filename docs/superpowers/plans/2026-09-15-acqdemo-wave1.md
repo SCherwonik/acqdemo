@@ -50,7 +50,7 @@ skills/
       cert-templates.md                acquisition and DoD FM self-certification templates
       question-bank.md                 question types, per-discriminator questions, drill-down ladder,
                                        recall sweeps, estimate protocol
-      wri-style.md                     writing rules for paste-ready text
+      writing-style.md                     writing rules for paste-ready text
       ledger-format.md                 ledger entry schema, statuses, roster, session-state, profile, paypool fields
     templates/
       profile.md                       blank personal profile
@@ -102,7 +102,7 @@ Spec coverage (spec section -> task):
 - 3.4 data contracts -> Task 7 (`ledger-format.md`, templates)
 - 4.1-4.5 recipe -> Task 5 (`question-bank.md`, including calendar export), Tasks 14-15 (calendar harvest), Task 18 (annual skill)
 - 5 annual workflow -> Task 18
-- 6 writing rules -> Task 6 (`wri-style.md`), Tasks 8-11 (mechanical checks)
+- 6 writing rules -> Task 6 (`writing-style.md`), Tasks 8-11 (mechanical checks)
 - 7 outputs -> Task 7 (`working-doc.md`), Task 18 (finalize)
 - 8 review skill -> Tasks 8-11, 16
 - 9 calendar -> Task 7 (`paypool.md`), Task 19 (stage detection)

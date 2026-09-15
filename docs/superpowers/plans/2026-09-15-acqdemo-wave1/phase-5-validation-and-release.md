@@ -213,7 +213,7 @@ For each persona, in a fresh Claude Code session with the plugin installed (Task
 Acceptance for each persona:
 - The skill used the correct descriptor file (`nj`, `nk`, or `nh`) and target level.
 - NH-II persona: JA opens with "I supervise 0 military, 4 civilians, and manage 1 contractors." followed by a supervisory paragraph. NJ-III persona: MS opens with an acquisition statement. NH-II persona: MS opens with a DoD FM "active cycle" statement.
-- At least three W-R-I per factor; no fictional person names in the factor files; every number traces to the ramble or an approved estimate recorded in the ledger.
+- At least three C-R-I per factor; no fictional person names in the factor files; every number traces to the ramble or an approved estimate recorded in the ledger.
 - `check.py` with the persona's flags reports 0 CRITICAL.
 
 Copy each scratch workspace's `FY26/final/` three factor files into `skills/acqdemo/references/examples/<persona>/final/`.
@@ -225,7 +225,7 @@ Expected: 4 passed.
 
 - [ ] **Step 6: Record results and commit**
 
-Create `docs/superpowers/validation/personas.md` with a table of persona, descriptor file used, target level, W-R-I per factor, CRITICAL/WARNING counts, and any skill instruction changes made to reach acceptance (with the reason for each).
+Create `docs/superpowers/validation/personas.md` with a table of persona, descriptor file used, target level, C-R-I per factor, CRITICAL/WARNING counts, and any skill instruction changes made to reach acceptance (with the reason for each).
 
 ```bash
 git add skills/acqdemo/references/examples tests/test_examples.py docs/superpowers/validation/personas.md
@@ -250,7 +250,7 @@ In a fresh Claude Code session with the plugin installed, send each prompt in it
 | 2 | "Help me with my CCAS self-assessment" | acqdemo |
 | 3 | "Let's do my annual self-assessment" | acqdemo-annual (or acqdemo, which routes to it) |
 | 4 | "Pull what I did this year from git and my calendar" | acqdemo-harvest |
-| 5 | "Check my W-R-I draft before I paste it into CAS2Net" | acqdemo-review |
+| 5 | "Check my C-R-I draft before I paste it into CAS2Net" | acqdemo-review |
 | 6 | "Review these statements for repeats from last year" | acqdemo-review |
 | 7 | "Write a Python function to parse dates" | none of the AcqDemo skills |
 
@@ -324,7 +324,7 @@ Fill `tests/backtest-fy25/scorecard.md`:
 |---|---|---|
 | CRITICAL findings in final text | 0 | |
 | Supervisor-added facts surfaced by questions | at least two-thirds | |
-| Numbers per W-R-I vs. the original self-assessment | higher | |
+| Numbers per C-R-I vs. the original self-assessment | higher | |
 | Characters per factor | at most 3,900 | |
 | Blind side-by-side preference by the employee | new wins at least 2 of 3 factors | |
 

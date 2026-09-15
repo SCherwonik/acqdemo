@@ -16,7 +16,7 @@ A Claude Code **plugin** containing a primary skill plus smaller single-purpose 
 1. Harvest evidence (git history, prior documents) and pull memories out of free-form voice rambles.
 2. Ask as many targeted questions as it takes, including structured memory sweeps (timeline, people, artifacts).
 3. Keep a year-round **evidence ledger** that every skill reads and writes.
-4. Draft CAS2Net-ready W-R-I statements per factor, calibrated to the employee's career path and target broadband level.
+4. Draft CAS2Net-ready C-R-I statements per factor, calibrated to the employee's career path and target broadband level.
 5. Check drafts against the program rules and a "panel read" before submission.
 6. Hand the supervisor a crib sheet that helps them defend the rating at panel.
 
@@ -50,7 +50,7 @@ skills/
       levels.md            score ranges per career path/level, Very High gates
       rules/ccas-core.md   rules common to all pay pools (verify vs. Operating Guide)
       question-bank.md
-      wri-style.md         writing rules (Section 6)
+      writing-style.md         writing rules (Section 6)
       ledger-format.md     data contracts (Section 3.4)
       cert-templates.md    acquisition + DoD FM self-certification templates
       examples/            fully fictional personas only
@@ -76,7 +76,7 @@ Shared references live under the primary skill. Other skills reference them by r
 | `acqdemo-harvest` | Mine git repos, calendar exports, and prior documents for the rating period | profile (repo list), `FY<yy>/evidence/` calendar exports, prior-cycle submissions | ledger (`candidate` entries), harvest snapshots | "Pull what I did from git and my calendar" |
 | `acqdemo-log` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
 | `acqdemo-annual` | Gate, dump, recall sweeps, deep-dives, allocate, draft, finalize | all | ledger, roster, drafts, final outputs | "Let's do my annual" |
-| `acqdemo-midpoint` | Same flow, minimum 1 W-R-I per factor, no scores | all | same | "Midpoint time" |
+| `acqdemo-midpoint` | Same flow, minimum 1 C-R-I per factor, no scores | all | same | "Midpoint time" |
 | `acqdemo-plan` | Contribution plan from PRD duties + expected work, labeled objectives, KPIs | profile, PRD, prior plan | plan draft | "Write my plan" |
 | `acqdemo-review` | Script checks + judgment checks, fix loop | any draft, prior-cycle text, current midpoint, roster, ledger | findings, fixed draft | "Check my draft" |
 
@@ -204,10 +204,10 @@ Unknown Tier 0 items do not block drafting; they are flagged in the working doc.
 ## 6. Writing rules
 
 ### 6.1 Format
-- Labels `W:` `R:` `I:`. What = 1 sentence, at most 35 words. Result and Impact = 1-2 sentences each and carry the detail.
-- Budget: at most 3,900 characters per factor (CAS2Net field is about 4,000), counting each line break as 2. Typically 3-4 W-R-I.
+- Labels `C:` `R:` `I:` (Contribution-Result-Impact, the current method; older guidance calls it W-R-I with `W:`, accepted when the pay pool overlay sets `what_label: W`). Contribution = 1 sentence, at most 35 words. Result and Impact = 1-2 sentences each and carry the detail.
+- Budget: at most 3,900 characters per factor (CAS2Net field is about 4,000), counting each line break as 2. Typically 3-4 C-R-I.
 - Order: greatest impact first.
-- Mandatory non-W-R-I paragraphs (do not count toward the minimum), in the order the pay pool overlay specifies:
+- Mandatory non-C-R-I paragraphs (do not count toward the minimum), in the order the pay pool overlay specifies:
   - Supervisors: personnel counts ("I supervise X military, Y civilians, and manage Z contractors.") + supervisory objective paragraph, first under JA.
   - Acquisition-coded positions: self-certification statement, first under MS.
   - DoD FM certification-coded positions: self-certification + CET status, typically second under MS.
@@ -258,7 +258,7 @@ Sustained contributions ("institutionalized", "now standard each cycle") support
 ## 7. Outputs
 
 ### 7.1 Paste-ready files
-`Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, `Mission Support.txt`: plain text, W-R-I labeled, character count verified.
+`Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, `Mission Support.txt`: plain text, C-R-I labeled, character count verified.
 
 ### 7.2 Working doc (`FY<yy> working doc.md`)
 1. Status and gaps (unknown Tier 0 items, flags)
@@ -285,14 +285,14 @@ Sustained contributions ("institutionalized", "now standard each cycle") support
 | Severity | Check |
 |---|---|
 | CRITICAL | Every entry has W, R and I |
-| CRITICAL | Minimum W-R-I per factor (annual 3, midpoint 1; overlay may change); mandatory paragraphs excluded from count |
+| CRITICAL | Minimum C-R-I per factor (annual 3, midpoint 1; overlay may change); mandatory paragraphs excluded from count |
 | CRITICAL | Mandatory certification and supervisory paragraphs present and in overlay order |
 | CRITICAL | Characters per factor at most 4,000 (WARNING above 3,900) |
 | CRITICAL | Prior-cycle wording: any run of 6+ identical words |
 | CRITICAL | Identical wording across factors |
 | CRITICAL | Any roster name in final text |
 | WARNING | Banned words, em dashes, smart quotes, Markdown characters |
-| WARNING | What longer than 35 words |
+| WARNING | Contribution longer than 35 words |
 
 ### 8.2 Layer 2: judgment
 | Severity | Check |
@@ -353,7 +353,7 @@ Defaults below are examples; each pay pool's overlay sets real dates.
 
 **Backtest scorecard:** 0 CRITICAL; at least two-thirds of the facts the supervisor added (that the employee omitted) are surfaced by the question loop; more numbers per statement than the original; at most 3,900 characters per factor; blind side-by-side preference in at least 2 of 3 factors. Backtest drafts are stored where harvest never reads them.
 
-**Acceptance bar for real use:** 0 CRITICAL; at most 3,900 characters per factor; at least 3 W-R-I per factor plus 2 bench entries; every number has a basis; special-situation paragraphs present when triggered; user sign-off.
+**Acceptance bar for real use:** 0 CRITICAL; at most 3,900 characters per factor; at least 3 C-R-I per factor plus 2 bench entries; every number has a basis; special-situation paragraphs present when triggered; user sign-off.
 
 ---
 

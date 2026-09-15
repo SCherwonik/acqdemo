@@ -107,14 +107,14 @@ Create `.claude-plugin/plugin.json`:
 ```json
 {
   "name": "acqdemo",
-  "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, W-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
+  "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, C-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
   "version": "0.1.0",
   "author": {
     "name": "SCherwonik"
   },
   "homepage": "https://github.com/SCherwonik/acqdemo",
   "repository": "https://github.com/SCherwonik/acqdemo",
-  "keywords": ["acqdemo", "ccas", "self-assessment", "w-r-i", "performance"]
+  "keywords": ["acqdemo", "ccas", "self-assessment", "c-r-i", "performance"]
 }
 ```
 
@@ -130,7 +130,7 @@ Create `.claude-plugin/marketplace.json`:
   "plugins": [
     {
       "name": "acqdemo",
-      "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, W-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
+      "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, C-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
       "version": "0.1.0",
       "source": "./",
       "author": {
@@ -566,7 +566,7 @@ Tags: **[common]** applies across AcqDemo per the program's Federal Register not
 
 ## Midpoint
 - [common] Held about midway through the cycle (March/April).
-- [common] The employee writes a midpoint self-assessment in W-R-I format; at least one W-R-I per factor.
+- [common] The employee writes a midpoint self-assessment in C-R-I format; at least one C-R-I per factor.
 - [common] The supervisor writes an assessment without scores, meets with the employee, and documents the date and method of communication in CAS2Net.
 - [pay pool] Not required for employees who entered AcqDemo after 1 May.
 
@@ -575,20 +575,20 @@ Tags: **[common]** applies across AcqDemo per the program's Federal Register not
 - [common] The gaining supervisor considers closeouts when recommending annual scores.
 
 ## Annual self-assessment
-- [common] W-R-I format (What, Result, Impact) for every entry.
-- [common] Minimum of three distinct W-R-I statements per factor (nine total).
-- [common] Do not duplicate self-assessments from year to year, and do not use the same W-R-I for more than one factor. Duplication may affect factor scores.
+- [common] C-R-I format (Contribution, Result, Impact) for every entry. Older guidance and business rules call the same structure W-R-I (What, Result, Impact); the labels differ, not the content. Read the preferred label from `paypool.md` `what_label`.
+- [common] Minimum of three distinct C-R-I statements per factor (nine total).
+- [common] Do not duplicate self-assessments from year to year, and do not use the same C-R-I for more than one factor. Duplication may affect factor scores.
 - [common] Failing to provide the minimum statements or to address mandatory objectives may affect factor scores.
 - [common] CAS2Net holds about 4,000 characters per factor and times out after about 15 minutes without saving.
 
 ## Mandatory objectives
-These paragraphs are not W-R-I and do not count toward the minimum.
+These paragraphs are not C-R-I and do not count toward the minimum.
 - **Supervisory objective** [common]: first statement under Job Achievement and/or Innovation, in paragraph form, stating counts in this exact format: "I supervise X military, Y civilians, and manage Z contractors." Then describe how the supervisory objective was met.
 - **Acquisition-coded positions** [common]: a self-certification statement as the first statement under Mission Support (certification level, date, continuous learning points, cycle end). See `cert-templates.md`.
 - **DoD FM certification-coded positions** [pay pool]: a self-certification and CET maintenance statement as the second statement under Mission Support in the example business rules (the example guidance allows first or second).
 
 ## Supervisor narratives
-- [common] Not required in W-R-I format.
+- [common] Not required in C-R-I format.
 - [common] Each factor begins with exactly one lead-in:
   - "Meeting expected contributions." (scored at the EOCS)
   - "Exceeding expected contributions." (scored above the EOCS; explain with clear, precise specifics and add significant contributions the employee omitted)
@@ -621,7 +621,7 @@ Create `skills/acqdemo/references/cert-templates.md`:
 ```markdown
 # Certification Self-Statement Templates
 
-Use in Mission Support before any W-R-I. Not W-R-I format; not counted toward the minimum. Fill every `{placeholder}` from the profile; if a value is unknown, ask. Never guess dates or point counts. Order comes from `paypool.md` (example: acquisition first, DoD FM second).
+Use in Mission Support before any C-R-I. Not C-R-I format; not counted toward the minimum. Fill every `{placeholder}` from the profile; if a value is unknown, ask. Never guess dates or point counts. Order comes from `paypool.md` (example: acquisition first, DoD FM second).
 
 ## Acquisition-coded positions
 
@@ -723,7 +723,7 @@ Recall is the bottleneck. Ask more, not less.
 - Never ask about topics the user has not raised unless the question comes from a recall sweep or the gate list.
 
 ## Drill-down ladder
-Apply to every accomplishment until it has enough for a strong W-R-I:
+Apply to every accomplishment until it has enough for a strong C-R-I:
 1. **What** exactly did you do? What was your role: owned, co-owned, owned a piece, or supported?
 2. **So what?** What came out of it (product, decision, fix, capability)?
 3. **Who used it?** Which people, teams, organizations, leaders? How many?
@@ -899,7 +899,7 @@ git commit -m "feat: add question bank with recall sweeps and estimate protocol"
 ### Task 6: Writing style reference
 
 **Files:**
-- Create: `skills/acqdemo/references/wri-style.md`
+- Create: `skills/acqdemo/references/writing-style.md`
 - Modify: `tests/test_references.py` (append test)
 
 - [ ] **Step 1: Append the failing test**
@@ -907,26 +907,26 @@ git commit -m "feat: add question bank with recall sweeps and estimate protocol"
 Append to `tests/test_references.py`:
 
 ```python
-def test_wri_style():
+def test_writing_style():
     assert_contains(
-        REF / "wri-style.md",
+        REF / "writing-style.md",
         [
             "## Output format", "## Length budget", "## Order", "## Framing policy",
             "## Role verbs", "## Vocabulary", "## Impact ladder", "## One project, three angles",
             "## Raise or award framing", "## Repeat rule", "## Special situations", "## Examples",
-            "seamlessly", "3,900", "W: ", "R: ", "I: ",
+            "seamlessly", "3,900", "C: ", "R: ", "I: ",
         ],
     )
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `python -m pytest tests/test_references.py::test_wri_style`
+Run: `python -m pytest tests/test_references.py::test_writing_style`
 Expected: FAIL with `FileNotFoundError`.
 
 - [ ] **Step 3: Create the style reference**
 
-Create `skills/acqdemo/references/wri-style.md`:
+Create `skills/acqdemo/references/writing-style.md`:
 
 ````markdown
 # Writing Style for Paste-Ready Text
@@ -941,24 +941,24 @@ Each factor file is plain text:
 
 <mandatory paragraph 2, if any>
 
-W: <what you did, one sentence>
+C: <what you did, one sentence>
 R: <result>
 I: <impact>
 
-W: ...
+C: ...
 R: ...
 I: ...
 ```
 
-- Labels are exactly `W: `, `R: `, `I: ` at the start of a line.
+- Labels are exactly `C: `, `R: `, `I: ` at the start of a line (Contribution, Result, Impact). If `paypool.md` sets `what_label: W`, use `W: ` instead of `C: `; the structure is the same.
 - One blank line between paragraphs and between entries.
 - Straight quotes only. No em dashes. No bullets, headers, bold, or other Markdown.
 - Mandatory paragraphs (supervisory objective under JA; certification statements under MS) come first, in the order `paypool.md` specifies. See `rules/ccas-core.md` and `cert-templates.md`.
 
 ## Length budget
 - At most **3,900 characters** per factor, counting each line break as two characters (CAS2Net allows about 4,000).
-- The What is one sentence of at most 35 words. Result and Impact are one or two sentences each and carry the detail.
-- Usually three or four W-R-I per factor. Put spare entries on the bench in the working doc rather than squeezing a fifth.
+- The Contribution is one sentence of at most 35 words. Result and Impact are one or two sentences each and carry the detail.
+- Usually three or four C-R-I per factor. Put spare entries on the bench in the working doc rather than squeezing a fifth.
 
 ## Order
 Greatest impact first. Rank by scope, organizational level reached, and novelty.
@@ -1019,21 +1019,21 @@ All examples are fictional.
 
 **Weak**
 ```
-W: Worked on the cost model for the program and helped the team with data.
+C: Worked on the cost model for the program and helped the team with data.
 R: The model was improved and the team was happy with the results.
 I: This helped the organization make better decisions.
 ```
 
 **Strong (owned role, estimate recorded in ledger)**
 ```
-W: Architected and delivered an automated regression tool that replaced manual spreadsheet testing for 40 cost estimating relationships across 6 programs.
+C: Architected and delivered an automated regression tool that replaced manual spreadsheet testing for 40 cost estimating relationships across 6 programs.
 R: Cut model development time from about three weeks to four days per estimate and surfaced two unit errors in the legacy workbook before a leadership review.
 I: Established the division's standard method for relationship testing, giving headquarters decision-makers defensible estimates for over $2B in program funding decisions.
 ```
 
 **Same project, CT angle**
 ```
-W: Trained 14 analysts across 3 divisions to use the new regression tool through live demonstrations and a written user guide.
+C: Trained 14 analysts across 3 divisions to use the new regression tool through live demonstrations and a written user guide.
 R: Analysts in all three divisions adopted the tool for their next estimates, and questions to the team dropped to near zero within two months.
 I: Raised the agency's analytic baseline and freed senior analysts for higher-priority program reviews.
 ```
@@ -1041,13 +1041,13 @@ I: Raised the agency's analytic baseline and freed senior analysts for higher-pr
 
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `python -m pytest tests/test_references.py::test_wri_style`
+Run: `python -m pytest tests/test_references.py::test_writing_style`
 Expected: 1 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo/references/wri-style.md tests/test_references.py
+git add skills/acqdemo/references/writing-style.md tests/test_references.py
 git commit -m "feat: add writing style reference"
 ```
 
@@ -1091,7 +1091,7 @@ def test_ledger_format():
                         "rating_period:", "prd_path:", "supervisor:", "certifications:",
                         "## Office map", "## Repositories to harvest", "## Mission statements",
                         "## Promotions and position changes"]),
-        ("paypool.md", ["employee_due:", "supervisor_due:", "min_wri_annual:", "min_wri_midpoint:",
+        ("paypool.md", ["employee_due:", "supervisor_due:", "min_entries_annual:", "min_entries_midpoint:", "what_label:",
                         "mandatory_paragraph_order:", "promotion_window_days:", "plan_days_required:",
                         "char_limit:", "allow_phrases:"]),
         ("roster.md", ["| Ring | Name | Organization | Role | Worked on | Frequency | Ledger |"]),
@@ -1181,7 +1181,7 @@ Field rules:
 - Names of people may appear in `audience`, `notes`, and `evidence`; they never pass into factor files.
 
 ## Status lifecycle
-`candidate` (from harvest or a quick capture; not yet explored) > `ready` (drill-down complete; enough for a full W-R-I) > `allocated` (chosen for a factor or the bench) > `submitted` (in final text). Any status can move to `rejected` with a note.
+`candidate` (from harvest or a quick capture; not yet explored) > `ready` (drill-down complete; enough for a full C-R-I) > `allocated` (chosen for a factor or the bench) > `submitted` (in final text). Any status can move to `rejected` with a note.
 
 ## Roster
 `roster.md`:
@@ -1285,8 +1285,9 @@ Values below are the example pay pool's defaults. Replace them with your pay poo
 - supervisor_due: 09-30
 - panels: Oct-Nov
 - reconsideration_window: late Jan to mid Feb
-- min_wri_annual: 3
-- min_wri_midpoint: 1
+- min_entries_annual: 3
+- min_entries_midpoint: 1
+- what_label: C                    # C (Contribution, current) or W (What, older guidance)
 - min_plan_objectives_per_factor: 2
 - mandatory_paragraph_order:
   - JA: supervisory

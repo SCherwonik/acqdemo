@@ -2,7 +2,7 @@
 
 A recipe, a set of Claude Code skills, and supporting tools that help a Department of Defense AcqDemo employee capture a year of contributions and turn them into strong, compliant contribution plans, midpoint assessments, and annual self-assessments.
 
-You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready W-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
+You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready C-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
 
 ---
 
@@ -52,7 +52,7 @@ Writing an AcqDemo self-assessment is mostly a **recall** problem, not a writing
 - The details that win points at the pay pool panel are rarely written down: dollar values, who was in the room, how many people used your work, what decision it fed, what it replaced.
 - Paste-in prompts ask one round of questions and stop. If you did not remember it before the prompt, it does not make it into the assessment.
 
-This project started from the excellent [gocyclic249/AcqDemo_Prompt](https://github.com/gocyclic249/AcqDemo_Prompt), a set of copy-paste prompts for W-R-I statements, contribution plans, supervisor narratives, and format review. This toolkit keeps what works there (strict W-R-I format, no invented facts, CAS2Net-ready plain text) and adds:
+This project started from the excellent [gocyclic249/AcqDemo_Prompt](https://github.com/gocyclic249/AcqDemo_Prompt), a set of copy-paste prompts for C-R-I statements, contribution plans, supervisor narratives, and format review. This toolkit keeps what works there (strict C-R-I format, no invented facts, CAS2Net-ready plain text) and adds:
 
 - **Conversation instead of a form.** Ramble by voice; the assistant extracts the facts.
 - **Unlimited, deeper questions.** Numbered so you can answer by voice ("number four: ...").
@@ -83,9 +83,9 @@ You do not need to be technical to use the skills once they ship: you install th
 | Event | Typical timing | What happens |
 |---|---|---|
 | **Contribution plan** | Within 30 days of cycle start (1 Oct), a new position, or a new supervisor | You and your supervisor agree on expected contributions per factor, based on your Position Requirements Document (PRD) |
-| **Midpoint review** | March/April | You write at least one W-R-I per factor; supervisor writes an assessment without scores and meets with you |
+| **Midpoint review** | March/April | You write at least one C-R-I per factor; supervisor writes an assessment without scores and meets with you |
 | **Closeout** | Within 30 days of a change of supervisor or position | You and the departing supervisor document contributions so far; no scores |
-| **Annual self-assessment** | Due to your supervisor before the supervisor deadline (example pay pool: employee 15 Sep, supervisor 30 Sep) | You write at least three W-R-I per factor |
+| **Annual self-assessment** | Due to your supervisor before the supervisor deadline (example pay pool: employee 15 Sep, supervisor 30 Sep) | You write at least three C-R-I per factor |
 | **Pay pool panels** | October to November | Supervisors and senior leaders review every narrative side by side and calibrate scores |
 | **Results** | January | Pay changes effective the first full pay period; a reconsideration window follows |
 
@@ -105,9 +105,9 @@ You do not need to be technical to use the skills once they ship: you install th
 
 Descriptors are written to the **high end** of each level and are read **as a whole**, not as a checklist. Very High scores are available only to employees in the top level of their career path with an expected score at the top of that level (for NH, an EOCS of 96-100 in the example business rules).
 
-### 4.4 W-R-I (What-Result-Impact)
-Every self-assessment entry uses this structure:
-- **What:** the specific contribution you made this cycle.
+### 4.4 C-R-I (Contribution-Result-Impact)
+Every self-assessment entry uses this structure. Entries are labeled `C:`, `R:`, `I:`. Older program guidance and business rules (including the example documents in this repo) call the same structure W-R-I, What-Result-Impact; the content is identical and only the first label differs.
+- **Contribution:** what you did this cycle.
 - **Result:** the immediate outcome or deliverable (quality, quantity, cost, timeliness).
 - **Impact:** why it mattered to the mission, as broadly as you can honestly climb.
 
@@ -126,8 +126,8 @@ Apply the "so what?" test to every entry.
 **Salary increase vs. bonus event:** panels consider whether a contribution will continue at that level (supports a raise) or was a one-time "big rock" (supports an award). Write accordingly.
 
 ### 4.6 Rules that trip people up
-- **Minimum three W-R-I per factor** at the annual; at least one per factor at the midpoint.
-- **No copying** from prior years' assessments, and no identical W-R-I across factors. Duplicates may lower scores.
+- **Minimum three C-R-I per factor** at the annual; at least one per factor at the midpoint.
+- **No copying** from prior years' assessments, and no identical C-R-I across factors. Duplicates may lower scores.
 - **Mandatory objectives** go first and do not count toward the minimum:
   - Supervisors state personnel counts ("I supervise X military, Y civilians, and manage Z contractors.") and describe how the supervisory objective was met, in paragraph form, first under JA.
   - Acquisition-coded positions give a certification self-statement first under MS.
@@ -167,14 +167,14 @@ Every skill reads and writes one file per cycle, `ledger.md`. Each entry records
 | 3b. Recall sweeps | Timeline walk; people sweep by ring; artifact prompts | Name names, answer |
 | 4. Deep-dives | Project by project, biggest first; numbered questions; estimates proposed; each entry saved immediately | Ramble, answer, approve estimates |
 | 5. Allocate | Picks the top 3-4 entries per factor with distinct angles and no prior-year overlap | Approve or swap |
-| 6. Draft | Writes W-R-I statements and mandatory paragraphs | Read |
+| 6. Draft | Writes C-R-I statements and mandatory paragraphs | Read |
 | 7. Review | Automated checks plus a panel read; fixes and shows the diff | Edit by voice |
 | 8. Finalize | Writes the paste-ready files and working doc; marks entries submitted | Paste into CAS2Net |
 
 Deep-dives continue until each factor has at least four ready entries (three plus a spare) or you say "enough."
 
 ### 5.4 Outputs
-- `Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, `Mission Support.txt`: plain text, W-R-I labeled, character counts verified, ready to paste.
+- `Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, `Mission Support.txt`: plain text, C-R-I labeled, character counts verified, ready to paste.
 - `FY<yy> working doc.md`: status and gaps, final text with counts, evidence table (every claim with its source and basis), bench of unused entries and alternate phrasings, descriptor coverage map, next-cycle seeds, and the **supervisor and panel crib sheet**:
   - three "big rock" one-liners
   - hard counts in one list
@@ -267,8 +267,8 @@ Tips:
 ## 7. Writing rules
 
 ### 7.1 Format
-- Labels `W:`, `R:`, `I:`. The What is one sentence of at most 35 words; the Result and Impact carry the detail.
-- At most 3,900 characters per factor (CAS2Net allows about 4,000), counting each line break as two characters. Usually three or four W-R-I.
+- Labels `C:`, `R:`, `I:` (set `what_label: W` in `paypool.md` if your pay pool still uses `W:`). The Contribution is one sentence of at most 35 words; the Result and Impact carry the detail.
+- At most 3,900 characters per factor (CAS2Net allows about 4,000), counting each line break as two characters. Usually three or four C-R-I.
 - Greatest impact first.
 - Mandatory paragraphs (supervisory objective, certification statements) in the order your pay pool requires.
 - Plain text only: straight quotes, no em dashes, no bullets, no Markdown.
@@ -511,7 +511,7 @@ Planned skill validation (from the design spec):
 | `2026 AcqDemo_CCAS_Assessments_Guidance.pdf` | One pay pool's 2026 guidance for employee self-assessments and supervisor narratives, including certification templates and PAQL examples | Verify against your own pay pool |
 | `2026 AcqDemo_CCAS_Assessments_Checklist.pdf` | Quick-check list matching the guidance | Useful before submitting |
 | `Acqdemo Business Rules/2025 AcqDemo Business Rules.pdf` | One pay pool's signed 2025 business rules: roles, funding, CAS2Net rules, special situations, compensation, timeline | Rules change yearly; get your pay pool's current version |
-| `MidPoint Review - 2023.pptx` | Training deck on writing CCAS assessments, W-R-I examples, and significant-accomplishment characteristics | Older but still instructive |
+| `MidPoint Review - 2023.pptx` | Training deck on writing CCAS assessments, C-R-I examples, and significant-accomplishment characteristics | Older but still instructive |
 | `Important Rules to Consider.txt` | Short writing tips and a continuous-learning status template | |
 | `Github Link.txt` | Link to the prompt collection this project builds on | |
 
@@ -541,7 +541,7 @@ Planned skill validation (from the design spec):
 | SPPP | Sub-Pay Pool Panel |
 | TOA | Time Off Award |
 | VoP | Value of Position |
-| W-R-I | What-Result-Impact |
+| C-R-I | Contribution-Result-Impact |
 
 ---
 

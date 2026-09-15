@@ -20,7 +20,7 @@ Create `skills/acqdemo-review/SKILL.md`:
 ````markdown
 ---
 name: acqdemo-review
-description: Use when checking an AcqDemo self-assessment draft (annual, midpoint, or closeout W-R-I statements) before it goes into CAS2Net, or when the user asks to review, audit, or fix a draft.
+description: Use when checking an AcqDemo self-assessment draft (annual, midpoint, or closeout C-R-I statements) before it goes into CAS2Net, or when the user asks to review, audit, or fix a draft.
 ---
 
 # AcqDemo Review
@@ -30,7 +30,7 @@ Checks the three paste-ready factor files against the program rules and a pay po
 ## Inputs
 - A draft folder containing exactly `Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, and `Mission Support.txt` (usually `FY<yy>/drafts/v<N>/` or `FY<yy>/final/` in the user's private workspace). If the user pasted text instead, save it into those three files in a new `FY<yy>/drafts/v<N>/` folder first. Ask where the workspace is if unknown.
 - From the workspace when present: `profile.md`, `paypool.md`, `roster.md`, `FY<yy>/ledger.md`, `prior/`, and the current cycle's midpoint text.
-- Rules: `../acqdemo/references/wri-style.md`, `../acqdemo/references/rules/ccas-core.md`, `../acqdemo/references/levels.md`, and the user's career path file in `../acqdemo/references/descriptors/`.
+- Rules: `../acqdemo/references/writing-style.md`, `../acqdemo/references/rules/ccas-core.md`, `../acqdemo/references/levels.md`, and the user's career path file in `../acqdemo/references/descriptors/`.
 
 ## Step 1: Run the deterministic checker
 Build flags from the workspace:
@@ -38,13 +38,14 @@ Build flags from the workspace:
 | Source | Flag |
 |---|---|
 | Annual or midpoint | `--mode annual` or `--mode midpoint` |
-| `paypool.md` `min_wri_annual` / `min_wri_midpoint` | `--min-wri N` |
+| `paypool.md` `min_entries_annual` / `min_entries_midpoint` | `--min-entries N` |
 | `profile.md` certification of type `acquisition` | `--acq-cert` |
 | `profile.md` certification of type `dod-fm` | `--fm-cert` |
 | `profile.md` `supervises` with any count above 0 | `--supervisor` |
 | `prior/` (previous cycles only; never the current midpoint) | `--prior "<workspace>/prior"` |
 | `roster.md` | `--roster "<workspace>/roster.md"` |
 | `paypool.md` `allow_phrases` (write them one per line to `FY<yy>/drafts/allow-phrases.txt`) | `--allow-phrases <that file>` |
+| `paypool.md` `what_label` (`C` unless the pay pool uses `W`) | `--what-label C` or `--what-label W` |
 
 Run the checker at `scripts/check.py` in this skill's folder:
 
@@ -55,14 +56,14 @@ python "<this skill folder>/scripts/check.py" --dir "<draft folder>" <flags>
 The checker expects acquisition before DoD FM when both apply. If `paypool.md` orders them differently, report `ACQ_CERT`/`FM_CERT` ordering findings as INFO instead of CRITICAL.
 
 ## Step 2: Judgment checks
-Match each W-R-I to its ledger entry by content.
+Match each C-R-I to its ledger entry by content.
 
 | Severity | Check | How to decide |
 |---|---|---|
 | CRITICAL | Same achievement as a prior cycle with no current-cycle delta | Compare against `prior/` meaningfully, not just wording, and against the entry's `prior_cycle_overlap` |
 | WARNING | Number without a basis | Every number in the text must appear in the entry's `numbers` with a `basis` |
-| WARNING | Verb stronger than the recorded role | Role verbs table in `wri-style.md` |
-| WARNING | Impact climbs fewer than two rungs or lacks a mission tie | Impact ladder in `wri-style.md`; mission statements in `profile.md` |
+| WARNING | Verb stronger than the recorded role | Role verbs table in `writing-style.md` |
+| WARNING | Impact climbs fewer than two rungs or lacks a mission tie | Impact ladder in `writing-style.md`; mission statements in `profile.md` |
 | WARNING | Reads below the target level | Compare with the target level's descriptors; no recognizable descriptor language or scope |
 | WARNING | Not ordered by impact | Scope x organizational level x novelty |
 | INFO | Passive voice; uncovered discriminators per factor; raise vs. award balance; missing plan tags | |
@@ -165,7 +166,7 @@ If there is no workspace, ask for the rating period and sources, and offer the `
 4. If the export has no meetings in some months of the rating period, tell the user which months are missing and suggest re-exporting.
 
 ## Step 3: Documents
-- Each W-R-I in the current midpoint or a closeout becomes a candidate with the note "from midpoint" or "from closeout". The current midpoint is the starting point, so these are expected to carry forward.
+- Each C-R-I in the current midpoint or a closeout becomes a candidate with the note "from midpoint" or "from closeout". The current midpoint is the starting point, so these are expected to carry forward.
 - Do not create candidates from `prior/`. When any candidate matches an achievement already claimed in a prior cycle, set `prior_cycle_overlap: continuing (cycle delta: unknown)` so the deep-dive asks what is new.
 
 ## Step 4: Confirm with the user
@@ -215,14 +216,14 @@ Create `skills/acqdemo-annual/SKILL.md`:
 ````markdown
 ---
 name: acqdemo-annual
-description: Use when writing an AcqDemo annual self-assessment - runs recall-first intake (brain dump, calendar and people sweeps, project deep-dives), builds the evidence ledger, and drafts paste-ready W-R-I statements for all three factors plus a supervisor crib sheet.
+description: Use when writing an AcqDemo annual self-assessment - runs recall-first intake (brain dump, calendar and people sweeps, project deep-dives), builds the evidence ledger, and drafts paste-ready C-R-I statements for all three factors plus a supervisor crib sheet.
 ---
 
 # AcqDemo Annual Self-Assessment
 
 ## References (open when a step needs them)
 - Questions, sweeps, estimates: `../acqdemo/references/question-bank.md`
-- Writing rules: `../acqdemo/references/wri-style.md`
+- Writing rules: `../acqdemo/references/writing-style.md`
 - Data formats: `../acqdemo/references/ledger-format.md`
 - Levels and Very High: `../acqdemo/references/levels.md`
 - Program rules: `../acqdemo/references/rules/ccas-core.md`
@@ -236,7 +237,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 - **Names** are welcome in conversation, `roster.md`, and the ledger; never in factor files.
 - **Never invent** events, audiences, awards, or recognition. Numbers follow the estimate protocol: proposed, approved by the user, and recorded with a basis.
 - **Repeats:** the current cycle's midpoint is the starting point; prior cycles are off limits.
-- **Output** factor files follow `wri-style.md` exactly.
+- **Output** factor files follow `writing-style.md` exactly.
 - **Classified information:** if the user begins to share it, stop them and move on.
 
 ## Step 0: Load
@@ -288,7 +289,7 @@ Rules: three or four entries per factor; each entry is primary in one factor and
 ## Step 6: Draft
 Write `FY<yy>/drafts/v1/` with the three factor files:
 1. Mandatory paragraphs first, in `paypool.md` order: the supervisory paragraph (exact counts from the profile) and certification statements (templates filled from the profile; ask for any missing value).
-2. W-R-I statements per `wri-style.md`: the What in at most 35 words with a verb that matches the role; the Result with the entry's numbers; the Impact climbing at least two rungs with a mission tie drawn from the profile's mission statements; phrasing from the target level's descriptors; at most 3,900 characters per factor.
+2. C-R-I statements per `writing-style.md`: the Contribution in at most 35 words with a verb that matches the role; the Result with the entry's numbers; the Impact climbing at least two rungs with a mission tie drawn from the profile's mission statements; phrasing from the target level's descriptors; at most 3,900 characters per factor.
 3. If a promotion falls inside the pay pool's window, make continuity visible: higher-level contributions before and after the effective date, and sustained strategic work.
 
 ## Step 7: Review
@@ -334,7 +335,7 @@ Create `skills/acqdemo/SKILL.md`:
 ````markdown
 ---
 name: acqdemo
-description: Use when the user mentions AcqDemo, CCAS, CAS2Net, a contribution plan, a midpoint or closeout, an annual self-assessment, W-R-I statements, or asks where they are in the appraisal cycle - finds or sets up the private workspace, detects the cycle stage, resumes unfinished work, and routes to the right AcqDemo skill.
+description: Use when the user mentions AcqDemo, CCAS, CAS2Net, a contribution plan, a midpoint or closeout, an annual self-assessment, C-R-I statements, or asks where they are in the appraisal cycle - finds or sets up the private workspace, detects the cycle stage, resumes unfinished work, and routes to the right AcqDemo skill.
 ---
 
 # AcqDemo
@@ -359,9 +360,9 @@ Compare today's date with `paypool.md`:
 
 | Window | Stage | Next skill |
 |---|---|---|
-| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo-plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/wri-style.md`, with labeled objectives (JA1, CT1, MS1) |
+| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo-plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
 | After plan due, before midpoint window | Capture | `acqdemo-log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
-| Midpoint window | Midpoint | `acqdemo-midpoint` when available; until then, run `acqdemo-annual` with a minimum of one W-R-I per factor and no crib sheet |
+| Midpoint window | Midpoint | `acqdemo-midpoint` when available; until then, run `acqdemo-annual` with a minimum of one C-R-I per factor and no crib sheet |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
 | Mid-August to employee due date | Annual | `acqdemo-harvest`, then `acqdemo-annual` |
 | Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo-review` on the final text |

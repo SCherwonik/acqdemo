@@ -39,14 +39,14 @@ SUP = ("I supervise 0 military, 3 civilians, and manage 2 contractors. I held mo
        "feedback sessions and completed all required personnel actions on time.")
 
 
-def wri(topic, n):
-    return (f"W: Built {topic} tool number {n} for the analysts.\n"
+def cri(topic, n):
+    return (f"C: Built {topic} tool number {n} for the analysts.\n"
             f"R: Delivered {topic} release {n} on schedule.\n"
             f"I: Improved {topic} readiness across the agency {n}.\n")
 
 
 def factor_text(topic, count=3, preamble=()):
-    parts = list(preamble) + [wri(topic, i) for i in range(1, count + 1)]
+    parts = list(preamble) + [cri(topic, i) for i in range(1, count + 1)]
     return "\n".join(p if p.endswith("\n") else p + "\n" for p in parts)
 
 
@@ -68,7 +68,7 @@ def codes(findings, severity=None):
 # ---------------------------------------------------------------- parsing
 
 def test_parse_preamble_and_entries():
-    text = f"{ACQ}\n\n{FM}\n\n{wri('alpha', 1)}\n{wri('alpha', 2)}"
+    text = f"{ACQ}\n\n{FM}\n\n{cri('alpha', 1)}\n{cri('alpha', 2)}"
     factor = check.parse_factor("MS", text)
     assert factor.preamble == [ACQ, FM]
     assert len(factor.entries) == 2
@@ -77,15 +77,20 @@ def test_parse_preamble_and_entries():
 
 
 def test_parse_joins_continuation_lines():
-    text = "W: Led the effort\nacross three divisions.\nR: Finished early.\nI: Saved money.\n"
+    text = "C: Led the effort\nacross three divisions.\nR: Finished early.\nI: Saved money.\n"
     entry = check.parse_factor("JA", text).entries[0]
-    assert entry.W == "Led the effort across three divisions."
+    assert entry.C == "Led the effort across three divisions."
 
 
 def test_parse_orphan_and_repeated_labels():
-    text = "R: Result with no what.\nW: What.\nR: One.\nR: Two.\nI: Impact.\n"
+    text = "R: Result with no what.\nC: What.\nR: One.\nR: Two.\nI: Impact.\n"
     factor = check.parse_factor("JA", text)
     assert factor.orphans == [1, 4]
+
+
+def test_parse_accepts_older_w_label_as_contribution():
+    entry = check.parse_factor("JA", "W: Built it.\nR: Shipped.\nI: Saved.\n").entries[0]
+    assert entry.complete and entry.C == "Built it."
 
 
 def test_char_count_counts_line_breaks_twice():
@@ -106,10 +111,10 @@ Create `skills/acqdemo-review/scripts/check.py`:
 """Deterministic checks for AcqDemo self-assessment drafts.
 
 Usage:
-    python check.py --dir <folder> [--mode annual|midpoint] [--min-wri N]
+    python check.py --dir <folder> [--mode annual|midpoint] [--min-entries N]
                     [--acq-cert] [--fm-cert] [--supervisor]
                     [--prior FILE_OR_DIR ...] [--roster roster.md]
-                    [--allow-phrases FILE] [--json]
+                    [--allow-phrases FILE] [--what-label C|W] [--json]
 
 The folder must contain the three factor files:
     Job Achievement and Innovation.txt
@@ -137,14 +142,15 @@ HARD_LIMIT = 4000
 SOFT_LIMIT = 3900
 PRIOR_RUN = 6
 CROSS_RUN = 8
-WHAT_MAX_WORDS = 35
+CONTRIBUTION_MAX_WORDS = 35
 BANNED = ["seamlessly", "friction-free", "perfectly", "unbroken", "synergy", "cutting-edge", "world-class"]
 ONCE_ONLY = {"robust": r"\brobust\b", "leverage": r"\bleverag\w*"}
 SEVERITY_ORDER = {"CRITICAL": 0, "WARNING": 1, "INFO": 2}
 
-LABEL_RE = re.compile(r"^\s*(W|R|I)\s*:\s?(.*)$")
-LABEL_PREFIX_RE = re.compile(r"^\s*[WRI]\s*:\s?", re.M)
-WRONG_LABEL_RE = re.compile(r"^\s*C\s*:", re.M)
+LABEL_RE = re.compile(r"^\s*(W|C|R|I)\s*:\s?(.*)$")
+LABEL_PREFIX_RE = re.compile(r"^\s*[WCRI]\s*:\s?", re.M)
+# "C:" (Contribution) is the current label; older guidance used "W:" (What). Both start an entry.
+LABEL_STYLE_RE = {"W": re.compile(r"^\s*W\s*:", re.M), "C": re.compile(r"^\s*C\s*:", re.M)}
 SUPERVISOR_RE = re.compile(
     r"I supervise \d+ military, \d+ civilians?,? and manage \d+ contractors?\.?", re.I
 )
@@ -158,14 +164,14 @@ MARKDOWN_RE = re.compile(r"^\s*(#{1,6}\s|[-*+]\s)|\*\*|__|`", re.M)
 
 @dataclass
 class Entry:
-    W: str = ""
+    C: str = ""
     R: str = ""
     I: str = ""
     line: int = 0
 
     @property
     def complete(self) -> bool:
-        return bool(self.W.strip() and self.R.strip() and self.I.strip())
+        return bool(self.C.strip() and self.R.strip() and self.I.strip())
 
 
 @dataclass
@@ -198,13 +204,13 @@ def parse_factor(key: str, text: str) -> Factor:
         match = LABEL_RE.match(line)
         if match:
             label, body = match.group(1), match.group(2)
-            if label == "W":
+            if label in ("W", "C"):
                 if current is None and para:
                     factor.preamble.append(" ".join(para))
                     para = []
-                current = Entry(W=body, line=number)
+                current = Entry(C=body, line=number)
                 factor.entries.append(current)
-                last_field = "W"
+                last_field = "C"
             elif current is None or getattr(current, label):
                 factor.orphans.append(number)
             else:
@@ -234,7 +240,7 @@ def char_count(text: str) -> int:
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 4 passed.
+Expected: 5 passed.
 
 - [ ] **Step 5: Commit**
 
@@ -259,30 +265,32 @@ Append to `skills/acqdemo-review/scripts/tests/test_check.py`:
 # ---------------------------------------------------------------- structure and mandatory
 
 def test_clean_draft_has_no_critical(tmp_path):
-    findings = check.run_checks(write_dir(tmp_path), min_wri=3)
+    findings = check.run_checks(write_dir(tmp_path), min_entries=3)
     assert codes(findings, "CRITICAL") == []
 
 
 def test_incomplete_entry_and_minimum(tmp_path):
-    ja = factor_text("alpha", count=2) + "W: Something without result.\n"
-    findings = check.run_checks(write_dir(tmp_path, ja=ja), min_wri=3)
-    assert "WRI_INCOMPLETE" in codes(findings, "CRITICAL")
-    assert "MIN_WRI" in codes(findings, "CRITICAL")
+    ja = factor_text("alpha", count=2) + "C: Something without result.\n"
+    findings = check.run_checks(write_dir(tmp_path, ja=ja), min_entries=3)
+    assert "ENTRY_INCOMPLETE" in codes(findings, "CRITICAL")
+    assert "MIN_ENTRIES" in codes(findings, "CRITICAL")
 
 
-def test_contribution_labels_flagged_as_wrong_label(tmp_path):
-    ja = "C: Built the tool.\nR: Shipped it.\nI: Saved time.\n\n" * 3
-    found = check.run_checks(write_dir(tmp_path, ja=ja), min_wri=3)
-    critical = codes(found, "CRITICAL")
-    assert "WRONG_LABEL" in critical
-    assert "MIN_WRI" in critical
-    assert "3 line(s)" in next(f.message for f in found if f.code == "WRONG_LABEL")
+def test_w_labels_count_as_entries_with_style_warning(tmp_path):
+    ja = factor_text("alpha").replace("C: ", "W: ")
+    found = check.run_checks(write_dir(tmp_path, ja=ja), min_entries=3)
+    assert codes(found, "CRITICAL") == []
+    style = [f for f in found if f.code == "LABEL_STYLE"]
+    assert [f.factor for f in style] == ["JA"] and style[0].severity == "WARNING"
+    assert "3 entries" in style[0].message
+    found_w = check.run_checks(write_dir(tmp_path, ja=ja), min_entries=3, what_label="W")
+    assert sorted(f.factor for f in found_w if f.code == "LABEL_STYLE") == ["CT", "MS"]
 
 
 def test_midpoint_minimum_is_one(tmp_path):
     folder = write_dir(tmp_path, ja=factor_text("alpha", 1), ct=factor_text("bravo", 1), ms=factor_text("charlie", 1))
-    assert "MIN_WRI" not in codes(check.run_checks(folder, min_wri=1))
-    assert "MIN_WRI" in codes(check.run_checks(folder, min_wri=3))
+    assert "MIN_ENTRIES" not in codes(check.run_checks(folder, min_entries=1))
+    assert "MIN_ENTRIES" in codes(check.run_checks(folder, min_entries=3))
 
 
 def test_supervisor_statement_required_first(tmp_path):
@@ -316,7 +324,7 @@ def test_bus_fm_acquisition_statement_is_not_dod_fm(tmp_path):
 
 def padded_factor(target):
     """A valid 3-entry factor whose character count is exactly target."""
-    base = factor_text("alpha", 2) + "W: What.\nR: Result.\nI: "
+    base = factor_text("alpha", 2) + "C: What.\nR: Result.\nI: "
     pad = target - len(base) - base.count("\n")
     text = base + "y" * pad + "\n"
     assert check.char_count(text) == target
@@ -336,7 +344,7 @@ def test_char_limits(tmp_path, target, critical, warning):
 - [ ] **Step 2: Run the tests to verify they fail**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: the new tests FAIL with `AttributeError: module 'check' has no attribute 'run_checks'`; the 4 parsing tests still pass.
+Expected: the new tests FAIL with `AttributeError: module 'check' has no attribute 'run_checks'`; the 5 parsing tests still pass.
 
 - [ ] **Step 3: Append the checks and a first `run_checks`**
 
@@ -345,24 +353,26 @@ Append to `skills/acqdemo-review/scripts/check.py`:
 ```python
 # ---------------------------------------------------------------- structure
 
-def check_structure(factor: Factor, min_wri: int) -> list[Finding]:
+def check_structure(factor: Factor, min_entries: int, what_label: str = "C") -> list[Finding]:
     out: list[Finding] = []
-    wrong = len(WRONG_LABEL_RE.findall(factor.text))
-    if wrong:
-        out.append(Finding("CRITICAL", "WRONG_LABEL", factor.key,
-                           f"{wrong} line(s) start with 'C:'; W-R-I uses 'W:' (What), 'R:', 'I:'"))
+    other = "W" if what_label == "C" else "C"
+    mismatched = len(LABEL_STYLE_RE[other].findall(factor.text))
+    if mismatched:
+        out.append(Finding("WARNING", "LABEL_STYLE", factor.key,
+                           f"{mismatched} entries start with '{other}:'; this pay pool's Contribution label is "
+                           f"'{what_label}:' (set --what-label to match your pay pool)"))
     for entry in factor.entries:
         if not entry.complete:
-            missing = ", ".join(k for k in ("W", "R", "I") if not getattr(entry, k).strip())
-            out.append(Finding("CRITICAL", "WRI_INCOMPLETE", factor.key,
+            missing = ", ".join(k for k in ("C", "R", "I") if not getattr(entry, k).strip())
+            out.append(Finding("CRITICAL", "ENTRY_INCOMPLETE", factor.key,
                                f"entry starting line {entry.line} is missing {missing}"))
     for number in factor.orphans:
-        out.append(Finding("CRITICAL", "WRI_ORPHAN_LABEL", factor.key,
-                           f"line {number}: R or I label outside a W-R-I entry, or repeated"))
+        out.append(Finding("CRITICAL", "ORPHAN_LABEL", factor.key,
+                           f"line {number}: R or I label outside a C-R-I entry, or repeated"))
     complete = sum(1 for e in factor.entries if e.complete)
-    if complete < min_wri:
-        out.append(Finding("CRITICAL", "MIN_WRI", factor.key,
-                           f"{complete} complete W-R-I; minimum is {min_wri}"))
+    if complete < min_entries:
+        out.append(Finding("CRITICAL", "MIN_ENTRIES", factor.key,
+                           f"{complete} complete C-R-I; minimum is {min_entries}"))
     return out
 
 
@@ -372,7 +382,7 @@ def check_mandatory(factors: dict[str, Factor], acq: bool, fm: bool, supervisor:
     if supervisor and not (ja.preamble and SUPERVISOR_RE.search(ja.preamble[0])):
         out.append(Finding("CRITICAL", "SUPERVISOR_STATEMENT", "JA",
                            "first JA paragraph must state 'I supervise X military, Y civilians, "
-                           "and manage Z contractors.' before any W-R-I"))
+                           "and manage Z contractors.' before any C-R-I"))
     expected = []
     if acq:
         expected.append(("ACQ_CERT", "acquisition certification statement",
@@ -383,7 +393,7 @@ def check_mandatory(factors: dict[str, Factor], acq: bool, fm: bool, supervisor:
     for position, (code, label, ok) in enumerate(expected):
         if len(ms.preamble) <= position or not ok(ms.preamble[position]):
             out.append(Finding("CRITICAL", code, "MS",
-                               f"MS paragraph {position + 1} must be the {label}, before any W-R-I"))
+                               f"MS paragraph {position + 1} must be the {label}, before any C-R-I"))
     return out
 
 
@@ -409,15 +419,15 @@ def read_text(path: Path) -> str:
         return data.decode("cp1252", errors="replace")
 
 
-def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False,
-               supervisor: bool = False) -> list[Finding]:
+def run_checks(folder: Path, min_entries: int, acq: bool = False, fm: bool = False,
+               supervisor: bool = False, what_label: str = "C") -> list[Finding]:
     missing = [name for name in FACTOR_FILES.values() if not (folder / name).exists()]
     if missing:
         return [Finding("CRITICAL", "MISSING_FILE", "-", f"missing factor file '{m}'") for m in missing]
     factors = {key: parse_factor(key, read_text(folder / name)) for key, name in FACTOR_FILES.items()}
     findings: list[Finding] = []
     for factor in factors.values():
-        findings += check_structure(factor, min_wri)
+        findings += check_structure(factor, min_entries, what_label)
         findings += check_length(factor)
     findings += check_mandatory(factors, acq, fm, supervisor)
     return sorted(findings, key=lambda f: (SEVERITY_ORDER[f.severity], f.factor, f.code))
@@ -426,13 +436,13 @@ def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False,
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 16 passed.
+Expected: 17 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add skills/acqdemo-review/scripts
-git commit -m "feat(review): check W-R-I structure, mandatory paragraphs, and length"
+git commit -m "feat(review): check C-R-I structure, mandatory paragraphs, and length"
 ```
 
 ---
@@ -454,7 +464,7 @@ PRIOR_SENTENCE = "Reconciled contractor cost reports with the program office eve
 
 
 def test_prior_repeat_flags_six_word_run(tmp_path):
-    ja = factor_text("alpha", 2) + "W: Reconciled contractor cost reports with the program office twice.\nR: Done.\nI: Better data.\n"
+    ja = factor_text("alpha", 2) + "C: Reconciled contractor cost reports with the program office twice.\nR: Done.\nI: Better data.\n"
     folder = write_dir(tmp_path, ja=ja)
     findings = check.run_checks(folder, 3, prior={"fy25.txt": PRIOR_SENTENCE})
     messages = [f.message for f in findings if f.code == "PRIOR_REPEAT"]
@@ -463,7 +473,7 @@ def test_prior_repeat_flags_six_word_run(tmp_path):
 
 def test_prior_repeat_ignores_allowed_phrase(tmp_path):
     org = "Office of the Regional Cost Estimating Directorate"
-    ja = factor_text("alpha", 2) + f"W: Briefed the {org} leadership.\nR: Done.\nI: Better data.\n"
+    ja = factor_text("alpha", 2) + f"C: Briefed the {org} leadership.\nR: Done.\nI: Better data.\n"
     folder = write_dir(tmp_path, ja=ja)
     prior = {"fy25.txt": f"Supported the {org} staff."}
     assert "PRIOR_REPEAT" in codes(check.run_checks(folder, 3, prior=prior))
@@ -472,8 +482,8 @@ def test_prior_repeat_ignores_allowed_phrase(tmp_path):
 
 def test_cross_factor_repeat_flags_eight_word_run(tmp_path):
     shared = "Automated the quarterly data pull for every program estimate in the branch."
-    ja = factor_text("alpha", 2) + f"W: {shared}\nR: Done.\nI: Faster.\n"
-    ct = factor_text("bravo", 2) + f"W: {shared}\nR: Trained staff.\nI: Adoption.\n"
+    ja = factor_text("alpha", 2) + f"C: {shared}\nR: Done.\nI: Faster.\n"
+    ct = factor_text("bravo", 2) + f"C: {shared}\nR: Trained staff.\nI: Adoption.\n"
     findings = check.run_checks(write_dir(tmp_path, ja=ja, ct=ct), 3)
     assert "CROSS_FACTOR_REPEAT" in codes(findings, "CRITICAL")
 
@@ -494,15 +504,15 @@ def test_roster_names_parsed():
 
 
 def test_names_in_text_flagged_full_and_last(tmp_path):
-    ja = factor_text("alpha", 2) + "W: Mentored Quill on regression.\nR: Done.\nI: Growth.\n"
-    ct = factor_text("bravo", 2) + "W: Worked with Avery Lee daily.\nR: Done.\nI: Growth.\n"
+    ja = factor_text("alpha", 2) + "C: Mentored Quill on regression.\nR: Done.\nI: Growth.\n"
+    ct = factor_text("bravo", 2) + "C: Worked with Avery Lee daily.\nR: Done.\nI: Growth.\n"
     findings = check.run_checks(write_dir(tmp_path, ja=ja, ct=ct), 3, names=check.roster_names(ROSTER))
     messages = " ".join(f.message for f in findings if f.code == "NAME_IN_TEXT")
     assert "'Quill'" in messages and "'Avery Lee'" in messages
 
 
 def test_short_last_names_are_not_matched_alone(tmp_path):
-    ja = factor_text("alpha", 2) + "W: Worked with the lee side team.\nR: Done.\nI: Growth.\n"
+    ja = factor_text("alpha", 2) + "C: Worked with the lee side team.\nR: Done.\nI: Growth.\n"
     findings = check.run_checks(write_dir(tmp_path, ja=ja), 3, names=check.roster_names(ROSTER))
     assert "NAME_IN_TEXT" not in codes(findings)
 
@@ -511,7 +521,7 @@ def test_short_last_names_are_not_matched_alone(tmp_path):
 
 def test_style_warnings(tmp_path):
     ja = factor_text("alpha", 2) + (
-        "W: Seamlessly built a robust and robust tool — fast.\n"
+        "C: Seamlessly built a robust and robust tool — fast.\n"
         "R: Called it “great”.\nI: **Big** win.\n"
     )
     found = codes(check.run_checks(write_dir(tmp_path, ja=ja), 3), "WARNING")
@@ -520,15 +530,15 @@ def test_style_warnings(tmp_path):
 
 
 def test_what_too_long(tmp_path):
-    long_what = "W: " + " ".join(["word"] * 36) + "\nR: Done.\nI: Impact.\n"
+    long_what = "C: " + " ".join(["word"] * 36) + "\nR: Done.\nI: Impact.\n"
     found = codes(check.run_checks(write_dir(tmp_path, ja=factor_text("alpha", 2) + long_what), 3), "WARNING")
-    assert "WHAT_TOO_LONG" in found
+    assert "CONTRIBUTION_TOO_LONG" in found
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: new tests FAIL with `TypeError: run_checks() got an unexpected keyword argument 'prior'` (or `'names'`), `AttributeError: ... 'roster_names'`, and missing style warnings; earlier 16 still pass.
+Expected: new tests FAIL with `TypeError: run_checks() got an unexpected keyword argument 'prior'` (or `'names'`), `AttributeError: ... 'roster_names'`, and missing style warnings; earlier 17 still pass.
 
 - [ ] **Step 3: Insert repeat, name, and style checks above the orchestration section**
 
@@ -655,10 +665,10 @@ def check_style(factor: Factor) -> list[Finding]:
     if MARKDOWN_RE.search(text):
         out.append(Finding("WARNING", "MARKDOWN", factor.key, "Markdown characters found; CAS2Net is plain text"))
     for entry in factor.entries:
-        words = len(entry.W.split())
-        if words > WHAT_MAX_WORDS:
-            out.append(Finding("WARNING", "WHAT_TOO_LONG", factor.key,
-                               f"What at line {entry.line} has {words} words (max {WHAT_MAX_WORDS})"))
+        words = len(entry.C.split())
+        if words > CONTRIBUTION_MAX_WORDS:
+            out.append(Finding("WARNING", "CONTRIBUTION_TOO_LONG", factor.key,
+                               f"Contribution at line {entry.line} has {words} words (max {CONTRIBUTION_MAX_WORDS})"))
     return out
 
 
@@ -669,9 +679,9 @@ def check_style(factor: Factor) -> list[Finding]:
 Replace the entire `run_checks` function in `check.py` with:
 
 ```python
-def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False, supervisor: bool = False,
+def run_checks(folder: Path, min_entries: int, acq: bool = False, fm: bool = False, supervisor: bool = False,
                prior: dict[str, str] | None = None, names: list[str] | None = None,
-               allow: list[str] | None = None) -> list[Finding]:
+               allow: list[str] | None = None, what_label: str = "C") -> list[Finding]:
     missing = [name for name in FACTOR_FILES.values() if not (folder / name).exists()]
     if missing:
         return [Finding("CRITICAL", "MISSING_FILE", "-", f"missing factor file '{m}'") for m in missing]
@@ -679,7 +689,7 @@ def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False, 
     allow = allow or []
     findings: list[Finding] = []
     for factor in factors.values():
-        findings += check_structure(factor, min_wri)
+        findings += check_structure(factor, min_entries, what_label)
         findings += check_length(factor)
         findings += check_style(factor)
     findings += check_mandatory(factors, acq, fm, supervisor)
@@ -692,7 +702,7 @@ def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False, 
 - [ ] **Step 5: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 24 passed.
+Expected: 25 passed.
 
 - [ ] **Step 6: Commit**
 
@@ -729,7 +739,7 @@ def test_main_critical_exit_one_with_prior_dir_and_roster(tmp_path, capsys):
     (prior_dir / "fy25.txt").write_text(PRIOR_SENTENCE, encoding="utf-8")
     roster = tmp_path / "roster.md"
     roster.write_text(ROSTER, encoding="utf-8")
-    ja = factor_text("alpha", 2) + "W: Reconciled contractor cost reports with the program office for Avery Lee.\nR: Done.\nI: Data.\n"
+    ja = factor_text("alpha", 2) + "C: Reconciled contractor cost reports with the program office for Avery Lee.\nR: Done.\nI: Data.\n"
     folder = write_dir(tmp_path, ja=ja)
     code = check.main(["--dir", str(folder), "--prior", str(prior_dir), "--roster", str(roster)])
     out = capsys.readouterr().out
@@ -750,20 +760,27 @@ def test_missing_factor_file(tmp_path):
     assert check.main(["--dir", str(folder)]) == 1
 
 
+def test_main_what_label_w_accepts_older_labels(tmp_path, capsys):
+    folder = write_dir(tmp_path, ja=factor_text("alpha").replace("C: ", "W: "),
+                       ct=factor_text("bravo").replace("C: ", "W: "), ms=factor_text("charlie").replace("C: ", "W: "))
+    assert check.main(["--dir", str(folder), "--what-label", "W"]) == 0
+    assert "LABEL_STYLE" not in capsys.readouterr().out
+
+
 def test_read_text_handles_utf16_bom_and_cp1252(tmp_path):
     import codecs
     utf16 = tmp_path / "u16.txt"
-    utf16.write_bytes(codecs.BOM_UTF16_LE + "W: Built it.\n".encode("utf-16-le"))
-    assert check.read_text(utf16).startswith("W: Built it.")
+    utf16.write_bytes(codecs.BOM_UTF16_LE + "C: Built it.\n".encode("utf-16-le"))
+    assert check.read_text(utf16).startswith("C: Built it.")
     cp = tmp_path / "cp.txt"
-    cp.write_bytes("W: Led the director’s review.\n".encode("cp1252"))
+    cp.write_bytes("C: Led the director’s review.\n".encode("cp1252"))
     assert "director’s" in check.read_text(cp)
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 5 new tests FAIL with `AttributeError: module 'check' has no attribute 'main'`.
+Expected: 6 new tests FAIL with `AttributeError: module 'check' has no attribute 'main'`.
 
 - [ ] **Step 3: Append loaders, report, and `main`**
 
@@ -798,20 +815,22 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dir", type=Path, required=True)
     ap.add_argument("--mode", choices=["annual", "midpoint"], default="annual")
-    ap.add_argument("--min-wri", type=int)
+    ap.add_argument("--min-entries", type=int)
     ap.add_argument("--acq-cert", action="store_true")
     ap.add_argument("--fm-cert", action="store_true")
     ap.add_argument("--supervisor", action="store_true")
     ap.add_argument("--prior", type=Path, nargs="*", default=[])
     ap.add_argument("--roster", type=Path)
     ap.add_argument("--allow-phrases", type=Path)
+    ap.add_argument("--what-label", choices=["C", "W"], default="C")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
-    min_wri = args.min_wri if args.min_wri is not None else (3 if args.mode == "annual" else 1)
+    min_entries = args.min_entries if args.min_entries is not None else (3 if args.mode == "annual" else 1)
     names = roster_names(read_text(args.roster)) if args.roster else []
-    findings = run_checks(args.dir, min_wri, args.acq_cert, args.fm_cert, args.supervisor,
-                          load_prior(args.prior), names, load_list(args.allow_phrases))
+    findings = run_checks(args.dir, min_entries, args.acq_cert, args.fm_cert, args.supervisor,
+                          load_prior(args.prior), names, load_list(args.allow_phrases),
+                          what_label=args.what_label)
     if args.json:
         print(json.dumps([asdict(f) for f in findings], indent=2))
     else:
@@ -826,7 +845,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 29 passed.
+Expected: 31 passed.
 
 - [ ] **Step 5: Smoke-test the CLI by hand**
 
