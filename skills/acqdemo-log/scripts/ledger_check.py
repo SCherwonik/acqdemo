@@ -24,12 +24,17 @@ ID_RE = re.compile(r"^(L-\d+)(?:\s+(.*))?$")
 FIELD_RE = re.compile(r"^- ([A-Za-z_][A-Za-z0-9_]*):\s?(.*)$")
 SUBITEM_RE = re.compile(r"^\s+- (.*)$")
 
-REQUIRED_FIELDS = ["status", "dates", "what", "role"]
+REQUIRED_FIELDS = ["status", "dates", "what"]
 STATUS_VALUES = {"candidate", "ready", "allocated", "submitted", "rejected"}
 ROLE_VALUES = {"owned", "co-owned", "owned-a-piece", "supported"}
 SUSTAINED_VALUES = {"yes", "one-time"}
+NUMBER_SOURCE_VALUES = {"stated", "git", "estimate", "calendar", "document"}
 LIST_FIELDS = {"numbers", "lenses"}
-SEVERITY_ORDER = {"CRITICAL": 0, "WARNING": 1}
+SEVERITY_ORDER = {"CRITICAL": 0, "WARNING": 1, "INFO": 2}
+# Fields a deep-dive must answer before an entry is ready. "none" is an answer; blank is not.
+# "role" starts blank on harvest-created candidates, since nobody knows the role yet.
+DEEP_FIELDS = ["role", "project", "audience", "decision_fed", "obstacle", "sustained", "descriptor_hits",
+               "prd_duty", "plan_tag", "evidence", "prior_cycle_overlap"]
 
 
 @dataclass
@@ -120,6 +125,18 @@ def read_text(path: Path) -> str:
 
 # ---------------------------------------------------------------- checks
 
+def open_fields(entry: LedgerEntry) -> list[str]:
+    """Fields still blank, so a later deep-dive or allocation step asks about them."""
+    blank = [name for name in DEEP_FIELDS if not entry.fields.get(name, "").strip()]
+    if not entry.numbers and entry.fields.get("numbers", "").strip().lower() != "none":
+        blank.append("numbers")
+    if not entry.lenses and entry.fields.get("lenses", "").strip().lower() != "none":
+        blank.append("lenses")
+    if not entry.fields.get("allocated", "").strip():
+        blank.append("allocated")
+    return blank
+
+
 def check_entry(entry: LedgerEntry) -> list[Finding]:
     out: list[Finding] = []
     if not re.fullmatch(r"L-\d+", entry.id_token):
@@ -145,25 +162,28 @@ def check_entry(entry: LedgerEntry) -> list[Finding]:
                            f"sustained '{sustained}' is not one of {sorted(SUSTAINED_VALUES)}"))
 
     for item in entry.numbers:
-        if not item.get("source"):
+        source = (item.get("source") or "").strip()
+        if not source:
             out.append(Finding("CRITICAL", "NUMBER_NO_SOURCE", entry.display,
                                f"number '{item['text']}' has no source"))
-        elif (item["source"] or "").strip().lower() == "estimate" and not item.get("basis"):
+        elif source.lower() not in NUMBER_SOURCE_VALUES:
+            out.append(Finding("CRITICAL", "BAD_VALUE", entry.display,
+                               f"number '{item['text']}' source '{source}' is not one of "
+                               f"{sorted(NUMBER_SOURCE_VALUES)}"))
+        elif source.lower() == "estimate" and not item.get("basis"):
             out.append(Finding("CRITICAL", "ESTIMATE_NO_BASIS", entry.display,
                                f"number '{item['text']}' is an estimate with no basis"))
 
+    blank = open_fields(entry)
     if status == "ready":
-        audience = entry.fields.get("audience", "").strip()
-        missing_bits = []
-        if not audience:
-            missing_bits.append("audience")
-        if not entry.numbers:
-            missing_bits.append("numbers")
-        if not entry.lenses:
-            missing_bits.append("lenses")
+        missing_bits = [name for name in blank if name != "allocated"]
         if missing_bits:
             out.append(Finding("WARNING", "READY_INCOMPLETE", entry.display,
-                               f"status ready but missing {', '.join(missing_bits)}"))
+                               f"status ready but blank: {', '.join(missing_bits)} "
+                               f"(write 'none' when a field does not apply)"))
+    if blank and status != "rejected":
+        out.append(Finding("INFO", "OPEN_FIELDS", entry.display,
+                           f"open fields to ask about: {', '.join(blank)}"))
 
     overlap = entry.fields.get("prior_cycle_overlap", "").strip()
     if overlap.lower().startswith("continuing") and "delta" not in overlap.lower():
@@ -210,7 +230,10 @@ def next_id(entries: list[LedgerEntry]) -> str:
 
 def format_report(findings: list[Finding]) -> str:
     counts = {s: sum(1 for f in findings if f.severity == s) for s in SEVERITY_ORDER}
-    lines = [f"ledger_check: {counts['CRITICAL']} CRITICAL, {counts['WARNING']} WARNING"]
+    head = f"ledger_check: {counts['CRITICAL']} CRITICAL, {counts['WARNING']} WARNING"
+    if counts["INFO"]:
+        head += f", {counts['INFO']} INFO"
+    lines = [head]
     for f in findings:
         lines.append(f"[{f.severity}] {f.entry} {f.code}: {f.message}")
     return "\n".join(lines)

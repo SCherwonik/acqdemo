@@ -22,6 +22,8 @@ closeout. Do not re-copy its step bodies here.
 - **Closeout**: the supervisor or the employee's position changed. Required within
   30 calendar days of the change date. State that deadline as soon as this starts.
 
+The annual's operating rules apply unchanged, including **Save before you ask** (write `session-state.md` before any message that waits on the user).
+
 ## Differences from the annual (`../acqdemo-annual/SKILL.md`)
 1. **Period.** Cycle start to today (midpoint) or cycle start to the change date
    (closeout), never the full cycle and never a prior cycle.

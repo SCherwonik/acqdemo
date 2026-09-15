@@ -5,8 +5,10 @@ Usage:
         [--local PATH ...] [--github OWNER/REPO ...] [--author NAME ...] [--out FILE]
 
 Local repositories are read with `git log`; GitHub repositories with the GitHub CLI (`gh`).
-Merge commits are skipped. Output lists totals, and per repository: months, authors, tags,
-and commit subjects (oldest first).
+Merge commits are skipped. A commit with the same author date and subject as one already
+kept in the same repository is dropped (a fix cherry-picked or ported between branches
+would otherwise be counted twice). Output lists totals, and per repository: months, authors,
+tags, and commit subjects (oldest first).
 """
 from __future__ import annotations
 
@@ -79,11 +81,27 @@ def parse_github_items(items: list[dict]) -> list[Commit]:
     return commits
 
 
+def dedupe_commits(commits: list[Commit]) -> list[Commit]:
+    """Drop commits that share an author date and subject within a repository, keeping the
+    first. `git log --all` walks every branch, so a fix cherry-picked or ported between
+    branches (different sha, same author date and message) would otherwise count twice."""
+    seen: set[tuple[str, str]] = set()
+    deduped: list[Commit] = []
+    for c in commits:
+        key = (c.date, c.subject)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(c)
+    return deduped
+
+
 def filter_commits(commits: list[Commit], since: str, until: str, authors: list[str]) -> list[Commit]:
     wanted = [a.strip().lower() for a in authors if a.strip()]
     kept = [c for c in commits
             if since <= c.date <= until and (not wanted or any(a in c.author.lower() for a in wanted))]
-    return sorted(kept, key=lambda c: (c.date, c.sha))
+    kept = sorted(kept, key=lambda c: (c.date, c.sha))
+    return dedupe_commits(kept)
 
 
 def render_markdown(summaries: list[RepoSummary], since: str, until: str) -> str:

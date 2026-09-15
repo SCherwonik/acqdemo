@@ -8,7 +8,7 @@
     {
       "name": "acqdemo",
       "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, C-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./",
       "author": {
         "name": "SCherwonik"

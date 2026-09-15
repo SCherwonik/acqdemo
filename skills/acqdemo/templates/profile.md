@@ -38,6 +38,8 @@
 |---|---|
 
 ## Repositories to harvest
+One row per repository. `Kind` is `local` or `github`. `Location` is a filesystem path for `local` (used with `git_harvest.py --local`), or `owner/repo` for `github` (used with `--github`).
+
 | Kind | Location | Include authors |
 |---|---|---|
 | local | C:/path/to/repo | |

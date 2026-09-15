@@ -117,7 +117,7 @@ def test_ledger_format():
                         "mandatory_paragraph_order:", "promotion_window_days:", "plan_days_required:",
                         "char_limit:", "allow_phrases:"]),
         ("roster.md", ["| Ring | Name | Organization | Role | Worked on | Frequency | Ledger |"]),
-        ("session-state.md", ["step:", "next_action:", "open_questions:", "updated:"]),
+        ("session-state.md", ["step:", "current_entry:", "round:", "pending_questions:", "next_action:", "open_questions:", "updated:"]),
         ("working-doc.md", ["## 1. Status and gaps", "## 2. Final text", "## 3. Evidence table",
                             "## 4. Bench", "## 5. Descriptor map", "## 6. Supervisor and panel crib sheet",
                             "## 7. Next-cycle seeds", "### Big rocks", "### Substantial justification"]),

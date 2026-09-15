@@ -20,6 +20,12 @@ Date: 2026-09-15. Plugin loaded with `claude -p --plugin-dir <repo>` in an empty
 ## Open item
 - Prompt 8a, the plain "Log a win: ..." wording from the Task 22 list, is still unreliable (4 of 7 runs) in a folder with no AcqDemo context because Claude's general memory feature competes for it. Workaround until a better fix: include "AcqDemo" in the request or run `/acqdemo:acqdemo-log`.
 
+## Rechecked at 0.2.1 (2026-09-15)
+Reran every prompt against the released skills with the plugin loaded from a copy holding only `.claude-plugin/` and `skills/`. All pass except two, both collisions with other software on the tester's machine rather than skill defects:
+- Prompt 4 ("Pull what I did this year from git and my calendar") lands on an unrelated locally installed skill about half the time, apparently on the word "pull". Naming AcqDemo fixes it: "Pull what I did this year from git and my calendar for my AcqDemo self-assessment" and "Gather my AcqDemo evidence from git and my calendar" both hit `acqdemo-harvest` in about 4 seconds.
+- Prompt 8 stays as recorded below.
+Where a prompt competes with other installed skills, saying "AcqDemo" or invoking the skill directly (`/acqdemo:acqdemo-harvest`) always works.
+
 ## Fixes made during the check
 - `acqdemo-midpoint` description narrowed to drafting, pointing checks of existing drafts to `acqdemo-review` (prompt 11 guards this).
 - `acqdemo-log` description now says "AcqDemo self-assessment evidence" and "instead of saving a general memory". A bare "log a win" in a folder with no AcqDemo context stays ambiguous with Claude's memory feature, so the README tells users to say "AcqDemo" or run `/acqdemo:acqdemo-log`.

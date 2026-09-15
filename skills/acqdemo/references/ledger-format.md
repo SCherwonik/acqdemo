@@ -25,7 +25,7 @@ The user's private workspace (never the public toolkit repo):
 ```
 
 ## Ledger entry
-`ledger.md` starts with `# Ledger FY<yy>` and holds one `##` section per entry. Ids increase and are never reused.
+`ledger.md` starts with `# Ledger FY<yy>` and holds one `##` section per entry. Ids increase and are never reused. Only `status`, `dates`, and `what` are required to create an entry; every other field, including `role`, may start blank and gets filled in by a later deep-dive.
 
 ```markdown
 ## L-001 Automated regression tool
@@ -56,11 +56,12 @@ The user's private workspace (never the public toolkit repo):
 ```
 
 Field rules:
-- `role`: exactly one of `owned`, `co-owned`, `owned-a-piece`, `supported`.
-- `numbers`: every number that may appear in text needs a line with `source:` (`stated`, `git`, or `estimate`) and `basis:`.
+- `role`: blank on a fresh `candidate` (harvest creates entries before anyone knows the role); once known, exactly one of `owned`, `co-owned`, `owned-a-piece`, `supported`.
+- `numbers`: every number that may appear in text needs a line with `source:` (`stated`, `git`, `estimate`, `calendar`, or `document`) and `basis:`.
 - `sustained`: `yes` or `one-time`.
 - `prior_cycle_overlap`: `none`, or `continuing (cycle delta: ...)`. An entry that repeats a prior-cycle achievement with no delta is `rejected`.
 - `allocated`: `JA`, `CT`, `MS`, `bench`, or empty. An entry whose project appears in more than one factor lists each, primary factor first: `JA, MS`.
+- Blank means not asked yet; `none` means asked and does not apply. `ledger_check.py` lists blank fields as `OPEN_FIELDS` (INFO) on every entry and warns (`READY_INCOMPLETE`) when a `ready` entry still has any, so nothing stays blank by accident.
 - Names of people may appear in `audience`, `notes`, and `evidence`; they never pass into factor files.
 
 ## Status lifecycle

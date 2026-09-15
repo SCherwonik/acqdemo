@@ -16,8 +16,10 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 - Templates: `../acqdemo/templates/working-doc.md`, `../acqdemo/templates/session-state.md`, `../acqdemo/templates/roster.md`
 
 ## Operating rules
-- **Recall first.** Ask many numbered questions. No cap. End every round with "What else does that bring to mind?"
+- **Recall first.** Ask many numbered questions. No cap. End every message that asks questions, including later rounds and single follow-ups, with "What else does that bring to mind?"
 - **Save constantly.** Write ledger, roster, rambles, and session state after every meaningful exchange; the session can end at any moment.
+- **Save before you ask.** Before sending any message that waits on the user, write `FY<yy>/session-state.md`: `step`, `current_entry`, `round`, `pending_questions` (the numbered questions you are about to ask, verbatim), `next_action`, `updated`. Write answers already given into the ledger first. A message that asks questions without this save is a bug.
+- **Allowed values only.** `status`, `role`, `sustained`, and number `source` use the lists in `../acqdemo/references/ledger-format.md`. Translate what the user says into a list value ("I built it myself" is `owned`, "one and done" is `one-time`) and keep their words in `notes`. Run `python ../acqdemo-log/scripts/ledger_check.py --file FY<yy>/ledger.md` after every ledger save and fix each CRITICAL before the next question.
 - **Names** are welcome in conversation, `roster.md`, and the ledger; never in factor files.
 - **Never invent** events, audiences, awards, or recognition. Numbers follow the estimate protocol: proposed, approved by the user, and recorded with a basis.
 - **Repeats:** the current cycle's midpoint is the starting point; prior cycles are off limits.
@@ -26,7 +28,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 
 ## Step 0: Load
 1. Find the workspace: the current directory if it holds `profile.md`, otherwise ask. If there is no profile, run the `acqdemo` skill's first-time setup first.
-2. Read `profile.md`, `paypool.md`, and `FY<yy>/session-state.md`. If session state shows unfinished work, summarize it in two lines and continue from `next_action`.
+2. Work only in the workspace the user named or confirmed in this conversation; never search the disk for another one, and never use this skill's own folder or the plugin folder above it, even when it contains `profile.md`. Read `profile.md`, `paypool.md`, and `FY<yy>/session-state.md`. If session state shows unfinished work, summarize it in two lines (step, current entry, what is already answered in the ledger) and continue from `next_action`; re-ask only the `pending_questions` that the ledger does not yet answer.
 3. Create any missing pieces: `FY<yy>/rambles/`, `evidence/`, `harvest/`, `drafts/`, `final/`; `FY<yy>/ledger.md` starting with `# Ledger FY<yy>`; `FY<yy>/session-state.md` and `<workspace>/roster.md` from the templates.
 
 ## Step 1: Gate
@@ -58,8 +60,8 @@ Order candidates by likely impact (scope x organizational level x novelty). For 
 2. Update the entry. Ask numbered drill-down ladder and discriminator questions for whatever is missing (5-8 per round, as many rounds as needed).
 3. If the user cannot expand on a claim from the midpoint, a closeout, or the plan, ask yes/no questions built from its named entities (meetings led, budget rounds, audiences; question bank, Confirm before dropping) before dropping it. If answers conflict, the later answer wins and the entry's `notes` record the conflict.
 4. Resolve numbers with the estimate protocol; confirm each; record source and basis.
-5. Fill `lenses` for all three factors, `descriptor_hits` from the target level, `sustained`, `prior_cycle_overlap` (compare with `prior/`), `prd_duty`, and `plan_tag`.
-6. Set `status: ready`, save, and show the coverage grid.
+5. Fill `lenses` for all three factors, `descriptor_hits` from the target level, `sustained`, `prior_cycle_overlap` (compare with `prior/`), `prd_duty`, and `plan_tag`. Read the duties yourself with `python ../acqdemo-plan/scripts/prd_text.py --file "<profile prd_path>"` and the plan from `FY<yy>/plan/`; ask the user to paste a document only when the file is missing or unreadable.
+6. Run `python ../acqdemo-log/scripts/ledger_check.py --file FY<yy>/ledger.md` and ask about every field its `OPEN_FIELDS` line lists for this entry (write `none` when a field does not apply; blank means not asked yet). Set `status: ready` only when the entry has no `READY_INCOMPLETE` warning, save, and show the coverage grid.
 
 Continue until every factor has at least four `ready` entries counted by primary factor (each entry once, under its strongest lens), the sweeps turn up nothing new, or the user says "enough." Aim the next deep-dive at the weakest factor. Then run the question bank's Portfolio roll-up and record the confirmed totals.
 

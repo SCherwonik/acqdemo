@@ -1,6 +1,6 @@
 ---
 name: acqdemo-harvest
-description: Use when gathering evidence of a year's work for an AcqDemo assessment from git repositories, a calendar export, or midpoint and closeout documents, to create candidate entries in the evidence ledger.
+description: Use when gathering evidence of a year's work for an AcqDemo self-assessment from git repositories, a calendar export, or midpoint and closeout documents, to create candidate entries in the evidence ledger. Typical requests: "pull what I did this year from git and my calendar", "mine my repos for the rating period", "gather my AcqDemo evidence", "what did I work on this year".
 ---
 
 # AcqDemo Harvest
@@ -8,7 +8,9 @@ description: Use when gathering evidence of a year's work for an AcqDemo assessm
 Turns raw evidence into `candidate` ledger entries that the user confirms. Harvest never marks anything `ready`; deep-dives do that.
 
 ## Inputs
-- `<workspace>/profile.md`: `rating_period` and the "Repositories to harvest" table.
+- `<workspace>/profile.md`: `rating_period` and the "Repositories to harvest" table (one row per
+  repository: `local` rows give a filesystem path for `--local`, `github` rows give `owner/repo`
+  for `--github`).
 - `FY<yy>/evidence/calendar-*.txt`: calendar exports.
 - The current cycle's midpoint and closeout text, if saved in the workspace.
 - `<workspace>/prior/`: previous cycles, used only to flag overlap.
@@ -16,9 +18,13 @@ Turns raw evidence into `candidate` ledger entries that the user confirms. Harve
 
 If there is no workspace, ask for the rating period and sources, and offer the `acqdemo` skill's first-time setup.
 
+When harvesting mid-cycle, pass `--until` as the earlier of today and the rating period's end
+date, for both `git_harvest.py` and `calendar_harvest.py`, so the harvest never asks about
+commits or meetings that have not happened yet.
+
 ## Step 1: Git
 1. Ask which author names are the user's (commit names often differ between machines). Keep commits from other authors in the output; they show collaboration.
-2. Run the git harvester at `scripts/git_harvest.py`:
+2. Run the git harvester at `scripts/git_harvest.py`. `<end>` is the earlier of today and the rating period's end date:
    ```
    python "<this skill folder>/scripts/git_harvest.py" --since <start> --until <end> --local <paths...> --github <owner/repo...> --out "FY<yy>/harvest/<today>-git.md"
    ```
@@ -30,7 +36,7 @@ If there is no workspace, ask for the rating period and sources, and offer the `
 
 ## Step 2: Calendar
 1. If no export exists, give the user the calendar export steps from `../acqdemo/references/question-bank.md` (section "Calendar export") and continue with other sources meanwhile.
-2. Run the calendar harvester at `scripts/calendar_harvest.py`:
+2. Run the calendar harvester at `scripts/calendar_harvest.py`. `<end>` is the earlier of today and the rating period's end date:
    ```
    python "<this skill folder>/scripts/calendar_harvest.py" --file "FY<yy>/evidence/<export>.txt" --since <start> --until <end> --out "FY<yy>/harvest/<today>-calendar.md"
    ```
@@ -58,9 +64,11 @@ Documents
 12. From midpoint: data pipeline automation
 ```
 
-Ask: keep, reject, or merge ("merge 2 and 3", "reject 5"). Then append kept candidates to `FY<yy>/ledger.md` with the next `L-###` ids, `status: candidate`, and only the fields the evidence supports. Record numbers as `source: git` with `basis: harvest <date>` (or `basis: calendar export <date>`). Update `FY<yy>/session-state.md`.
+Ask: keep, reject, or merge ("merge 2 and 3", "reject 5"). Then append kept candidates to `FY<yy>/ledger.md` with the next `L-###` ids, `status: candidate`, and only the fields the evidence supports. Leave every other field, including `role`, blank rather than a placeholder; nobody knows the role until a deep-dive fills it in. Record numbers with the source matching where they came from: `source: git` with `basis: harvest <date>` for git counts, `source: calendar` with `basis: calendar export <date>` for calendar counts, `source: document` with `basis: <midpoint or closeout> <date>` for counts pulled from midpoint or closeout text. Update `FY<yy>/session-state.md`.
+
+Running `ledger_check.py` right after a harvest will report `OPEN_FIELDS` (INFO) on every new candidate; that is expected at this stage and is not something to fix before moving on.
 
 ## Rules
 - Harvest snapshots and the ledger stay in the private workspace.
-- Merge commits are never counted; dates are never guessed.
+- Merge commits are never counted; dates are never guessed. A commit cherry-picked or ported between branches (same author date and subject) counts once per repository, not once per branch.
 - Calendar titles may contain names and program details; they may go in ledger `evidence` and `notes`, never into factor files.

@@ -8,7 +8,7 @@ description: Use when the user says "log a win" or wants to capture an accomplis
 Capture one accomplishment from a ramble into a ledger entry. Fast, any time, no drafting.
 
 ## Step 0: Load
-1. Find the workspace: the current directory if it holds `profile.md`, otherwise ask. If there is no profile, run the `acqdemo` skill's first-time setup first.
+1. Find the workspace: the current directory if it holds `profile.md`, otherwise ask. If there is no profile, run the `acqdemo` skill's first-time setup first. Use only that folder: never search the disk and never reuse a path from memory or an earlier session without the user confirming it here. Never treat this skill's own folder, or the plugin folder above it (the one holding `skills/`), as the workspace, even when it contains `profile.md`. When the current directory has no `profile.md`, ask and wait for the answer before creating or writing any file.
 2. Find the current `FY<yy>/` the same way `acqdemo` does. Create `FY<yy>/ledger.md` (starting with `# Ledger FY<yy>`) and `FY<yy>/rambles/` if missing.
 
 ## Step 1: Take the ramble
@@ -31,7 +31,7 @@ Put any person's name in `roster.md` only (add a row if new). The ledger entry i
 ## Step 4: Write the entry
 1. Get the next id: `python scripts/ledger_check.py --file "<workspace>/FY<yy>/ledger.md" --next-id`.
 2. Append a `##` section with that id to the ledger, `status: candidate` if fields are still open, or `status: ready` once every field in Step 2 is filled.
-3. Validate: `python scripts/ledger_check.py --file "<workspace>/FY<yy>/ledger.md"`. Fix every CRITICAL finding before moving on; WARNINGs (for example `READY_INCOMPLETE`) can wait if the user wants to finish later.
+3. Validate: `python scripts/ledger_check.py --file "<workspace>/FY<yy>/ledger.md"`. Fix every CRITICAL finding before moving on; WARNINGs (for example `READY_INCOMPLETE`) can wait if the user wants to finish later. `OPEN_FIELDS` lines list blank fields; they stay in the ledger so the annual or midpoint deep-dive asks about them.
 
 ## Step 5: Confirm
 Reply in two lines: the entry id and title, and the single most useful missing fact to capture later (or "nothing missing" if the entry is `ready`).

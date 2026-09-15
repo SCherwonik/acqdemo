@@ -20,6 +20,7 @@ DEFAULT_FIELDS = {
     "plan_tag": "JA1",
     "evidence": "repo regression-tool@v2.3",
     "prior_cycle_overlap": "none",
+    "descriptor_hits": "NH IV JA new methodologies",
     "allocated": "JA",
 }
 DEFAULT_NUMBERS = [
@@ -99,11 +100,26 @@ def test_duplicate_id(tmp_path):
 
 
 def test_missing_field(tmp_path):
-    path = write_ledger(tmp_path, make_entry(omit=["dates", "role"]))
+    path = write_ledger(tmp_path, make_entry(omit=["dates", "what"]))
     findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
     missing = [f for f in findings if f.code == "MISSING_FIELD"]
     assert len(missing) == 1
-    assert "dates" in missing[0].message and "role" in missing[0].message
+    assert "dates" in missing[0].message and "what" in missing[0].message
+
+
+def test_role_blank_is_not_a_missing_field(tmp_path):
+    # A harvest-created candidate has no role yet; that must not be CRITICAL.
+    path = write_ledger(tmp_path, make_entry(fields={"status": "candidate"}, omit=["role"]))
+    findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
+    assert "MISSING_FIELD" not in codes(findings, "CRITICAL")
+    assert "role" in [f.message for f in findings if f.code == "OPEN_FIELDS"][0]
+
+
+def test_ready_with_blank_role_warns_incomplete(tmp_path):
+    path = write_ledger(tmp_path, make_entry(omit=["role"]))
+    findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
+    warnings = [f for f in findings if f.code == "READY_INCOMPLETE"]
+    assert warnings and "role" in warnings[0].message
 
 
 def test_bad_value_status(tmp_path):
@@ -135,6 +151,22 @@ def test_estimate_no_basis(tmp_path):
     findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
     assert "ESTIMATE_NO_BASIS" in codes(findings, "CRITICAL")
     assert "NUMBER_NO_SOURCE" not in codes(findings)
+
+
+def test_number_bad_source(tmp_path):
+    path = write_ledger(tmp_path, make_entry(numbers=["5 things done | source: excel | basis: a sheet"]))
+    findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
+    assert "BAD_VALUE" in codes(findings, "CRITICAL")
+    assert "NUMBER_NO_SOURCE" not in codes(findings)
+
+
+def test_number_source_calendar_and_document_are_valid(tmp_path):
+    path = write_ledger(tmp_path, make_entry(numbers=[
+        "32 sessions | source: calendar | basis: calendar export 2026-08-01",
+        "3 C-R-I carried forward | source: document | basis: midpoint 2026-03-01",
+    ]))
+    findings = ledger_check.run_checks(ledger_check.parse_ledger(ledger_check.read_text(path)))
+    assert codes(findings, "CRITICAL") == []
 
 
 # ---------------------------------------------------------------- WARNING codes
@@ -293,3 +325,43 @@ def test_blank_lines_inside_sub_lists_keep_items(tmp_path):
 def test_short_and_padded_ids_count_as_duplicates(tmp_path):
     path = write_ledger(tmp_path, make_entry(id_token="L-1", title="One"), make_entry(id_token="L-001", title="Two"))
     assert "DUPLICATE_ID" in codes(findings_for(path), "CRITICAL")
+
+
+
+# ---------------------------------------------------------------- open fields stay visible
+
+DEEP_FIELDS = ("role", "project", "audience", "decision_fed", "obstacle", "sustained", "descriptor_hits",
+               "prd_duty", "plan_tag", "evidence", "prior_cycle_overlap")
+
+
+def test_ready_with_any_blank_deep_field_warns(tmp_path):
+    for field_name in DEEP_FIELDS:
+        path = write_ledger(tmp_path, make_entry(omit=(field_name,)), name=f"{field_name}.md")
+        warnings = [f for f in findings_for(path) if f.code == "READY_INCOMPLETE"]
+        assert warnings and field_name in warnings[0].message, field_name
+
+
+def test_blank_value_counts_as_open(tmp_path):
+    path = write_ledger(tmp_path, make_entry(fields={"obstacle": ""}))
+    assert "READY_INCOMPLETE" in codes(findings_for(path), "WARNING")
+
+
+def test_none_counts_as_answered(tmp_path):
+    entry = make_entry(fields={"decision_fed": "none", "obstacle": "none", "plan_tag": "none"})
+    assert codes(findings_for(write_ledger(tmp_path, entry))) == []
+
+
+def test_candidate_lists_open_fields_as_info(tmp_path):
+    entry = make_entry(fields={"status": "candidate"}, omit=("obstacle", "plan_tag", "allocated"), lenses=None)
+    findings = findings_for(write_ledger(tmp_path, entry))
+    assert "READY_INCOMPLETE" not in codes(findings)
+    info = [f for f in findings if f.code == "OPEN_FIELDS"]
+    assert info and info[0].severity == "INFO"
+    for name in ("obstacle", "plan_tag", "lenses", "allocated"):
+        assert name in info[0].message
+
+
+def test_report_counts_info_when_present(tmp_path, capsys):
+    entry = make_entry(fields={"status": "candidate"}, omit=("obstacle",))
+    ledger_check.main(["--file", str(write_ledger(tmp_path, entry))])
+    assert capsys.readouterr().out.splitlines()[0] == "ledger_check: 0 CRITICAL, 0 WARNING, 1 INFO"

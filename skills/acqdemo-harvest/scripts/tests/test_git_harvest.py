@@ -157,3 +157,31 @@ def test_local_summary_keeps_in_period_commit_rewritten_after_period(tmp_path):
 def test_filter_commits_ignores_blank_author_values():
     commits = [gh.Commit("a", "2026-01-05", "Dana Smith", "one"), gh.Commit("b", "2026-01-06", "Lee Park", "two")]
     assert [c.subject for c in gh.filter_commits(commits, "2025-10-01", "2026-09-30", ["", "  ", "dana"])] == ["one"]
+
+
+def test_filter_commits_dedupes_same_author_date_and_subject():
+    # git log --all walks every branch, so a commit cherry-picked or ported between
+    # branches (same author date, same subject, different sha) must count once.
+    commits = [
+        gh.Commit("aaa111", "2026-01-05", "Dana Smith", "fix: same underlying bug"),
+        gh.Commit("bbb222", "2026-01-05", "Dana Smith", "fix: same underlying bug"),
+        gh.Commit("ccc333", "2026-01-06", "Dana Smith", "feat: unrelated"),
+    ]
+    kept = gh.filter_commits(commits, "2025-10-01", "2026-09-30", [])
+    assert [c.sha for c in kept] == ["aaa111", "ccc333"]
+
+
+def test_local_summary_dedupes_commit_ported_to_two_branches(tmp_path):
+    repo = make_repo(tmp_path)
+    ident = ["-c", "user.name=Dana Smith", "-c", "user.email=dana@example.com", "-C", str(repo)]
+    env = {**os.environ, "GIT_AUTHOR_DATE": "2026-04-05T12:00:00", "GIT_COMMITTER_DATE": "2026-04-05T12:00:00"}
+    for branch, fname in [("branch-a", "fix-a.txt"), ("branch-b", "fix-b.txt")]:
+        subprocess.run(["git", *ident, "checkout", "-q", "main"], check=True, capture_output=True)
+        subprocess.run(["git", *ident, "checkout", "-q", "-b", branch], check=True, capture_output=True)
+        (repo / fname).write_text(fname, encoding="utf-8")
+        subprocess.run(["git", *ident, "add", "-A"], check=True, capture_output=True)
+        subprocess.run(["git", *ident, "commit", "-q", "-m", "fix: same underlying bug"],
+                        check=True, capture_output=True, env=env)
+    s = gh.local_summary(repo, "2025-10-01", "2026-09-30", [])
+    matching = [c for c in s.commits if c.subject == "fix: same underlying bug"]
+    assert len(matching) == 1

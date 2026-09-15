@@ -146,7 +146,7 @@ Apply the "so what?" test to every entry.
 | Skill | What you say | What it does |
 |---|---|---|
 | `acqdemo` (primary) | "Where am I in the cycle?" | Reads your profile and pay pool calendar, lists what inputs exist, resumes an unfinished session, and routes to the right skill |
-| `acqdemo-harvest` | "Pull what I did from git and my calendar" | Mines your git repos, calendar export, and prior documents for the rating period and creates candidate ledger entries |
+| `acqdemo-harvest` | "Pull what I did from git and my calendar for my AcqDemo" | Mines your git repos, calendar export, and prior documents for the rating period and creates candidate ledger entries |
 | `acqdemo-log` | "Log a win for my AcqDemo: ..." | Turns a quick ramble into one ledger entry any time during the year. Say "AcqDemo" (or run `/acqdemo:acqdemo-log`): a bare "log a win" can be taken as a request to save a general Claude memory instead |
 | `acqdemo-annual` | "Let's do my annual" | Runs the full annual intake and drafting workflow (Section 5.3) |
 | `acqdemo-midpoint` | "Midpoint time" | Same engine with midpoint minimums and framing; also writes closeouts after a supervisor or position change |
@@ -156,7 +156,7 @@ Apply the "so what?" test to every entry.
 Each smaller skill runs on its own when you only have part of the inputs.
 
 ### 5.2 The evidence ledger
-Every skill reads and writes one file per cycle, `ledger.md`. Each entry records what you did, your role (owned, co-owned, owned a piece, supported), the audience and highest rank involved, numbers with their source (stated, git, or estimate with a one-line basis), the decision it fed, whether it is sustained or one-time, a separate angle for each factor, matching descriptor lines, PRD duty, plan objective tag, and evidence pointers. The ledger is what lets the skills work independently and what makes next year easier.
+Every skill reads and writes one file per cycle, `ledger.md`. Each entry records what you did, your role (owned, co-owned, owned a piece, supported), the audience and highest rank involved, numbers with their source (stated, git, calendar, document, or estimate with a one-line basis), the decision it fed, whether it is sustained or one-time, a separate angle for each factor, matching descriptor lines, PRD duty, plan objective tag, and evidence pointers. The ledger is what lets the skills work independently and what makes next year easier.
 
 ### 5.3 The annual workflow
 | Step | What happens | You do |
