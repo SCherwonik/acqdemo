@@ -73,7 +73,7 @@ Shared references live under the primary skill. Other skills reference them by r
 | Skill | Purpose | Reads | Writes | Standalone use |
 |---|---|---|---|---|
 | `acqdemo` | Detect stage (date vs. calendar in overlay), inventory inputs, resume sessions, route | profile, paypool, session-state, ledger | session-state | "Where am I in the cycle?" |
-| `acqdemo-harvest` | Mine git repos and prior documents for the rating period | profile (repo list), prior-cycle submissions | ledger (`candidate` entries), harvest snapshot | "Pull what I did from git" |
+| `acqdemo-harvest` | Mine git repos, calendar exports, and prior documents for the rating period | profile (repo list), `FY<yy>/evidence/` calendar exports, prior-cycle submissions | ledger (`candidate` entries), harvest snapshots | "Pull what I did from git and my calendar" |
 | `acqdemo-log` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
 | `acqdemo-annual` | Gate, dump, recall sweeps, deep-dives, allocate, draft, finalize | all | ledger, roster, drafts, final outputs | "Let's do my annual" |
 | `acqdemo-midpoint` | Same flow, minimum 1 W-R-I per factor, no scores | all | same | "Midpoint time" |
@@ -91,6 +91,7 @@ Shared references live under the primary skill. Other skills reference them by r
     ledger.md
     session-state.md
     rambles/              raw dictation, dated
+    evidence/             calendar exports and other raw evidence files
     harvest/
     drafts/
     final/                Job Achievement and Innovation.txt
@@ -139,7 +140,7 @@ Shared references live under the primary skill. Other skills reference them by r
 | Tier | Items |
 |---|---|
 | 0: gate | Career path and level on the last day of the cycle; EOCS; rating period; current contribution plan text; certification status (acquisition level + CLPs, DoD FM level + CETs, dates); supervisor(s) of record; closeouts; promotions or position changes with effective dates |
-| 1: evidence | Git harvest; current-cycle midpoint; briefings (audience, highest rank, headcount); training and mentoring counts; programs and dollar values; decisions fed; recognition (awards, time off awards, praise) |
+| 1: evidence | Git harvest; calendar export (Subject and Start columns, tab-separated, from a list view); current-cycle midpoint; briefings (audience, highest rank, headcount); training and mentoring counts; programs and dollar values; decisions fed; recognition (awards, time off awards, praise) |
 | 2: framing | Mission statements (one and two levels up); organizational priorities; value of position; PRD duties |
 
 Unknown Tier 0 items do not block drafting; they are flagged in the working doc.
@@ -155,7 +156,8 @@ Unknown Tier 0 items do not block drafting; they are flagged in the working doc.
 - No fixed cap. After every round: "What else does that bring to mind?"
 
 ### 4.3 Recall sweeps
-1. **Timeline walk:** month by month through the cycle, seeded with known anchors (git releases, midpoint, awards, promotions, shutdowns, budget milestones).
+0. **Calendar export first:** the user exports calendar Subject and Start columns to a text file (classic desktop Outlook: Calendar > View > Change View > List; filter or sort by Start; keep Subject and Start; select all in range; copy; paste into a text editor; save as `.txt`). The harvest filters to the rating period, skips canceled meetings, lists meetings by month, and counts recurring series.
+1. **Timeline walk:** month by month through the cycle, seeded with known anchors (calendar meetings, git releases, midpoint, awards, promotions, shutdowns, budget milestones).
 2. **People rings:** (1) own office, section by section from a saved office map, (2) other divisions, (3) government outside the organization, (4) contractor companies and their people, (5) leadership briefed or advised. Ask for names explicitly.
 3. **Artifact prompts:** calendar meeting titles, sent mail, chat threads, slide decks, shared drive.
 

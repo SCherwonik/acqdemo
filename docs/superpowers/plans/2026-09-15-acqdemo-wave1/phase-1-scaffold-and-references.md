@@ -689,7 +689,8 @@ def test_question_bank():
             "#### Complexity/Difficulty", "#### Creativity", "#### Scope/Impact",
             "#### Oral", "#### Written", "#### Contribution to Team", "#### Effectiveness",
             "#### Independence", "#### Customer Needs", "#### Planning/Budgeting", "#### Execution/Efficiency",
-            "## Recall sweeps", "### Timeline walk", "### People rings", "### Artifact prompts",
+            "## Recall sweeps", "### Calendar export", "### Timeline walk", "### People rings",
+            "### Artifact prompts",
             "## Estimate protocol", "## Coverage grid and stop rule",
             "What else does that bring to mind?",
         ],
@@ -824,9 +825,18 @@ Pick the questions that fill gaps in the current ledger entry. Adapt wording to 
 
 ## Recall sweeps
 
+### Calendar export
+Ask for this before the timeline walk. If `FY<yy>/evidence/` has no calendar file, give the user these steps (classic desktop Outlook; README Section 6.4 has the full version):
+1. Calendar > **View** tab > **Change View** > **List**.
+2. Sort by the **Start** column, or **View Settings > Filter** to the rating period.
+3. Optional: right-click column headers > **Remove This Column**; keep **Subject** and **Start**.
+4. Click the first meeting, **Shift**+click the last, **Ctrl + C**.
+5. Paste into Notepad and save as `FY<yy>/evidence/calendar-<YYYY-MM-DD>.txt`.
+Then run the calendar harvest (see the acqdemo-harvest skill). Remind the user never to export from a classified system and to delete sensitive titles.
+
 ### Timeline walk
 1. Build a month list from the first to the last month of the rating period.
-2. Seed each month with anchors already known: git releases and tags, midpoint and closeout dates, promotions or moves, awards, shutdowns, budget or program milestones the user mentioned.
+2. Seed each month with anchors already known: meetings from the calendar harvest (especially briefings, demos, working groups, and recurring series), git releases and tags, midpoint and closeout dates, promotions or moves, awards, shutdowns, budget or program milestones the user mentioned.
 3. Walk month by month: "In <month>, I have <anchors>. What else was going on that month? Any briefings, deadlines, fires, trips, trainings?"
 4. Every new item becomes a candidate ledger entry.
 
@@ -1122,7 +1132,8 @@ The user's private workspace (never the public toolkit repo):
     ledger.md
     session-state.md
     rambles/              raw dictation, one file per session: YYYY-MM-DD-<topic>.md
-    harvest/              git harvest snapshots: YYYY-MM-DD-git.md
+    evidence/             raw evidence files: calendar-YYYY-MM-DD.txt (calendar export), others
+    harvest/              harvest snapshots: YYYY-MM-DD-git.md, YYYY-MM-DD-calendar.md
     drafts/               v1/, v2/ ... each holding the three factor files
     final/                Job Achievement and Innovation.txt
                           Communication and Teamwork.txt

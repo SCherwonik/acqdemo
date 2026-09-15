@@ -145,7 +145,7 @@ Apply the "so what?" test to every entry.
 | Skill | What you say | What it does |
 |---|---|---|
 | `acqdemo` (primary) | "Where am I in the cycle?" | Reads your profile and pay pool calendar, lists what inputs exist, resumes an unfinished session, and routes to the right skill |
-| `acqdemo-harvest` | "Pull what I did from git" | Mines your git repos and prior documents for the rating period and creates candidate ledger entries |
+| `acqdemo-harvest` | "Pull what I did from git and my calendar" | Mines your git repos, calendar export, and prior documents for the rating period and creates candidate ledger entries |
 | `acqdemo-log` | "Log a win" | Turns a quick ramble into one ledger entry any time during the year |
 | `acqdemo-annual` | "Let's do my annual" | Runs the full annual intake and drafting workflow (Section 5.3) |
 | `acqdemo-midpoint` | "Midpoint time" | Same engine with midpoint minimums and framing |
@@ -162,7 +162,7 @@ Every skill reads and writes one file per cycle, `ledger.md`. Each entry records
 |---|---|---|
 | 0. Load | Reads profile, pay pool overlay, session state; detects cycle stage; resumes | Nothing |
 | 1. Gate | Asks the must-know items: level, EOCS, plan, certifications, closeouts, promotions | Answer or say "unknown" |
-| 2. Harvest | Git and document mining for the period | Confirm, reject, or merge candidates |
+| 2. Harvest | Git history, calendar export (Section 6.4), and prior documents for the period | Confirm, reject, or merge candidates |
 | 3. Brain dump | You ramble the whole year; you get an inventory and a JA/CT/MS coverage grid | Ramble, fix the inventory |
 | 3b. Recall sweeps | Timeline walk; people sweep by ring; artifact prompts | Name names, answer |
 | 4. Deep-dives | Project by project, biggest first; numbered questions; estimates proposed; each entry saved immediately | Ramble, answer, approve estimates |
@@ -215,7 +215,37 @@ Every answer gets a drill-down ladder: **what > so what > who used it > what cha
 
 **Names rule:** names are welcome in conversation and in your private notes. The final paste-ready text never contains names; they become titles, organizations, and counts ("mentored 9 analysts across 3 divisions").
 
-### 6.4 Turning answers into statements
+### 6.4 Export your calendar first (strongly recommended)
+
+Your calendar is the best memory aid you have. Every briefing, working group, training session, and customer meeting is already there, with a date. Export it before the annual (and again before the midpoint). The toolkit turns it into a month-by-month timeline for the recall sweep and counts recurring meetings, which become hard numbers ("led 32 working group sessions").
+
+**Classic desktop Outlook (Windows):**
+
+| Step | Action | Instructions |
+|---|---|---|
+| 1 | Change the calendar view | Open **Calendar** in desktop Outlook. On the **View** tab of the ribbon, click **Change View**, then choose **List**. |
+| 2 | Filter or sort by date | Click the **Start** column header to sort chronologically, or use **View Settings > Filter** to set start and end dates covering your rating period. |
+| 3 | Trim columns (optional) | Right-click any column header and choose **Remove This Column** for fields you do not need. Keep **Subject** and **Start**; the dates are what place each meeting on the timeline. |
+| 4 | Copy the entries | Click the first meeting in your range, hold **Shift**, click the last meeting, and press **Ctrl + C**. |
+| 5 | Save as a text file | Open Notepad (or another text editor), press **Ctrl + V**, and save as a `.txt` file in your private workspace, for example `FY26/evidence/calendar-2026-09-01.txt`. |
+
+The saved file has a header line, then one meeting per line: the subject, a tab, and the start date and time. Fictional example:
+
+```
+Subject	Start	
+Estimating working group	Tue 10/14/2025 10:00 AM	
+Canceled: Branch staff meeting	Mon 12/8/2025 11:00 AM	
+Regression tool demo for program office	Thu 3/12/2026 1:30 PM	
+```
+
+Tips:
+- Export a little wider than the rating period. The harvest keeps only meetings inside the period.
+- Leave canceled meetings in; lines starting with "Canceled:" are skipped automatically.
+- Order does not matter; the harvest sorts by date.
+- The newer Outlook app and Outlook on the web may not offer the List view. If yours does not, use classic desktop Outlook, or any calendar that can produce "Subject, tab, Start" lines.
+- **Privacy:** calendar exports contain coworker names, program names, and meeting details. Keep them in your private workspace only. Never export from a classified system, and delete any line whose title is sensitive before saving.
+
+### 6.5 Turning answers into statements
 1. Extract facts into ledger entries with sources.
 2. When you do not know a number: check git or files, then a proxy count, then an estimate you approve (with a recorded basis, phrased "over" or "approximately"), then fall back to scope and audience.
 3. Rank entries by scope, organizational level, and novelty.
@@ -223,7 +253,8 @@ Every answer gets a drill-down ladder: **what > so what > who used it > what cha
 5. Write (Section 7) and review.
 6. Arm your supervisor with the crib sheet.
 
-### 6.5 What to capture next year
+### 6.6 What to capture next year
+- Export your calendar at the midpoint and again before the annual (Section 6.4).
 - A five-minute ramble each month and right after any briefing, release, or praise email.
 - A brag folder: praise emails, slide titles, attendance counts, award notices.
 - A contribution plan with labeled objectives (JA1-3, CT1-3, MS1-3); tag every ledger entry.
@@ -377,7 +408,7 @@ python -m pytest
 1. Create a **private** repository for your own notes (for example with `gh repo create <you>/acqdemo-personal --private`).
 2. Copy this repo's contents into it and run `git config core.hooksPath tools/hooks`.
 3. Copy `tools/sync/personal-paths.example.txt` to `tools/sync/personal-paths.txt` and `tools/sync/denylist.example.txt` to `tools/sync/denylist.txt`; fill in your own paths and terms (name, birth year, contact details, IDs, salary figures, coworker names, program names).
-4. Put your own documents in the workspace. Keep personnel forms (SF-50, SF-52), appraisal PDFs, and resumes out of git entirely; the `.gitignore` and hook block the common ones.
+4. Put your own documents in the workspace, including a calendar export (Section 6.4). Keep personnel forms (SF-50, SF-52), appraisal PDFs, and resumes out of git entirely; the `.gitignore` and hook block the common ones. The hook does not detect coworker names, so list personal files in `tools/sync/personal-paths.txt` before syncing anything public.
 5. Once the skills ship, add `profile.md` and `paypool.md` from `templates/`.
 
 ### 10.5 Install the skills (once Wave 1 ships)
@@ -394,6 +425,7 @@ The repository will include a Claude Code plugin manifest. Installation instruct
   2. `tools/hooks/scan_pii.py` runs before every commit. It extracts text from `.txt`, `.md`, `.pdf`, `.docx`, `.pptx`, and `.xlsx` files and blocks the commit if it finds an SSN pattern, a date-of-birth label with a date, a PII/CUI banner, or a sensitive file name. It never prints the matched value.
 - **Do not bypass the hook** with `--no-verify`. If it blocks a commit, remove the file from the commit.
 - **Names rule:** names help recall in private notes but never appear in paste-ready text.
+- **Calendar exports** carry names, program names, and meeting details. Keep them private, never export from a classified system, and remove sensitive titles before saving.
 - **You are responsible for accuracy.** Every fact and number you submit is signed by you and defended by your supervisor.
 
 ---
