@@ -24,7 +24,7 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 14. [Reference documents included](#14-reference-documents-included)
 15. [Glossary](#15-glossary)
 16. [FAQ](#16-faq)
-17. [Credits and disclaimer](#17-credits-and-disclaimer)
+17. [Disclaimer](#17-disclaimer)
 
 ---
 
