@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship an installable Claude Code plugin with the `acqdemo` router, `acqdemo-harvest`, `acqdemo-annual`, and `acqdemo-review` skills, their shared references, and two tested scripts (`check.py`, `git_harvest.py`), validated on fictional personas and a real private backtest.
+**Goal:** Ship an installable Claude Code plugin with the `acqdemo` router, `acqdemo-harvest`, `acqdemo-annual`, and `acqdemo-review` skills, their shared references, and three tested scripts (`check.py`, `git_harvest.py`, `calendar_harvest.py`), validated on fictional personas and a real private backtest.
 
 **Architecture:** The repository root is the plugin root (`.claude-plugin/plugin.json` + `marketplace.json`). Skills live in `skills/<name>/SKILL.md`; shared references and templates live under `skills/acqdemo/` and are referenced by other skills through `../acqdemo/...` paths. Deterministic rules are Python scripts with pytest suites; judgment rules live in skill instructions. All work happens in the private workspace and is mirrored to the public repo with `tools/sync/sync_public.py` at the end of each phase.
 
@@ -18,9 +18,9 @@
 |---|---|---|---|
 | 1 | [phase-1-scaffold-and-references.md](2026-09-15-acqdemo-wave1/phase-1-scaffold-and-references.md) | 1-7 | Plugin manifests, structure tests, shared references (levels, descriptors, rules, certification templates, question bank, writing style, ledger format), templates |
 | 2 | [phase-2-check-script.md](2026-09-15-acqdemo-wave1/phase-2-check-script.md) | 8-11 | `skills/acqdemo-review/scripts/check.py` with full tests |
-| 3 | [phase-3-harvest-script.md](2026-09-15-acqdemo-wave1/phase-3-harvest-script.md) | 12-14 | `skills/acqdemo-harvest/scripts/git_harvest.py` with full tests |
-| 4 | [phase-4-skills.md](2026-09-15-acqdemo-wave1/phase-4-skills.md) | 15-19 | Four `SKILL.md` files, local plugin install |
-| 5 | [phase-5-validation-and-release.md](2026-09-15-acqdemo-wave1/phase-5-validation-and-release.md) | 20-25 | Personas (test D), trigger check (E), known-problem review (B), backtest (C), dry run (F), README install section, release sync |
+| 3 | [phase-3-harvest-scripts.md](2026-09-15-acqdemo-wave1/phase-3-harvest-scripts.md) | 12-15 | `git_harvest.py` and `calendar_harvest.py` with full tests |
+| 4 | [phase-4-skills.md](2026-09-15-acqdemo-wave1/phase-4-skills.md) | 16-20 | Four `SKILL.md` files, local plugin install |
+| 5 | [phase-5-validation-and-release.md](2026-09-15-acqdemo-wave1/phase-5-validation-and-release.md) | 21-26 | Personas (test D), trigger check (E), known-problem review (B), backtest (C), dry run (F), README install section, release sync |
 
 Execute phases in order. Tasks inside a phase are ordered; each ends in a commit.
 
@@ -63,9 +63,11 @@ skills/
     scripts/check.py                   deterministic draft checks (CLI + importable functions)
     scripts/tests/test_check.py
   acqdemo-harvest/
-    SKILL.md                           runs git_harvest.py, clusters commits into candidate ledger entries
+    SKILL.md                           runs both harvest scripts, clusters results into candidate ledger entries
     scripts/git_harvest.py             git/GitHub activity for a period -> Markdown summary
+    scripts/calendar_harvest.py        calendar list export (Subject, Start) -> monthly meetings + recurring series
     scripts/tests/test_git_harvest.py
+    scripts/tests/test_calendar_harvest.py
   acqdemo-annual/
     SKILL.md                           annual workflow steps 0-8
 ```
@@ -94,20 +96,20 @@ skills/
 ## Self-review record
 
 Spec coverage (spec section -> task):
-- 3.1 plugin layout -> Tasks 1, 15-18 (templates moved under `skills/acqdemo/templates/` so every skill reaches them through the same `../acqdemo/` prefix; spec 3.1 listed root `templates/`)
-- 3.2 skills (Wave 1 subset) -> Tasks 15-18
-- 3.3 personal workspace layout -> Task 7 (templates), Task 18 (router first-time setup)
+- 3.1 plugin layout -> Tasks 1, 16-19 (templates moved under `skills/acqdemo/templates/` so every skill reaches them through the same `../acqdemo/` prefix; spec 3.1 listed root `templates/`)
+- 3.2 skills (Wave 1 subset) -> Tasks 16-19
+- 3.3 personal workspace layout -> Task 7 (templates), Task 19 (router first-time setup)
 - 3.4 data contracts -> Task 7 (`ledger-format.md`, templates)
-- 4.1-4.5 recipe -> Task 6 (`question-bank.md`), Task 17 (annual skill)
-- 5 annual workflow -> Task 17
+- 4.1-4.5 recipe -> Task 5 (`question-bank.md`, including calendar export), Tasks 14-15 (calendar harvest), Task 18 (annual skill)
+- 5 annual workflow -> Task 18
 - 6 writing rules -> Task 6 (`wri-style.md`), Tasks 8-11 (mechanical checks)
-- 7 outputs -> Task 7 (`working-doc.md`), Task 17 (finalize)
-- 8 review skill -> Tasks 8-11, 15
-- 9 calendar -> Task 7 (`paypool.md`), Task 18 (stage detection)
-- 10 privacy -> existing `tools/`; Task 18 (setup guidance); conventions above
-- 11 testing A-F -> Tasks 8-14 (A), 22 (B), 23 (C), 20 (D), 21 (E), 24 (F)
+- 7 outputs -> Task 7 (`working-doc.md`), Task 18 (finalize)
+- 8 review skill -> Tasks 8-11, 16
+- 9 calendar -> Task 7 (`paypool.md`), Task 19 (stage detection)
+- 10 privacy -> existing `tools/`; Task 19 (setup guidance); conventions above
+- 11 testing A-F -> Tasks 8-15 (A), 23 (B), 24 (C), 21 (D), 22 (E), 25 (F)
 - 12 build phases -> Wave 1 only; Wave 2 (`acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan`) gets its own plan
-- 13 open questions -> Task 19 verifies plugin path resolution; character counting stays conservative (Task 9)
+- 13 open questions -> Task 20 verifies plugin path resolution; character counting stays conservative (Task 9)
 
 Deviations from spec, recorded:
 1. Templates live in `skills/acqdemo/templates/` instead of root `templates/`.
