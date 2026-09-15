@@ -63,7 +63,8 @@ def test_question_bank():
     assert_contains(
         REF / "question-bank.md",
         [
-            "## How to ask", "## Drill-down ladder", "## Question types",
+            "## How to ask", "## Drill-down ladder", "## Confirm before dropping", "## Portfolio roll-up",
+            "## Question types",
             "## Gate questions", "## Discriminator questions",
             "### Job Achievement and/or Innovation", "### Communication and/or Teamwork", "### Mission Support",
             "#### Leadership Role", "#### Mentoring/Employee Development", "#### Accountability",

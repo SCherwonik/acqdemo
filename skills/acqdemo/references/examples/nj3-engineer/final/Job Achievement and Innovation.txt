@@ -1,0 +1,11 @@
+C: Developed and built a telemetry calibration fixture and automation script to replace a manual process that took two technicians about three days per aircraft.
+R: Cut calibration from about three days to one day per aircraft, a two-thirds reduction in calibration time.
+I: Created a new technique, now the branch's standard calibration method, that strengthens the wing's developmental test capability and helps keep aircraft programs on schedule.
+
+C: Identified drift in two legacy reference sensors, a fault that would have skewed aircraft load data.
+R: Partnered with the team to replace both sensors, removing the error before it could enter flight test load measurements.
+I: Resolved a complex measurement problem before it reached flight test, protecting the accuracy of the test data the wing delivers to aircraft programs.
+
+C: Took personal accountability for instrumentation installs during the June test surge, when test points moved earlier than planned.
+R: Worked two weekends to complete the installs on the compressed timeline.
+I: Exercised the flexibility and personal accountability an accelerated test schedule required, supporting on-time flight test data for the program.

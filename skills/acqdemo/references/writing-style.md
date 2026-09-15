@@ -38,8 +38,8 @@ Greatest impact first. Rank by scope, organizational level reached, and novelty.
 | The strongest verb the ledger role supports | Invented events, audiences, awards, or recognition |
 | Stacked scope: dollar value, portfolio, number of programs, organizational level | Ownership verbs for work someone else owned |
 | Language from the target level's descriptors | People's names |
-| Impact that climbs at least two rungs of the impact ladder | Classified information |
-| Estimated numbers at the top of a plausible range, rounded up, framed favorably, each with a basis recorded in the ledger | Numbers with no basis |
+| Impact at the highest rung of the impact ladder the facts reach | Classified information |
+| Estimated numbers at the top of a plausible range, rounded up, framed favorably, each with a basis recorded in the ledger (for an unknown input, its defensible low end, phrased "over N" or "about N") | Numbers with no basis |
 
 ## Role verbs
 | Ledger role | Verbs |
@@ -61,13 +61,17 @@ Shrink the noun, keep the verb strong: "Directed the subsystem reconciliation fo
 ## Impact ladder
 team > division or branch > agency or command > headquarters staff > military service or department > DoD or Congress
 
-Each Impact should sit at least two rungs above where the Result happened, and name the mission tie (budget decisions, program readiness, acquisition strategy, workforce capability).
+Tie each Impact to the level the work actually reaches (team, division, organization, mission) and name the mission tie (budget decisions, program readiness, acquisition strategy, workforce capability).
+- Aim two rungs above where the Result happened when the facts support it. For field and support positions, a tie to the mission one or two levels up satisfies the ladder. Never claim a level the facts do not reach.
+- Use a mission-statement phrase in at most one Impact per factor, and vary Impact wording from entry to entry.
 
 ## One project, three angles
 When a project supports more than one factor, each factor gets a different angle and different wording:
 - **JA:** what was built or solved and why it was hard or new.
 - **CT:** who was briefed, trained, or aligned, and what they adopted.
 - **MS:** the customer need met, resources saved, or schedule and budget effect.
+
+The same project may appear in more than one factor this way, but each fact and number appears in only one factor. Assign each number to one factor (for example, the count in JA and the dollars in MS) and note the split in the ledger entry's `notes`.
 
 ## Raise or award framing
 - **Sustained** contributions support a raise: "institutionalized," "now the standard method for every estimate," "adopted as the division's recurring process."
@@ -81,7 +85,7 @@ Tag each allocated entry `sustained` or `one-time` in the working doc so the sup
 ## Special situations
 - **Promotion inside a late-cycle window** (see `rules/ccas-core.md`): make continuity explicit. Show higher-level contributions before and after the effective date, emphasize sustained strategic work, and give the supervisor a substantial-justification paragraph in the crib sheet.
 - **Split year (closeout):** cover both halves; the self-assessment should still stand on its own.
-- **Supervisors:** the supervisory objective paragraph opens JA with exact counts.
+- **Supervisors:** the supervisory objective paragraph opens JA. First the exact counts sentence from `rules/ccas-core.md`. Then two or three sentences on the scope of supervision: what the team delivered as a whole, how staff were developed, hiring and training, and how workload was managed. Do not repeat facts or numbers from the JA C-R-I entries.
 
 ## Examples
 All examples are fictional.

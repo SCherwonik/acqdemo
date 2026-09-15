@@ -60,7 +60,7 @@ Field rules:
 - `numbers`: every number that may appear in text needs a line with `source:` (`stated`, `git`, or `estimate`) and `basis:`.
 - `sustained`: `yes` or `one-time`.
 - `prior_cycle_overlap`: `none`, or `continuing (cycle delta: ...)`. An entry that repeats a prior-cycle achievement with no delta is `rejected`.
-- `allocated`: `JA`, `CT`, `MS`, `bench`, or empty.
+- `allocated`: `JA`, `CT`, `MS`, `bench`, or empty. An entry whose project appears in more than one factor lists each, primary factor first: `JA, MS`.
 - Names of people may appear in `audience`, `notes`, and `evidence`; they never pass into factor files.
 
 ## Status lifecycle

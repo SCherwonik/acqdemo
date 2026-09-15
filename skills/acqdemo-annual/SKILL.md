@@ -36,7 +36,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
    - Special situations: a promotion inside `paypool.md` `promotion_window_days` (needs substantial justification), a position or supervisor change (closeouts exist), supervisory duties (supervisory paragraph), certifications (certification statements).
 
 ## Step 2: Harvest
-Run the `acqdemo-harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue.
+Run the `acqdemo-harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue. A harvested claim the user cannot expand on is confirmed with yes/no questions before it is dropped (Step 4).
 
 ## Step 3: Brain dump
 1. Say: "Tell me everything you worked on this cycle, in any order. Ramble; I'll organize it." Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
@@ -56,11 +56,12 @@ Run the sweeps in the question bank, in order: calendar export (if still missing
 Order candidates by likely impact (scope x organizational level x novelty). For each one:
 1. Ask the user to ramble about it; save to `FY<yy>/rambles/`.
 2. Update the entry. Ask numbered drill-down ladder and discriminator questions for whatever is missing (5-8 per round, as many rounds as needed).
-3. Resolve numbers with the estimate protocol; confirm each; record source and basis.
-4. Fill `lenses` for all three factors, `descriptor_hits` from the target level, `sustained`, `prior_cycle_overlap` (compare with `prior/`), `prd_duty`, and `plan_tag`.
-5. Set `status: ready`, save, and show the coverage grid.
+3. If the user cannot expand on a claim from the midpoint, a closeout, or the plan, ask yes/no questions built from its named entities (meetings led, budget rounds, audiences; question bank, Confirm before dropping) before dropping it. If answers conflict, the later answer wins and the entry's `notes` record the conflict.
+4. Resolve numbers with the estimate protocol; confirm each; record source and basis.
+5. Fill `lenses` for all three factors, `descriptor_hits` from the target level, `sustained`, `prior_cycle_overlap` (compare with `prior/`), `prd_duty`, and `plan_tag`.
+6. Set `status: ready`, save, and show the coverage grid.
 
-Continue until every factor has at least four `ready` entries or the user says "enough." Aim the next deep-dive at the weakest factor.
+Continue until every factor has at least four `ready` entries counted by primary factor (each entry once, under its strongest lens), the sweeps turn up nothing new, or the user says "enough." Aim the next deep-dive at the weakest factor. Then run the question bank's Portfolio roll-up and record the confirmed totals.
 
 ## Step 5: Allocate
 Propose, then get approval:
@@ -68,16 +69,19 @@ Propose, then get approval:
 | Factor | Order | Entry | Angle | Why this factor | Raise or award |
 |---|---|---|---|---|---|
 
-Rules: three or four entries per factor; each entry is primary in one factor and may appear in a second factor only with a different angle and different wording; no entry whose prior-cycle overlap has no delta; greatest impact first; remaining `ready` entries go to the bench. Record `allocated` in the ledger.
+Rules: three or four entries per factor, greatest impact first. Each entry is primary in one factor. Its project may appear in other factors only from a different angle with different wording (`writing-style.md`, One project, three angles), and no fact or number appears in more than one factor. No entry whose prior-cycle overlap has no delta. Remaining `ready` entries go to the bench. Record `allocated` in the ledger, primary factor first (`JA, MS`).
+
+Thin material: if primary entries cannot fill a factor's minimum, return to Step 3b sweeps and targeted questions aimed at that factor before reusing a project from another angle. Never turn an entry with no result into a C-R-I; tell the user plainly which factor is thin.
 
 ## Step 6: Draft
 Write `FY<yy>/drafts/v1/` with the three factor files:
-1. Mandatory paragraphs first, in `paypool.md` order: the supervisory paragraph (exact counts from the profile) and certification statements (templates filled from the profile; ask for any missing value).
-2. C-R-I statements per `writing-style.md`: the Contribution in at most 35 words with a verb that matches the role; the Result with the entry's numbers; the Impact climbing at least two rungs with a mission tie drawn from the profile's mission statements; phrasing from the target level's descriptors; at most 3,900 characters per factor.
+1. Mandatory paragraphs first, in `paypool.md` order: the supervisory paragraph (exact counts from the profile, then the scope of supervision per `writing-style.md`, Special situations) and certification statements (templates filled from the profile; ask for any missing value).
+2. C-R-I statements per `writing-style.md`: the Contribution in at most 35 words with a verb that matches the role; the Result with the entry's numbers; the Impact tied to the level the work actually reaches, with a mission tie from the profile's mission statements, worded differently in each entry; phrasing from the target level's descriptors; at most 3,900 characters per factor.
 3. If a promotion falls inside the pay pool's window, make continuity visible: higher-level contributions before and after the effective date, and sustained strategic work.
+4. Length check: if a factor is under about 3,000 characters, enrich Results and Impacts from the ledger (numbers, audience, scope, roll-up totals) or promote a bench entry, then recount. Never pad with adjectives. If the ledger holds nothing more, leave the factor short and say so.
 
 ## Step 7: Review
-Run the `acqdemo-review` skill on `FY<yy>/drafts/v1/`. It writes fixes to new versions. Then take the user's edits by voice, write a new version, and review again. Loop until 0 CRITICAL and the user approves the text.
+Run the `acqdemo-review` skill on `FY<yy>/drafts/v1/`: both the checker (its Step 1) and the judgment checks (its Step 2). A clean checker alone does not end the review. The review writes fixes to new versions. Then take the user's edits by voice, write a new version, and review again with both layers. Exit only when both layers show 0 CRITICAL, every remaining WARNING is fixed or accepted by the user, and the user approves the text.
 
 ## Step 8: Finalize
 1. Copy the approved version's three files to `FY<yy>/final/`.

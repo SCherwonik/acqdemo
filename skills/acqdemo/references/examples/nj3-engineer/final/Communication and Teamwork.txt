@@ -1,0 +1,11 @@
+C: Presented the new calibration rig to about 40 members of the quarterly test community meeting, including the wing technical director.
+R: Represented the branch as the rig's technical subject matter expert and explained a method that cut calibration to one day per aircraft.
+I: Gave wing leadership and the wider test community a proven, faster calibration approach, raising awareness of the branch's capability across the wing.
+
+C: Wrote the 14-page procedure for the new telemetry calibration rig, turning a new fixture and script into a documented, repeatable method.
+R: The branch chief signed the procedure as the branch standard for telemetry calibration.
+I: Institutionalized the method in writing so current and future technicians calibrate aircraft the same way, sustaining data quality for the programs the branch supports.
+
+C: Trained four technicians on the new calibration rig, two from the branch and two from the range support contractor.
+R: Brought government and contractor technicians onto one standard calibration method, adding four trained rig operators across both organizations.
+I: Built teamwork across the government and contractor workforce and spread rig expertise beyond its developer, so the method does not depend on a single technician.

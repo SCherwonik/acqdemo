@@ -38,10 +38,10 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | Reference documents (descriptors, CCAS guidance, business rules, training deck) | Included |
 | Implementation plan for Wave 1 | Done |
 | **Wave 1 skills:** `acqdemo` (router), `acqdemo-harvest`, `acqdemo-annual`, `acqdemo-review` + shared references | Done |
-| Validation records (`docs/superpowers/validation/`): personas, trigger tests, backtest, dry run | Planned |
-| **Wave 2 skills:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan` | Planned |
+| Validation records (`docs/superpowers/validation/`): personas, trigger tests, known problems, backtest | Done (dry run with a real user pending) |
+| **Wave 2 skills:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan` | Done |
 
-Wave 1 skills are installable as a Claude Code plugin (Section 10.5). Wave 2 skills and the validation records come next. The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+All seven skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
 
 ---
 
@@ -147,9 +147,9 @@ Apply the "so what?" test to every entry.
 |---|---|---|
 | `acqdemo` (primary) | "Where am I in the cycle?" | Reads your profile and pay pool calendar, lists what inputs exist, resumes an unfinished session, and routes to the right skill |
 | `acqdemo-harvest` | "Pull what I did from git and my calendar" | Mines your git repos, calendar export, and prior documents for the rating period and creates candidate ledger entries |
-| `acqdemo-log` | "Log a win" | Turns a quick ramble into one ledger entry any time during the year |
+| `acqdemo-log` | "Log a win for my AcqDemo: ..." | Turns a quick ramble into one ledger entry any time during the year. Say "AcqDemo" (or run `/acqdemo:acqdemo-log`): a bare "log a win" can be taken as a request to save a general Claude memory instead |
 | `acqdemo-annual` | "Let's do my annual" | Runs the full annual intake and drafting workflow (Section 5.3) |
-| `acqdemo-midpoint` | "Midpoint time" | Same engine with midpoint minimums and framing |
+| `acqdemo-midpoint` | "Midpoint time" | Same engine with midpoint minimums and framing; also writes closeouts after a supervisor or position change |
 | `acqdemo-plan` | "Write my plan" | Drafts a contribution plan from your PRD duties with labeled objectives (JA1, CT1, MS1) and KPIs |
 | `acqdemo-review` | "Check my draft" | Runs deterministic checks plus a panel-style read, then offers to fix what it finds |
 
@@ -360,18 +360,20 @@ Dates come from your pay pool overlay (`paypool.md`); the defaults below match t
 └── Important Rules to Consider.txt
 ```
 
-Planned plugin layout (Wave 1 and 2):
+Plugin layout:
 ```
+.claude-plugin/       plugin.json, marketplace.json
 skills/
   acqdemo/            primary router + shared references (descriptors, levels, rules,
                       question bank, writing style, ledger format, certification templates)
-  acqdemo-harvest/
-  acqdemo-log/
+                      and templates/ (profile, paypool, roster, session-state, working doc)
+  acqdemo-harvest/    scripts/git_harvest.py, scripts/calendar_harvest.py
+  acqdemo-log/        scripts/ledger_check.py
   acqdemo-annual/
-  acqdemo-midpoint/
-  acqdemo-plan/
-  acqdemo-review/     includes scripts/check.py
-templates/            profile.md, paypool.md
+  acqdemo-midpoint/   midpoint and closeout
+  acqdemo-plan/       scripts/prd_text.py, scripts/plan_check.py
+  acqdemo-review/     scripts/check.py
+tests/                plugin structure, references, and skill tests
 ```
 
 ---

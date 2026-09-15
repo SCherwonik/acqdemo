@@ -43,7 +43,8 @@ Match each C-R-I to its ledger entry by content.
 | CRITICAL | Same achievement as a prior cycle with no current-cycle delta | Compare against `prior/` meaningfully, not just wording, and against the entry's `prior_cycle_overlap` |
 | WARNING | Number without a basis | Every number in the text must appear in the entry's `numbers` with a `basis` |
 | WARNING | Verb stronger than the recorded role | Role verbs table in `writing-style.md` |
-| WARNING | Impact climbs fewer than two rungs or lacks a mission tie | Impact ladder in `writing-style.md`; mission statements in `profile.md` |
+| WARNING | Impact claims a level the facts do not reach, stays at the Result's level when the facts support more, or lacks a mission tie | Impact ladder in `writing-style.md`; mission statements in `profile.md` |
+| WARNING | Same fact or number in two factors, or the same mission phrase in two Impacts of one factor | The checker catches only repeated wording; compare numbers and phrases across entries |
 | WARNING | Reads below the target level | Compare with the target level's descriptors; no recognizable descriptor language or scope |
 | WARNING | Not ordered by impact | Scope x organizational level x novelty |
 | INFO | Passive voice; uncovered discriminators per factor; raise vs. award balance; missing plan tags | |
@@ -60,7 +61,7 @@ Character counts: JA <n> | CT <n> | MS <n>
 CRITICAL
 1. [JA] PRIOR_REPEAT: "<run>" also in FY25. Fix: reword from ledger L-004 using the FY26 delta.
 WARNING
-2. [CT] Number "over 200 attendees" has no basis in the ledger. Fix: confirm the count or remove.
+2. [CT] Number "over 50 attendees" has no basis in the ledger. Fix: confirm the count or remove.
 INFO
 3. [MS] No coverage of Planning/Budgeting.
 ```
@@ -70,7 +71,7 @@ INFO
 2. Write fixes to a new version folder `FY<yy>/drafts/v<N+1>/`; never overwrite the reviewed version.
 3. Fix rules: keep every fact and number; cut adjectives before facts; reword repeats with fresh wording from the ledger; replace names with title, organization, or a count from the roster; change verbs to match the role; never invent a number (ask instead).
 4. Show changed sentences as before and after, per factor.
-5. Rerun Step 1 on the new folder. Repeat until 0 CRITICAL, then ask about remaining WARNINGs.
+5. Rerun Steps 1 and 2 on the new folder; a clean checker alone is not a clean review. Repeat until both show 0 CRITICAL, then ask about remaining WARNINGs.
 
 ## Rules
 - Never add accomplishments, numbers, audiences, or awards that are not in the ledger or stated by the user.

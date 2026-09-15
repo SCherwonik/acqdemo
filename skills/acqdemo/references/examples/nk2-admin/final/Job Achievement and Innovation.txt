@@ -1,0 +1,11 @@
+C: Redesigned the directorate suspense tracker, moving it from a shared spreadsheet to a SharePoint list that sends automatic reminders.
+R: Cut overdue taskers from about 25 a month to about 6, a drop of roughly three quarters.
+I: Developed a new procedure for a complex organizational task, giving directorate leadership a tracker that flags due dates automatically instead of relying on manual follow-up.
+
+C: Built the seating plan for 140 people for the August building move.
+R: Gave all 140 people an assigned workspace in the new building.
+I: Planned and conducted a complex administrative activity that moved 140 people into a new building on a defined plan, keeping the directorate focused on logistics support for field units.
+
+C: Led development of the directorate's newest admin staff, three assistants in the division offices, training them on the suspense tracker and on travel orders.
+R: Built working knowledge of both processes among new staff outside the front office.
+I: Promoted team development across the directorate and extended the new tracker process beyond the front office.

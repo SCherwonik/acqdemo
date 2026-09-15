@@ -21,6 +21,25 @@ Apply to every accomplishment until it has enough for a strong C-R-I:
 4. **What changed?** Before vs. after in time, cost, quality, risk, speed, or capability.
 5. **Will it keep happening?** Is this now how things are done (sustained), or was it a one-time event?
 
+## Confirm before dropping
+When the user cannot expand on a claim from the midpoint, a closeout, or the plan, do not drop it after an open question. Switch to short yes/no questions built from the entities the claim or the workspace names (organizations in `roster.md`, meetings, budget rounds, audiences):
+- "The midpoint says you organized key meetings. Were any with <organization>? Did you run them, or attend?"
+- "Was that work aligned to <budget position>? More than one round?"
+- "Was <group> in the room? More than <n> people?"
+Keep the parts the user confirms; drop the claim only when the user cannot confirm any part or says it did not happen. If answers conflict with each other or with the document, the later answer wins; record the conflict and the correction in the entry's `notes`.
+
+## Portfolio roll-up
+Run once after the deep-dives, before allocation. Single entries hide the size of the year; totals across entries are often the strongest scope numbers.
+1. Count across all `ready` entries and `roster.md`, each item once:
+   - Distinct programs, estimates, systems, or teams supported.
+   - Distinct organizations engaged, and how many of those groups or meetings the user led.
+   - Senior-leader briefings: how many, highest rank or grade, total headcount.
+   - People trained or mentored.
+   - Forums, conferences, or communities briefed: how many, and the size of each audience.
+   - Dollars influenced: program or portfolio value, budget constraints, or trade space.
+2. Read each total back: "I count <n> <items>: <list>. Is that right? Did I miss any?"
+3. Turn confirmed totals into stacked phrasing, for example "across 5 programs and 3 organizations" or "briefed 2 senior-leader forums totaling about 60 people". Record each total in the `numbers` of the entry that will carry it, with the counted ledger ids as the basis.
+
 ## Question types
 | Type | Templates |
 |---|---|
@@ -83,6 +102,7 @@ Pick the questions that fill gaps in the current ledger entry. Adapt wording to 
 #### Oral
 - What briefings, demonstrations, or presentations did you give? To whom, how many, highest rank?
 - Did any briefing seek a decision or consensus? What was decided?
+- Was any session part of a larger forum, conference, or community (organization-wide, service-wide, DoD-wide)? How many were invited or attended across all sessions, and who made up the audience (grades, organizations, career fields)?
 
 #### Written
 - What did you write or co-write: reports, memos, documentation, user guides, specifications?
@@ -94,6 +114,7 @@ Pick the questions that fill gaps in the current ledger entry. Adapt wording to 
 
 #### Effectiveness
 - Did your communication change anything: adoption, fewer questions, faster turnaround, fewer revisions?
+- Did another organization, or an office above yours, start using what you briefed or wrote?
 - Were you sought out for help? By whom and how often?
 
 ### Mission Support
@@ -105,10 +126,12 @@ Pick the questions that fill gaps in the current ledger entry. Adapt wording to 
 #### Customer Needs
 - Who were your customers (program offices, leadership, other divisions, analysts)?
 - Did a customer ask for something specific that you delivered? Did you translate their need into a product?
+- Did an office above yours (headquarters staff, a service secretariat, OSD) or another organization adopt your product for a decision or for funding? Which decision?
 
 #### Planning/Budgeting
 - Did your work influence cost, schedule, or resource decisions? How much money or time was involved?
 - Did you plan resources across more than one project?
+- Did the work align programs or estimates to a budget position (for example the President's Budget, POM, or FYDP)? Through how many rounds, and against what dollar value, constraint, or trade space?
 
 #### Execution/Efficiency
 - What got faster, cheaper, or more accurate? By how much?
@@ -129,6 +152,7 @@ Then run the calendar harvest (see the acqdemo-harvest skill). Remind the user n
 1. Build a month list from the first to the last month of the rating period.
 2. Seed each month with anchors already known: meetings from the calendar harvest (especially briefings, demos, working groups, and recurring series), git releases and tags, midpoint and closeout dates, promotions or moves, awards, shutdowns, budget or program milestones the user mentioned.
 3. Walk month by month: "In <month>, I have <anchors>. What else was going on that month? Any briefings, deadlines, fires, trips, trainings?"
+   With no calendar export, do not ask open month-by-month questions. Walk the budget and program milestones instead (budget build and submission, budget release, program reviews and decision points, fiscal year end, shutdowns): "What did you deliver for <milestone>?"
 4. Every new item becomes a candidate ledger entry.
 
 ### People rings
@@ -157,17 +181,17 @@ When the user does not know a number, climb this ladder and stop at the first ru
    - Reach = attendees per session x sessions.
    - Dollar scope = value of the programs or portfolio the work supported.
    - Error reduction = defects found x consequence (for example, a unit error of 1,000x).
-   Propose the top of the plausible range, rounded up, phrased "over" or "approximately". Ask: "Does <estimate> sound defensible to you?" Record the basis line in the ledger.
+   Propose the top of the plausible range, rounded up, phrased "over" or "approximately". When an input is unknown (crew size, runs per month), use its defensible low end, phrase the result "over N" or "about N", and put the assumption in the basis. Ask: "Does <estimate> sound defensible to you?" Record the basis line in the ledger.
 4. **No number:** lean on scope, audience, and organizational level instead.
-Never estimate events, audiences, awards, or recognition.
+Never estimate events, audiences, awards, or recognition. A vague count the user states stays as stated ("about 40" stays "about 40") unless an Evidence rung supports more. Never add counts that may overlap (the same people in two sessions, the same program in two entries).
 
 ## Coverage grid and stop rule
 After each deep-dive, show the grid:
 
-| Factor | Ready entries | Weakest discriminators |
+| Factor | Ready entries (primary) | Weakest discriminators |
 |---|---|---|
 | JA | n | ... |
 | CT | n | ... |
 | MS | n | ... |
 
-Continue deep-dives until every factor has at least four `ready` entries (three plus a spare) or the user says "enough." Aim the next questions at the weakest factor and its uncovered discriminators.
+Count each `ready` entry once, under its primary factor (its strongest lens); a second-factor angle does not count. Continue deep-dives until every factor has at least four (three plus a spare), the sweeps and targeted questions turn up nothing new, or the user says "enough." Aim the next questions at the weakest factor and its uncovered discriminators.

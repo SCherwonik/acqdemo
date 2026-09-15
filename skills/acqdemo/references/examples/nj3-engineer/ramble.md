@@ -1,0 +1,4 @@
+So this year the big thing was the telemetry calibration rig. The old process took two technicians about three days per aircraft and I built a fixture plus a script that cut it to one day. We ran it on 11 aircraft for the Example Trainer program. I also found that two of the old reference sensors were drifting, which would have thrown off load data, and we swapped them before the March test window.
+I trained four technicians on the new rig, two from our branch and two from the range support contractor, Example Range Services. Wrote the procedure, 14 pages, and the branch chief signed it as the standard.
+Supported the June surge when three test points got pulled forward two weeks. Worked weekends twice to get the instrumentation installed.
+Presented the rig at the quarterly test community meeting, about 40 people, including the wing technical director.

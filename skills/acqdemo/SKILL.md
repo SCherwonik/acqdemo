@@ -25,21 +25,21 @@ Compare today's date with `paypool.md`:
 
 | Window | Stage | Next skill |
 |---|---|---|
-| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo-plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
-| After plan due, before midpoint window | Capture | `acqdemo-log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
-| Midpoint window | Midpoint | `acqdemo-midpoint` when available; until then, run `acqdemo-annual` with a minimum of one C-R-I per factor and no crib sheet |
+| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo-plan` |
+| After plan due, before midpoint window | Capture | `acqdemo-log` for each win (monthly, and after any briefing, release, or praise email) |
+| Midpoint window | Midpoint | `acqdemo-midpoint` |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
 | Mid-August to employee due date | Annual | `acqdemo-harvest`, then `acqdemo-annual` |
 | Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo-review` on the final text |
 | After the cycle ends | Next cycle | read next-cycle seeds from the working doc, then contribution plan |
 
-Always mention: days until the employee due date; any promotion inside the pay pool's promotion window; any position or supervisor change that needs a closeout.
+Always mention: days until the employee due date; any promotion inside the pay pool's promotion window; any position or supervisor change that needs a closeout (`acqdemo-midpoint` handles closeouts).
 
 ## Step 4: Inventory and resume
 Report briefly: profile completeness; pay pool overlay present; roster rows; for the current `FY<yy>/`: ledger entries by status, harvest snapshots, draft versions, final files. If `FY<yy>/session-state.md` has a `next_action`, offer to resume it.
 
 ## Step 5: Route
-Invoke the matching skill: `acqdemo-harvest`, `acqdemo-annual`, or `acqdemo-review`. For stages whose skill is not available yet, follow the interim approach in the table.
+Invoke the matching skill: `acqdemo-plan`, `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-harvest`, `acqdemo-annual`, or `acqdemo-review`.
 
 ## Safety
 - The workspace is private; names never appear in paste-ready text; classified information never enters any file or conversation.

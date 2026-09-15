@@ -1,0 +1,13 @@
+I am fully certified in ENG (Practitioner) as of 12 Mar 2025 and have completed 42 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.
+
+C: Applied the new calibration rig to 11 aircraft for a trainer aircraft program.
+R: Saved over 40 technician-days, about 350 labor hours, compared with the old two-technician, three-day process.
+I: Minimized technician resource expenditures across an aircraft program and returned that capacity to the wing's test schedule, supporting accurate, on-time flight test data for program customers.
+
+C: Anticipated a data accuracy risk from two drifting reference sensors and ensured both were replaced ahead of the March test window.
+R: Load data collected in the March test window came from stable references rather than drifting sensors.
+I: Met the customer's core need for accurate flight test data and avoided invalid load data that could have forced test points to be repeated, protecting program cost and schedule.
+
+C: Supported the June surge when three test points moved two weeks earlier, shifting instrumentation installs to the accelerated dates.
+R: Completed instrumentation installs for the three accelerated test points.
+I: Absorbed a two-week schedule acceleration at the branch level, helping the wing hold the program's revised test schedule.
