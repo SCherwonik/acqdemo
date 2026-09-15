@@ -121,6 +121,7 @@ Exit code 1 if any CRITICAL finding, otherwise 0.
 from __future__ import annotations
 
 import argparse
+import codecs
 import json
 import re
 import sys
@@ -386,12 +387,12 @@ def check_length(factor: Factor) -> list[Finding]:
 
 def read_text(path: Path) -> str:
     data = path.read_bytes()
-    for encoding in ("utf-8-sig", "utf-16", "cp1252"):
-        try:
-            return data.decode(encoding)
-        except UnicodeError:
-            continue
-    return data.decode("utf-8", "replace")
+    if data.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
+        return data.decode("utf-16")
+    try:
+        return data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return data.decode("cp1252", errors="replace")
 
 
 def run_checks(folder: Path, min_wri: int, acq: bool = False, fm: bool = False,
@@ -733,12 +734,22 @@ def test_missing_factor_file(tmp_path):
     folder = write_dir(tmp_path)
     (folder / "Mission Support.txt").unlink()
     assert check.main(["--dir", str(folder)]) == 1
+
+
+def test_read_text_handles_utf16_bom_and_cp1252(tmp_path):
+    import codecs
+    utf16 = tmp_path / "u16.txt"
+    utf16.write_bytes(codecs.BOM_UTF16_LE + "W: Built it.\n".encode("utf-16-le"))
+    assert check.read_text(utf16).startswith("W: Built it.")
+    cp = tmp_path / "cp.txt"
+    cp.write_bytes("W: Led the director’s review.\n".encode("cp1252"))
+    assert "director’s" in check.read_text(cp)
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 4 new tests FAIL with `AttributeError: module 'check' has no attribute 'main'`.
+Expected: 5 new tests FAIL with `AttributeError: module 'check' has no attribute 'main'`.
 
 - [ ] **Step 3: Append loaders, report, and `main`**
 
@@ -801,7 +812,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
-Expected: 27 passed.
+Expected: 28 passed.
 
 - [ ] **Step 5: Smoke-test the CLI by hand**
 
