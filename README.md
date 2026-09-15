@@ -4,6 +4,7 @@ A recipe, a set of Claude Code skills, and supporting tools that help a Departme
 
 You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready C-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
 
+
 ---
 
 ## Table of contents
@@ -36,11 +37,13 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | PII pre-commit guard (`tools/hooks/`) with tests | Done |
 | Private-to-public mirror tool (`tools/sync/`) with tests | Done |
 | Reference documents (descriptors, CCAS guidance, business rules, training deck) | Included |
-| Implementation plan for Wave 1 | In progress |
-| **Wave 1 skills:** `acqdemo` (router), `acqdemo-harvest`, `acqdemo-annual`, `acqdemo-review` + shared references | Planned |
+| Implementation plan for Wave 1 | Done |
+| **Wave 1 skills:** `acqdemo` (router), `acqdemo-harvest`, `acqdemo-annual`, `acqdemo-review` + shared references | Done |
+| Validation records (`docs/superpowers/validation/`): personas, trigger tests, backtest, dry run | Planned |
 | **Wave 2 skills:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan` | Planned |
 
-Until the skills ship, this repo is useful as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+Wave 1 skills are installable as a Claude Code plugin (Section 10.5). Wave 2 skills and the validation records come next. The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+
 
 ---
 
@@ -373,6 +376,7 @@ skills/
 templates/            profile.md, paypool.md
 ```
 
+
 ---
 
 ## 10. Getting started
@@ -410,8 +414,22 @@ python -m pytest
 4. Put your own documents in the workspace, including a calendar export (Section 6.4). Keep personnel forms (SF-50, SF-52), appraisal PDFs, and resumes out of git entirely; the `.gitignore` and hook block the common ones. The hook does not detect coworker names, so list personal files in `tools/sync/personal-paths.txt` before syncing anything public.
 5. Once the skills ship, add `profile.md` and `paypool.md` from `templates/`.
 
-### 10.5 Install the skills (once Wave 1 ships)
-The repository will include a Claude Code plugin manifest. Installation instructions will be added here with the first release.
+### 10.5 Install the skills
+
+From a terminal with Claude Code installed:
+
+    claude plugin marketplace add SCherwonik/acqdemo
+    claude plugin install acqdemo@acqdemo
+
+Restart Claude Code, open your private workspace folder, and say: "Where am I in the AcqDemo cycle?"
+
+To update later:
+
+    claude plugin marketplace update acqdemo
+    claude plugin update acqdemo@acqdemo
+
+Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
+
 
 ---
 

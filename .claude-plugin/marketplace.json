@@ -1,0 +1,18 @@
+{
+  "name": "acqdemo",
+  "description": "Marketplace for the AcqDemo evaluation toolkit",
+  "owner": {
+    "name": "SCherwonik"
+  },
+  "plugins": [
+    {
+      "name": "acqdemo",
+      "description": "AcqDemo evaluation toolkit: recall-first intake, evidence ledger, C-R-I drafting, and compliance review for contribution plans, midpoint and annual self-assessments.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "SCherwonik"
+      }
+    }
+  ]
+}

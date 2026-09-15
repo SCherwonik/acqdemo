@@ -27,3 +27,7 @@ tests/backtest-*/scratch/
 __pycache__/
 .pytest_cache/
 
+
+# Git worktrees for isolated builds
+.worktrees/
+

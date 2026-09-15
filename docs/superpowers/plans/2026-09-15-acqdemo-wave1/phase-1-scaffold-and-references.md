@@ -243,6 +243,8 @@ Available only to employees in the top broadband level of their career path, and
 | NJ | IV | 87, 91, 95 | 79-83 |
 | NK | III | 64, 67, 70 | 57-61 |
 
+Note: only the NH eligibility band (96-100) is stated in the source documents. The NJ (79-83) and NK (57-61) bands are inferred from the same pattern; verify them with your pay pool before relying on them.
+
 ## Categorical scores
 
 Each factor also receives a categorical score made of the level number and a position within the level: L (low), M (mid), or H (high). Examples: 3H, 4M. Categorical scores stay consistent with the employee's broadband level.
@@ -310,6 +312,7 @@ FACTORS = [
     ("Factor 2: Communication and/or Teamwork", "CT"),
     ("Factor 3: Mission Support", "MS"),
 ]
+CAREER_PATH_RE = re.compile(r"CAREER PATH:[^\n]*?\((NH|NJ|NK)\)")
 DISCRIMINATORS = {
     "JA": "Leadership Role; Mentoring/Employee Development; Accountability; Complexity/Difficulty; Creativity; Scope/Impact",
     "CT": "Oral; Written; Contribution to Team; Effectiveness",
@@ -354,12 +357,21 @@ def tokens(text):
 
 
 @pytest.fixture(scope="module")
-def pdf_tokens():
+def pdf_sections():
     exe = scan_pii.find_pdftotext()
     if exe is None:
         pytest.skip("pdftotext not installed")
     out = subprocess.run([exe, "-raw", str(PDF), "-"], capture_output=True, check=True)
-    return tokens(out.stdout.decode("utf-8", "replace"))
+    text = out.stdout.decode("utf-8", "replace")
+    matches = list(CAREER_PATH_RE.finditer(text))
+    sections = {}
+    for i, m in enumerate(matches):
+        start = m.start()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        key = m.group(1).lower()
+        sections[key] = sections.get(key, "") + text[start:end]
+    assert set(sections) == {"nh", "nj", "nk"}
+    return {key: tokens(section_text) for key, section_text in sections.items()}
 
 
 def appears_in_order(haystack, needle, slack=3):
@@ -405,9 +417,9 @@ def test_structure(path):
 
 
 @pytest.mark.parametrize("path", sorted(EXPECTED))
-def test_bullets_faithful_to_pdf(path, pdf_tokens):
+def test_bullets_faithful_to_pdf(path, pdf_sections):
     text = (DESC / f"{path}.md").read_text(encoding="utf-8")
-    unfaithful = [b for b in bullets(text) if not appears_in_order(pdf_tokens, tokens(b))]
+    unfaithful = [b for b in bullets(text) if not appears_in_order(pdf_sections[path], tokens(b))]
     assert not unfaithful, f"{path}: bullets not found in PDF: {unfaithful[:3]}"
 ```
 
