@@ -570,8 +570,5 @@ The skills run in your Claude Code session. Your files stay where you keep them.
 
 ---
 
-## 17. Credits and disclaimer
-
-- Builds on [gocyclic249/AcqDemo_Prompt](https://github.com/gocyclic249/AcqDemo_Prompt).
-- Designed and written with Claude (Anthropic).
+## 17. Disclaimer
 - **This is not an official DoD or Department of the Air Force product.** Rules summarized here are for orientation only and vary by pay pool and year. Always follow your pay pool's current business rules, guidance, and your supervisor's direction. You are responsible for the accuracy of everything you submit.
