@@ -52,7 +52,7 @@ Writing an AcqDemo self-assessment is mostly a **recall** problem, not a writing
 - The details that win points at the pay pool panel are rarely written down: dollar values, who was in the room, how many people used your work, what decision it fed, what it replaced.
 - Paste-in prompts ask one round of questions and stop. If you did not remember it before the prompt, it does not make it into the assessment.
 
-This project started from the excellent [gocyclic249/AcqDemo_Prompt](https://github.com/gocyclic249/AcqDemo_Prompt), a set of copy-paste prompts for C-R-I statements, contribution plans, supervisor narratives, and format review. This toolkit keeps what works there (strict C-R-I format, no invented facts, CAS2Net-ready plain text) and adds:
+Copy-paste prompt tools for C-R-I statements work, but they stop too early. This toolkit keeps what works in that approach (strict C-R-I format, no invented facts, CAS2Net-ready plain text) and adds:
 
 - **Conversation instead of a form.** Ramble by voice; the assistant extracts the facts.
 - **Unlimited, deeper questions.** Numbered so you can answer by voice ("number four: ...").
@@ -356,8 +356,7 @@ Dates come from your pay pool overlay (`paypool.md`); the defaults below match t
 ├── 2026 AcqDemo_CCAS_Assessments_Checklist.pdf
 ├── Acqdemo Business Rules/2025 AcqDemo Business Rules.pdf
 ├── MidPoint Review - 2023.pptx
-├── Important Rules to Consider.txt
-└── Github Link.txt
+└── Important Rules to Consider.txt
 ```
 
 Planned plugin layout (Wave 1 and 2):
@@ -513,7 +512,6 @@ Planned skill validation (from the design spec):
 | `Acqdemo Business Rules/2025 AcqDemo Business Rules.pdf` | One pay pool's signed 2025 business rules: roles, funding, CAS2Net rules, special situations, compensation, timeline | Rules change yearly; get your pay pool's current version |
 | `MidPoint Review - 2023.pptx` | Training deck on writing CCAS assessments, C-R-I examples, and significant-accomplishment characteristics | Older but still instructive |
 | `Important Rules to Consider.txt` | Short writing tips and a continuous-learning status template | |
-| `Github Link.txt` | Link to the prompt collection this project builds on | |
 
 ---
 
