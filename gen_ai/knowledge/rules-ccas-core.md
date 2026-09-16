@@ -3,7 +3,7 @@
 > Platform note. This copy is for an agent with no file system. Where the text below names a
 > workspace file or folder such as `profile.md`, `paypool.md`, `roster.md`, `ledger.md`, or
 > `FY<yy>/evidence/`, read it as a block of text kept in the conversation: the assistant
-> re-emits those blocks at the end of every round and the user keeps them in a document of
+> shows those blocks at each checkpoint and the user keeps them in a document of
 > their own. Source documents are uploaded in the chat rather than saved into folders. Field
 > names, allowed values, and every rule below are unchanged.
 

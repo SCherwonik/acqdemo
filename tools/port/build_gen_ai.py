@@ -558,9 +558,9 @@ is lost when the conversation ends.
         "ledger-format.md",
         "## Session state",
         """## The two blocks the user saves
-The workspace is two fenced blocks in the conversation. Re-emit both at the end of every round
-so the user can save them and paste them back to resume. There is no third block, and nothing
-else is saved.
+The workspace is two fenced blocks in the conversation. Show both in full at each checkpoint,
+so the user can read what was recorded and keep a copy to paste back. There is no third block,
+and nothing else is saved.
 
 **1. The ledger block.** It may open with its `# Ledger FY<yy>` title line, and after that it
 holds `## L-NNN` entries in the format below and nothing else. Session state, profile, pay pool,
@@ -619,7 +619,7 @@ WORKSPACE_TOKENS = (
 PLATFORM_NOTE = """> Platform note. This copy is for an agent with no file system. Where the text below names a
 > workspace file or folder such as `profile.md`, `paypool.md`, `roster.md`, `ledger.md`, or
 > `FY<yy>/evidence/`, read it as a block of text kept in the conversation: the assistant
-> re-emits those blocks at the end of every round and the user keeps them in a document of
+> shows those blocks at each checkpoint and the user keeps them in a document of
 > their own. Source documents are uploaded in the chat rather than saved into folders. Field
 > names, allowed values, and every rule below are unchanged.
 """
