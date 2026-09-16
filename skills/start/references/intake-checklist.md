@@ -31,7 +31,7 @@ Record the answer in `profile.md` (`first_cycle`, entry date, supervisors and da
 
 If the user does not have either one saved, both come out of CAS2Net; the click-by-click steps, and which sections to tick, are in `getting-your-documents.md`.
 
-Read them with `../scripts/doc_text.py` (pdf, docx, pptx, txt, md). Long export PDFs read in page ranges. If a format will not open, ask the user to paste the text instead; never make them retype a document.
+Pull the last completed cycle's salary appraisal with every section checked: one file holds that cycle's employee and supervisor assessments, its midpoint, its closeout, the plan it ran under, and the scores. Steps are in `getting-your-documents.md`. Read them with `../scripts/doc_text.py` (pdf, docx, pptx, txt, md). Long export PDFs read in page ranges. If a format will not open, ask the user to paste the text instead; never make them retype a document.
 
 ## Then these, if they exist
 | Item | Where it goes | What it buys |

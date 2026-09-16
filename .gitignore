@@ -31,3 +31,6 @@ __pycache__/
 # Git worktrees for isolated builds
 .worktrees/
 
+
+# CAS2Net exports: appraisal PDFs, CUI and salary detail
+CAS2NET/

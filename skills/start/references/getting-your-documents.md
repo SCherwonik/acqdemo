@@ -6,14 +6,19 @@ Walk this with the user only when they say they cannot find a document. If they 
 
 ## What to pull, by task
 
+Pull the **salary appraisal for the last completed cycle first**, with every section checked. It is one file that already contains that cycle's employee assessment, the supervisor assessment, the midpoint, the closeout, the contribution plan it ran under, and the scores. Pulling the individual reports for that same cycle afterwards adds nothing.
+
 | Writing this | Pull these |
 |---|---|
-| Annual assessment | The previous cycle's **Annual Assessment** with both the employee and the supervisor sections, this cycle's **Midpoint Assessment**, and this cycle's **Contribution Plan** |
-| Midpoint assessment | The previous cycle's **Annual Assessment**, and this cycle's **Contribution Plan** |
-| Contribution plan | The Position Requirements Document (PRD), which does not live in CAS2Net, and the prior cycle's **Contribution Plan** |
-| Closeout assessment | This cycle's **Contribution Plan**, and any **Midpoint Assessment** already written this cycle |
+| **Annual assessment** | 1. Last completed cycle: **Salary Appraisal**, Check All. 2. Current cycle: **Midpoint Assessment**, **Contribution Plan**, and the **Closeout Assessment** if a supervisor or position changed. |
+| **Midpoint assessment** | 1. Last completed cycle: **Salary Appraisal**, Check All. 2. Current cycle: **Contribution Plan**, and any **Closeout Assessment** already written. |
+| **Contribution plan** | The Position Requirements Document (PRD), which does not live in CAS2Net, plus the prior cycle's **Contribution Plan** (inside the salary appraisal) and the last **Annual Assessment** for the language that scored well. |
+| **Closeout assessment** | This cycle's **Contribution Plan**, and any **Midpoint Assessment** already written this cycle. |
 
-The salary appraisal is worth pulling once in any of these cases: it carries the expected contribution score and the value of position that the profile needs.
+A first-cycle employee has none of the prior-cycle documents. Pull this cycle's contribution plan and stop; the intake asks a few position questions instead.
+
+If the salary appraisal for the last completed cycle is unavailable, fall back to the individual reports for that fiscal year: **Annual Assessment** with both the employee and supervisor sections, then **Midpoint Assessment**, then **Closeout Assessment**.
+
 
 ## Fiscal Year Based Reports
 
@@ -49,6 +54,9 @@ Which to tick for each purpose:
 
 1. **Employee > Salary Appraisal** shows the current cycle's appraisal.
 2. **Employee > Archived Appraisals** lists earlier ones, one per completed cycle. Open the cycle wanted and save it.
+3. A dialog opens, **Select Salary Appraisal Form Sections**, offering **Check All** and these sections: **Part I CCAS Salary Appraisal** (always included), **include Compensation Detail**, **Part II Supervisor Assessment**, **include Employee Assessment**, **Midpoint Assessment**, and **Closeout Assessment**. Take **Check All** unless the user objects to pay figures being in the file, then **Continue**.
+
+Exported files are named for what they hold, for example EmployeeSalaryAppraisal_<year>_<name>.pdf, EmployeeAnnualReview_<year>.pdf, EmployeeMidpointReview_<year>.pdf, EmployeeContributionPlan_<year>.pdf, and EmployeeCloseoutReview_<year>.pdf. The salary appraisal runs several times longer than the others because it contains them.
 
 That document is the single richest source for the profile. It usually holds the prior assessments, the scores awarded, the expected contribution score (EOCS) for the broadband level, the value of position, and often the contribution plan that cycle ran under. It also carries pay figures, so the file itself is sensitive.
 
