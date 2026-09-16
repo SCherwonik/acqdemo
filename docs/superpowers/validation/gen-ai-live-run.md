@@ -88,6 +88,24 @@ Ranked. Each names the file that owns it.
     as the promotion case requires, and a conflict between documents is asked about rather than
     concatenated.*
 
+12. **Evidence lines do not track where a fact came from.** Three instances, one shape. A calendar
+    entry cited a filename the agent had not read. An entry corrected from the user's own answers
+    kept an `evidence:` line naming the document that does not contain them. A transition date was
+    inferred from the date a document was created and written as fact. A claim the employee will
+    defend in a panel has to say where it came from, and "the user said so on this date" is a
+    legitimate source that the format allows and the agent does not reach for. *Fix:
+    `ledger-keeper.md` and `document-extractor.md` require the evidence line to name the actual
+    origin, including the user and the date when the user is the origin, and forbid inferring a
+    date from a document's own date.*
+13. **`current_entry` held a value that is not an entry id.** Minor, but the resume path reads it.
+    *Fix: the workspace skeleton says it is one id or blank.*
+
+## Watch, not yet a finding
+A supervisor's full name appeared that the user had not supplied, in a run where other full names
+plausibly came from an uploaded PDF. Unverified either way. If the name was not in a document it is
+a fabrication of a person's name, which is the one thing the never-miss rules forbid outright, and
+it would be the most serious finding of the run.
+
 ## What the run has proved about the deterministic layer
 Every defect above is one a well-formed document passes cleanly: a stale certification statement, a
 wrong broadband level, an invented date, a role verb the calendar does not support. None of them can
