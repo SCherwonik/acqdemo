@@ -11,14 +11,14 @@ Validation records go in `docs/superpowers/validation/` (general, mirrored). Any
 ### Task 21: Fictional personas and example regression test (test D)
 
 **Files:**
-- Create: `skills/acqdemo/references/examples/nj3-engineer/profile.md`
-- Create: `skills/acqdemo/references/examples/nj3-engineer/ramble.md`
-- Create: `skills/acqdemo/references/examples/nk2-admin/profile.md`
-- Create: `skills/acqdemo/references/examples/nk2-admin/ramble.md`
-- Create: `skills/acqdemo/references/examples/nh2-supervisor/profile.md`
-- Create: `skills/acqdemo/references/examples/nh2-supervisor/ramble.md`
-- Create: `skills/acqdemo/references/examples/<persona>/final/` (three factor files each, produced in Step 4)
-- Create: `skills/acqdemo/references/examples/<persona>/flags.txt`
+- Create: `skills/start/references/examples/nj3-engineer/profile.md`
+- Create: `skills/start/references/examples/nj3-engineer/ramble.md`
+- Create: `skills/start/references/examples/nk2-admin/profile.md`
+- Create: `skills/start/references/examples/nk2-admin/ramble.md`
+- Create: `skills/start/references/examples/nh2-supervisor/profile.md`
+- Create: `skills/start/references/examples/nh2-supervisor/ramble.md`
+- Create: `skills/start/references/examples/<persona>/final/` (three factor files each, produced in Step 4)
+- Create: `skills/start/references/examples/<persona>/flags.txt`
 - Create: `tests/test_examples.py`
 - Create: `docs/superpowers/validation/personas.md`
 
@@ -61,7 +61,7 @@ Expected: FAIL in `test_three_personas_exist` (no examples yet).
 
 - [ ] **Step 3: Create the persona inputs**
 
-Create `skills/acqdemo/references/examples/nj3-engineer/profile.md`:
+Create `skills/start/references/examples/nj3-engineer/profile.md`:
 
 ```markdown
 # Profile
@@ -88,7 +88,7 @@ Create `skills/acqdemo/references/examples/nj3-engineer/profile.md`:
 - two_levels_up: Provide developmental test capabilities that keep weapon systems on schedule.
 ```
 
-Create `skills/acqdemo/references/examples/nj3-engineer/ramble.md`:
+Create `skills/start/references/examples/nj3-engineer/ramble.md`:
 
 ```markdown
 So this year the big thing was the telemetry calibration rig. The old process took two technicians about three days per aircraft and I built a fixture plus a script that cut it to one day. We ran it on 11 aircraft for the Example Trainer program. I also found that two of the old reference sensors were drifting, which would have thrown off load data, and we swapped them before the March test window.
@@ -97,7 +97,7 @@ Supported the June surge when three test points got pulled forward two weeks. Wo
 Presented the rig at the quarterly test community meeting, about 40 people, including the wing technical director.
 ```
 
-Create `skills/acqdemo/references/examples/nk2-admin/profile.md`:
+Create `skills/start/references/examples/nk2-admin/profile.md`:
 
 ```markdown
 # Profile
@@ -117,7 +117,7 @@ Create `skills/acqdemo/references/examples/nk2-admin/profile.md`:
 - two_levels_up: Sustain logistics readiness for field units.
 ```
 
-Create `skills/acqdemo/references/examples/nk2-admin/ramble.md`:
+Create `skills/start/references/examples/nk2-admin/ramble.md`:
 
 ```markdown
 I run the director's calendar and the suspense tracker. This year I moved the tracker from a shared spreadsheet to a SharePoint list with automatic reminders. Overdue taskers went from around 25 a month to about 6.
@@ -126,7 +126,7 @@ I trained the three new admin assistants in the division offices on the tracker 
 When the building move happened in August I made the seating plan for 140 people and kept the phone list updated every day for two weeks.
 ```
 
-Create `skills/acqdemo/references/examples/nh2-supervisor/profile.md`:
+Create `skills/start/references/examples/nh2-supervisor/profile.md`:
 
 ```markdown
 # Profile
@@ -153,7 +153,7 @@ Create `skills/acqdemo/references/examples/nh2-supervisor/profile.md`:
 - two_levels_up: Deliver acquisition solutions that sustain installation operations.
 ```
 
-Create `skills/acqdemo/references/examples/nh2-supervisor/ramble.md`:
+Create `skills/start/references/examples/nh2-supervisor/ramble.md`:
 
 ```markdown
 I lead a team of four contract specialists plus one contractor who does closeouts. We awarded 23 service contracts worth about $41M this year, including the base custodial recompete that was at risk of a gap.
@@ -165,7 +165,7 @@ I briefed the mission support group commander twice on the contract pipeline.
 
 Create a roster for each persona. These fictional names must never appear in that persona's factor files; the regression test passes the roster to the checker to prove it.
 
-`skills/acqdemo/references/examples/nj3-engineer/roster.md`:
+`skills/start/references/examples/nj3-engineer/roster.md`:
 
 ```markdown
 # Roster
@@ -177,7 +177,7 @@ Create a roster for each persona. These fictional names must never appear in tha
 | leadership | Dana Whitcomb | Example Test Wing | technical director | quarterly test community briefing | once | |
 ```
 
-`skills/acqdemo/references/examples/nk2-admin/roster.md`:
+`skills/start/references/examples/nk2-admin/roster.md`:
 
 ```markdown
 # Roster
@@ -188,7 +188,7 @@ Create a roster for each persona. These fictional names must never appear in tha
 | other division | Robin Castellano | Maintenance Division | admin assistant | tracker and travel order training | 2 sessions | |
 ```
 
-`skills/acqdemo/references/examples/nh2-supervisor/roster.md`:
+`skills/start/references/examples/nh2-supervisor/roster.md`:
 
 ```markdown
 # Roster
@@ -200,12 +200,12 @@ Create a roster for each persona. These fictional names must never appear in tha
 | leadership | Chris Delgado | Mission Support Group | commander | contract pipeline briefings | 2 briefings | |
 ```
 
-Create `skills/acqdemo/references/examples/nj3-engineer/flags.txt` with `--mode annual --acq-cert`, `skills/acqdemo/references/examples/nk2-admin/flags.txt` with `--mode annual`, and `skills/acqdemo/references/examples/nh2-supervisor/flags.txt` with `--mode annual --fm-cert --supervisor`.
+Create `skills/start/references/examples/nj3-engineer/flags.txt` with `--mode annual --acq-cert`, `skills/start/references/examples/nk2-admin/flags.txt` with `--mode annual`, and `skills/start/references/examples/nh2-supervisor/flags.txt` with `--mode annual --fm-cert --supervisor`.
 
 - [ ] **Step 4: Run each persona through the annual skill**
 
 For each persona, in a fresh Claude Code session with the plugin installed (Task 20):
-1. Copy the persona folder to a scratch workspace outside the repo and copy `skills/acqdemo/templates/paypool.md` into it unchanged.
+1. Copy the persona folder to a scratch workspace outside the repo and copy `skills/start/templates/paypool.md` into it unchanged.
 2. Say: "Let's do my annual. My workspace is <scratch path>."
 3. Answer the brain dump with the persona's `ramble.md` text. Answer later questions only from the ramble; say "I don't know" for anything else; approve reasonable estimates.
 4. Continue to Step 8 (finalize).
@@ -216,7 +216,7 @@ Acceptance for each persona:
 - At least three C-R-I per factor; no fictional person names in the factor files; every number traces to the ramble or an approved estimate recorded in the ledger.
 - `check.py` with the persona's flags reports 0 CRITICAL.
 
-Copy each scratch workspace's `FY26/final/` three factor files into `skills/acqdemo/references/examples/<persona>/final/`.
+Copy each scratch workspace's `FY26/final/` three factor files into `skills/start/references/examples/<persona>/final/`.
 
 - [ ] **Step 5: Run the regression test**
 
@@ -228,7 +228,7 @@ Expected: 4 passed.
 Create `docs/superpowers/validation/personas.md` with a table of persona, descriptor file used, target level, C-R-I per factor, CRITICAL/WARNING counts, and any skill instruction changes made to reach acceptance (with the reason for each).
 
 ```bash
-git add skills/acqdemo/references/examples tests/test_examples.py docs/superpowers/validation/personas.md
+git add skills/start/references/examples tests/test_examples.py docs/superpowers/validation/personas.md
 git commit -m "test: add fictional persona examples and checker regression test"
 ```
 
@@ -285,7 +285,7 @@ In a Claude Code session: "Review the draft in `tests/backtest-known/<cycle>/` a
 
 - [ ] **Step 3: Evaluate**
 
-Pass if every expected finding is reported and the fix loop produces a new version with 0 CRITICAL without inventing facts. For each miss, adjust `skills/acqdemo-review/SKILL.md` (judgment instructions) or, for a countable rule, add a failing unit test to `test_check.py` and fix `check.py`.
+Pass if every expected finding is reported and the fix loop produces a new version with 0 CRITICAL without inventing facts. For each miss, adjust `skills/review/SKILL.md` (judgment instructions) or, for a countable rule, add a failing unit test to `test_check.py` and fix `check.py`.
 
 - [ ] **Step 4: Record and commit**
 
@@ -314,7 +314,7 @@ Write `tests/backtest-fy25/simulated-employee.md`: instructions for a subagent t
 
 - [ ] **Step 3: Run the annual skill against the simulated employee**
 
-Dispatch one subagent running the `acqdemo-annual` skill in `tests/backtest-fy25/workspace/` and relay each question to a second subagent following `simulated-employee.md`. Continue to Step 8 (finalize).
+Dispatch one subagent running the `acqdemo:annual` skill in `tests/backtest-fy25/workspace/` and relay each question to a second subagent following `simulated-employee.md`. Continue to Step 8 (finalize).
 
 - [ ] **Step 4: Score**
 

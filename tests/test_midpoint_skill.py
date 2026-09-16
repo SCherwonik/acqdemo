@@ -1,4 +1,4 @@
-"""Content checks for the acqdemo-midpoint SKILL.md.
+"""Content checks for the midpoint SKILL.md.
 
 Frontmatter and relative-path validity are covered generically for every
 skill by tests/test_plugin_structure.py. This file checks the anchors and
@@ -7,7 +7,7 @@ exclusions specific to Task W2-2.
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "acqdemo-midpoint" / "SKILL.md"
+SKILL = ROOT / "skills" / "midpoint" / "SKILL.md"
 
 REQUIRED_ANCHORS = [
     "--mode midpoint",
@@ -49,7 +49,7 @@ def test_crib_sheet_mentioned_only_as_exclusion():
 
 def test_references_annual_instead_of_copying():
     text = _read_skill()
-    assert "../acqdemo-annual/SKILL.md" in text
+    assert "../annual/SKILL.md" in text
     # It should not re-list the annual's own step bodies (e.g. the brain
     # dump prompt text); a light heuristic is that this file stays short.
     assert len(text.splitlines()) < 80

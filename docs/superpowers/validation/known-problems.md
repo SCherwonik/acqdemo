@@ -1,6 +1,6 @@
 # Known Problems Validation (Test B)
 
-Validates the review skill (`skills/acqdemo-review/`) against two real prior
+Validates the review skill (`skills/review/`) against two real prior
 submissions that are known to have specific problems: a deterministic-checker
 pass (`check.py`) plus the judgment layer described in `SKILL.md` Step 2.
 Each folder was compared against a pre-recorded table of expected findings.

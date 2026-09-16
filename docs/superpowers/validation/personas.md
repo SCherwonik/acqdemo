@@ -3,11 +3,11 @@
 Date: 2026-09-15. Every name, organization, program, and number in the personas is invented.
 
 ## How the sessions were run
-The sessions were **simulated by an agent**, not run as live Claude Code sessions with the installed plugin. The agent read `skills/acqdemo-annual/SKILL.md` and followed Steps 0 through 8 in order, opening each reference the skill names (`question-bank.md`, `writing-style.md`, `ledger-format.md`, `levels.md`, `rules/ccas-core.md`, `cert-templates.md`, the persona's descriptor file, and the templates), and ran `acqdemo-review` (checker plus judgment checks) at Step 7.
+The sessions were **simulated by an agent**, not run as live Claude Code sessions with the installed plugin. The agent read `skills/annual/SKILL.md` and followed Steps 0 through 8 in order, opening each reference the skill names (`question-bank.md`, `writing-style.md`, `ledger-format.md`, `levels.md`, `rules/ccas-core.md`, `cert-templates.md`, the persona's descriptor file, and the templates), and ran `acqdemo:review` (checker plus judgment checks) at Step 7.
 
-- Workspace: each persona folder copied to a scratch folder outside the repo, plus `skills/acqdemo/templates/paypool.md` unchanged.
+- Workspace: each persona folder copied to a scratch folder outside the repo, plus `skills/start/templates/paypool.md` unchanged.
 - The simulated user answered every question only from the persona's `ramble.md`. Anything the ramble does not cover was answered "I don't know". Proposed estimates were approved and recorded in the ledger with a basis. "What else does that bring to mind?" was always answered "I don't know", which the agent treated as "enough" for the Step 4 stop rule.
-- Each session produced `FY26/ledger.md`, `FY26/session-state.md`, `FY26/rambles/`, draft versions, `FY26/final/` (three factor files and `FY26 working doc.md`), and a session log. Only the three final factor files are committed, to `skills/acqdemo/references/examples/<persona>/final/`.
+- Each session produced `FY26/ledger.md`, `FY26/session-state.md`, `FY26/rambles/`, draft versions, `FY26/final/` (three factor files and `FY26 working doc.md`), and a session log. Only the three final factor files are committed, to `skills/start/references/examples/<persona>/final/`.
 - Checker flags: `--mode annual --min-entries 3 --what-label C --roster <roster.md>` plus the persona's `flags.txt`.
 
 ## Results

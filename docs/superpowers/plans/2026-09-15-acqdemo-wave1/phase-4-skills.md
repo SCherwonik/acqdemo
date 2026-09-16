@@ -4,18 +4,18 @@ Back to [plan index](../2026-09-15-acqdemo-wave1.md).
 
 Four `SKILL.md` files turn the references and scripts into guided sessions. The structure test from Task 1 (`tests/test_plugin_structure.py`) checks each file's frontmatter and that every backticked relative path it mentions exists. Behavior is validated in Phase 5 (personas, triggers, known problems, backtest, dry run).
 
-Path convention inside skills: paths are relative to the skill's own folder. Shared material is reached through `../acqdemo/references/...` and `../acqdemo/templates/...`. Workspace paths (the user's private folder) are written as `<workspace>/...` or `FY<yy>/...` and are never backticked relative paths.
+Path convention inside skills: paths are relative to the skill's own folder. Shared material is reached through `../start/references/...` and `../start/templates/...`. Workspace paths (the user's private folder) are written as `<workspace>/...` or `FY<yy>/...` and are never backticked relative paths.
 
 ---
 
 ### Task 16: Review skill
 
 **Files:**
-- Create: `skills/acqdemo-review/SKILL.md`
+- Create: `skills/review/SKILL.md`
 
 - [ ] **Step 1: Create the skill**
 
-Create `skills/acqdemo-review/SKILL.md`:
+Create `skills/review/SKILL.md`:
 
 ````markdown
 ---
@@ -30,7 +30,7 @@ Checks the three paste-ready factor files against the program rules and a pay po
 ## Inputs
 - A draft folder containing exactly `Job Achievement and Innovation.txt`, `Communication and Teamwork.txt`, and `Mission Support.txt` (usually `FY<yy>/drafts/v<N>/` or `FY<yy>/final/` in the user's private workspace). If the user pasted text instead, save it into those three files in a new `FY<yy>/drafts/v<N>/` folder first. Ask where the workspace is if unknown.
 - From the workspace when present: `profile.md`, `paypool.md`, `roster.md`, `FY<yy>/ledger.md`, `prior/`, and the current cycle's midpoint text.
-- Rules: `../acqdemo/references/writing-style.md`, `../acqdemo/references/rules/ccas-core.md`, `../acqdemo/references/levels.md`, and the user's career path file in `../acqdemo/references/descriptors/`.
+- Rules: `../start/references/writing-style.md`, `../start/references/rules/ccas-core.md`, `../start/references/levels.md`, and the user's career path file in `../start/references/descriptors/`.
 
 ## Step 1: Run the deterministic checker
 Build flags from the workspace:
@@ -101,12 +101,12 @@ INFO
 - [ ] **Step 2: Run the structure tests**
 
 Run: `python -m pytest tests/test_plugin_structure.py`
-Expected: 4 passed (manifest, marketplace, and the two parametrized checks for `acqdemo-review`).
+Expected: 4 passed (manifest, marketplace, and the two parametrized checks for `acqdemo:review`).
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/acqdemo-review/SKILL.md
+git add skills/review/SKILL.md
 git commit -m "feat(review): add acqdemo-review skill"
 ```
 
@@ -115,11 +115,11 @@ git commit -m "feat(review): add acqdemo-review skill"
 ### Task 17: Harvest skill
 
 **Files:**
-- Create: `skills/acqdemo-harvest/SKILL.md`
+- Create: `skills/harvest/SKILL.md`
 
 - [ ] **Step 1: Create the skill**
 
-Create `skills/acqdemo-harvest/SKILL.md`:
+Create `skills/harvest/SKILL.md`:
 
 ````markdown
 ---
@@ -136,9 +136,9 @@ Turns raw evidence into `candidate` ledger entries that the user confirms. Harve
 - `FY<yy>/evidence/calendar-*.txt`: calendar exports.
 - The current cycle's midpoint and closeout text, if saved in the workspace.
 - `<workspace>/prior/`: previous cycles, used only to flag overlap.
-- Ledger format: `../acqdemo/references/ledger-format.md`.
+- Ledger format: `../start/references/ledger-format.md`.
 
-If there is no workspace, ask for the rating period and sources, and offer the `acqdemo` skill's first-time setup.
+If there is no workspace, ask for the rating period and sources, and offer the `acqdemo:start` skill's first-time setup.
 
 ## Step 1: Git
 1. Ask which author names are the user's (commit names often differ between machines). Keep commits from other authors in the output; they show collaboration.
@@ -153,7 +153,7 @@ If there is no workspace, ask for the rating period and sources, and offer the `
    - Do not infer role, audience, or impact from git. Deep-dives supply those.
 
 ## Step 2: Calendar
-1. If no export exists, give the user the calendar export steps from `../acqdemo/references/question-bank.md` (section "Calendar export") and continue with other sources meanwhile.
+1. If no export exists, give the user the calendar export steps from `../start/references/question-bank.md` (section "Calendar export") and continue with other sources meanwhile.
 2. Run the calendar harvester at `scripts/calendar_harvest.py`:
    ```
    python "<this skill folder>/scripts/calendar_harvest.py" --file "FY<yy>/evidence/<export>.txt" --since <start> --until <end> --out "FY<yy>/harvest/<today>-calendar.md"
@@ -198,7 +198,7 @@ Expected: 6 passed.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/acqdemo-harvest/SKILL.md
+git add skills/harvest/SKILL.md
 git commit -m "feat(harvest): add acqdemo-harvest skill"
 ```
 
@@ -207,11 +207,11 @@ git commit -m "feat(harvest): add acqdemo-harvest skill"
 ### Task 18: Annual skill
 
 **Files:**
-- Create: `skills/acqdemo-annual/SKILL.md`
+- Create: `skills/annual/SKILL.md`
 
 - [ ] **Step 1: Create the skill**
 
-Create `skills/acqdemo-annual/SKILL.md`:
+Create `skills/annual/SKILL.md`:
 
 ````markdown
 ---
@@ -222,14 +222,14 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 # AcqDemo Annual Self-Assessment
 
 ## References (open when a step needs them)
-- Questions, sweeps, estimates: `../acqdemo/references/question-bank.md`
-- Writing rules: `../acqdemo/references/writing-style.md`
-- Data formats: `../acqdemo/references/ledger-format.md`
-- Levels and Very High: `../acqdemo/references/levels.md`
-- Program rules: `../acqdemo/references/rules/ccas-core.md`
-- Certification statements: `../acqdemo/references/cert-templates.md`
-- Descriptors (use the file for the user's career path): `../acqdemo/references/descriptors/`
-- Templates: `../acqdemo/templates/working-doc.md`, `../acqdemo/templates/session-state.md`, `../acqdemo/templates/roster.md`
+- Questions, sweeps, estimates: `../start/references/question-bank.md`
+- Writing rules: `../start/references/writing-style.md`
+- Data formats: `../start/references/ledger-format.md`
+- Levels and Very High: `../start/references/levels.md`
+- Program rules: `../start/references/rules/ccas-core.md`
+- Certification statements: `../start/references/cert-templates.md`
+- Descriptors (use the file for the user's career path): `../start/references/descriptors/`
+- Templates: `../start/templates/working-doc.md`, `../start/templates/session-state.md`, `../start/templates/roster.md`
 
 ## Operating rules
 - **Recall first.** Ask many numbered questions. No cap. End every round with "What else does that bring to mind?"
@@ -241,7 +241,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 - **Classified information:** if the user begins to share it, stop them and move on.
 
 ## Step 0: Load
-1. Find the workspace: the current directory if it holds `profile.md`, otherwise ask. If there is no profile, run the `acqdemo` skill's first-time setup first.
+1. Find the workspace: the current directory if it holds `profile.md`, otherwise ask. If there is no profile, run the `acqdemo:start` skill's first-time setup first.
 2. Read `profile.md`, `paypool.md`, and `FY<yy>/session-state.md`. If session state shows unfinished work, summarize it in two lines and continue from `next_action`.
 3. Create any missing pieces: `FY<yy>/rambles/`, `evidence/`, `harvest/`, `drafts/`, `final/`; `FY<yy>/ledger.md` starting with `# Ledger FY<yy>`; `FY<yy>/session-state.md` and `<workspace>/roster.md` from the templates.
 
@@ -252,7 +252,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
    - Special situations: a promotion inside `paypool.md` `promotion_window_days` (needs substantial justification), a position or supervisor change (closeouts exist), supervisory duties (supervisory paragraph), certifications (certification statements).
 
 ## Step 2: Harvest
-Run the `acqdemo-harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue.
+Run the `acqdemo:harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue.
 
 ## Step 3: Brain dump
 1. Say: "Tell me everything you worked on this cycle, in any order. Ramble; I'll organize it." Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
@@ -293,7 +293,7 @@ Write `FY<yy>/drafts/v1/` with the three factor files:
 3. If a promotion falls inside the pay pool's window, make continuity visible: higher-level contributions before and after the effective date, and sustained strategic work.
 
 ## Step 7: Review
-Run the `acqdemo-review` skill on `FY<yy>/drafts/v1/`. It writes fixes to new versions. Then take the user's edits by voice, write a new version, and review again. Loop until 0 CRITICAL and the user approves the text.
+Run the `acqdemo:review` skill on `FY<yy>/drafts/v1/`. It writes fixes to new versions. Then take the user's edits by voice, write a new version, and review again. Loop until 0 CRITICAL and the user approves the text.
 
 ## Step 8: Finalize
 1. Copy the approved version's three files to `FY<yy>/final/`.
@@ -317,7 +317,7 @@ Expected: 8 passed.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/acqdemo-annual/SKILL.md
+git add skills/annual/SKILL.md
 git commit -m "feat(annual): add acqdemo-annual skill"
 ```
 
@@ -326,11 +326,11 @@ git commit -m "feat(annual): add acqdemo-annual skill"
 ### Task 19: Router skill
 
 **Files:**
-- Create: `skills/acqdemo/SKILL.md`
+- Create: `skills/start/SKILL.md`
 
 - [ ] **Step 1: Create the skill**
 
-Create `skills/acqdemo/SKILL.md`:
+Create `skills/start/SKILL.md`:
 
 ````markdown
 ---
@@ -360,12 +360,12 @@ Compare today's date with `paypool.md`:
 
 | Window | Stage | Next skill |
 |---|---|---|
-| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo-plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
-| After plan due, before midpoint window | Capture | `acqdemo-log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
-| Midpoint window | Midpoint | `acqdemo-midpoint` when available; until then, run `acqdemo-annual` with a minimum of one C-R-I per factor and no crib sheet |
+| Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo:plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
+| After plan due, before midpoint window | Capture | `acqdemo:log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
+| Midpoint window | Midpoint | `acqdemo:midpoint` when available; until then, run `acqdemo:annual` with a minimum of one C-R-I per factor and no crib sheet |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
-| Mid-August to employee due date | Annual | `acqdemo-harvest`, then `acqdemo-annual` |
-| Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo-review` on the final text |
+| Mid-August to employee due date | Annual | `acqdemo:harvest`, then `acqdemo:annual` |
+| Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo:review` on the final text |
 | After the cycle ends | Next cycle | read next-cycle seeds from the working doc, then contribution plan |
 
 Always mention: days until the employee due date; any promotion inside the pay pool's promotion window; any position or supervisor change that needs a closeout.
@@ -374,7 +374,7 @@ Always mention: days until the employee due date; any promotion inside the pay p
 Report briefly: profile completeness; pay pool overlay present; roster rows; for the current `FY<yy>/`: ledger entries by status, harvest snapshots, draft versions, final files. If `FY<yy>/session-state.md` has a `next_action`, offer to resume it.
 
 ## Step 5: Route
-Invoke the matching skill: `acqdemo-harvest`, `acqdemo-annual`, or `acqdemo-review`. For stages whose skill is not available yet, follow the interim approach in the table.
+Invoke the matching skill: `acqdemo:harvest`, `acqdemo:annual`, or `acqdemo:review`. For stages whose skill is not available yet, follow the interim approach in the table.
 
 ## Safety
 - The workspace is private; names never appear in paste-ready text; classified information never enters any file or conversation.
@@ -392,7 +392,7 @@ Run: `python -m pytest`
 Expected: all pass.
 
 ```bash
-git add skills/acqdemo/SKILL.md
+git add skills/start/SKILL.md
 git commit -m "feat: add acqdemo router skill"
 ```
 
@@ -416,18 +416,18 @@ claude plugin marketplace add "<absolute path to the private workspace>"
 claude plugin install acqdemo@acqdemo
 claude plugin list
 ```
-Expected: `claude plugin list` shows `acqdemo` as installed and enabled.
+Expected: `claude plugin list` shows `acqdemo:start` as installed and enabled.
 
 - [ ] **Step 3: Verify skills load and shared paths resolve**
 
 Start a new Claude Code session in an empty scratch folder and send:
-1. "Where am I in the AcqDemo cycle?" Expected: the `acqdemo` skill loads and asks for the workspace folder.
-2. "Open the levels reference the acqdemo-annual skill uses and tell me the NH Level IV range." Expected: Claude reads `../acqdemo/references/levels.md` relative to the `acqdemo-annual` skill folder and answers `79-100`.
+1. "Where am I in the AcqDemo cycle?" Expected: the `acqdemo:start` skill loads and asks for the workspace folder.
+2. "Open the levels reference the acqdemo-annual skill uses and tell me the NH Level IV range." Expected: Claude reads `../start/references/levels.md` relative to the `acqdemo:annual` skill folder and answers `79-100`.
 3. "Run the review skill's checker with --help." Expected: `check.py` usage text.
 
 - [ ] **Step 4: If shared paths do not resolve**
 
-Record the base directory the skill loader reports for `acqdemo-annual`. If `../acqdemo/` does not exist next to it, install as personal skills instead (keeps the sibling layout):
+Record the base directory the skill loader reports for `acqdemo:annual`. If `../start/` does not exist next to it, install as personal skills instead (keeps the sibling layout):
 ```
 python -c "import shutil, pathlib; src=pathlib.Path('skills'); dst=pathlib.Path.home()/'.claude'/'skills'; [shutil.copytree(p, dst/p.name, dirs_exist_ok=True) for p in src.iterdir() if p.is_dir()]"
 ```

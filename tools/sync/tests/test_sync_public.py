@@ -118,7 +118,7 @@ ROOT_EXAMPLE = Path(__file__).resolve().parents[1] / "personal-paths.example.txt
         ("docs/FY26-notes.md", False),
         ("tests/backtest-fy25/draft.md", True),
         ("profile.md", True),
-        ("skills/acqdemo/templates/profile.md", False),
+        ("skills/start/templates/profile.md", False),
     ],
 )
 def test_is_excluded(rel, expected):
@@ -129,7 +129,7 @@ def test_is_excluded(rel, expected):
 def test_example_personal_paths_keep_skill_templates_public():
     patterns = sync_public.load_list(ROOT_EXAMPLE)
     for name in ("profile.md", "paypool.md", "roster.md"):
-        assert not sync_public.is_excluded(f"skills/acqdemo/templates/{name}", patterns), name
+        assert not sync_public.is_excluded(f"skills/start/templates/{name}", patterns), name
         assert sync_public.is_excluded(name, patterns), name
 
 

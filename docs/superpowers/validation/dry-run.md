@@ -22,14 +22,14 @@ Status: **partial.** A quick agent-driven run on 2026-09-15 proved the resume pa
 
 ## Open issues to fix
 1. Deep-dive wrote values outside the allowed lists (`role: sole developer`, `sustained: no`). Map answers to allowed values and run `ledger_check.py` after every ledger save, not only before `ready`.
-2. Deep-dive asked the user to paste PRD duties although `../acqdemo-plan/scripts/prd_text.py` can read the PRD; point the annual skill at it for `prd_duty`.
+2. Deep-dive asked the user to paste PRD duties although `../plan/scripts/prd_text.py` can read the PRD; point the annual skill at it for `prd_duty`.
 3. "What else does that bring to mind?" was dropped from a later round.
-4. The router suggested `acqdemo-harvest` to finish open ledger fields; unfinished deep-dives should resume in `acqdemo-annual` (or `acqdemo-midpoint`).
+4. The router suggested `acqdemo:harvest` to finish open ledger fields; unfinished deep-dives should resume in `acqdemo:annual` (or `acqdemo:midpoint`).
 5. The router led with the due-date warning and inventory; lead with the resume summary when `next_action` exists.
 6. Test isolation: headless test sessions started in an empty folder still found and wrote to the real workspace (trigger-check "log a win" runs). Future tests must name a scratch workspace explicitly, and skills should use only the workspace the user names or confirms.
 
 ## Retest after the fixes (2026-09-15)
-- Resume: a new session on a paused workspace opened directly on the unfinished deep-dive (entry, round 2), read the PRD duties itself with `prd_text.py`, and ended with the recall prompt. It did not send the user to `acqdemo-harvest`.
+- Resume: a new session on a paused workspace opened directly on the unfinished deep-dive (entry, round 2), read the PRD duties itself with `prd_text.py`, and ended with the recall prompt. It did not send the user to `acqdemo:harvest`.
 - Workspace scope: "log a win" in a folder with no `profile.md` now asks for the workspace path and writes nothing.
 
 ## Bug found during the retest

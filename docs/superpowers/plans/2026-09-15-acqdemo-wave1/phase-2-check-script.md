@@ -2,26 +2,26 @@
 
 Back to [plan index](../2026-09-15-acqdemo-wave1.md).
 
-`skills/acqdemo-review/scripts/check.py` enforces every countable writing rule. The review skill (Task 16) runs it; the annual skill runs it before finalizing. It is standard-library Python and importable for tests.
+`skills/review/scripts/check.py` enforces every countable writing rule. The review skill (Task 16) runs it; the annual skill runs it before finalizing. It is standard-library Python and importable for tests.
 
 Each task adds code to the same two files:
-- `skills/acqdemo-review/scripts/check.py`
-- `skills/acqdemo-review/scripts/tests/test_check.py`
+- `skills/review/scripts/check.py`
+- `skills/review/scripts/tests/test_check.py`
 
 ---
 
 ### Task 8: Constants, parsing, and character counting
 
 **Files:**
-- Create: `skills/acqdemo-review/scripts/check.py`
-- Create: `skills/acqdemo-review/scripts/tests/test_check.py`
+- Create: `skills/review/scripts/check.py`
+- Create: `skills/review/scripts/tests/test_check.py`
 
 - [ ] **Step 1: Write the failing tests (with shared helpers)**
 
-Create `skills/acqdemo-review/scripts/tests/test_check.py`:
+Create `skills/review/scripts/tests/test_check.py`:
 
 ```python
-"""Tests for skills/acqdemo-review/scripts/check.py."""
+"""Tests for skills/review/scripts/check.py."""
 import json
 import sys
 from pathlib import Path
@@ -100,12 +100,12 @@ def test_char_count_counts_line_breaks_twice():
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: collection ERROR with `ModuleNotFoundError: No module named 'check'`.
 
 - [ ] **Step 3: Write the constants, data classes, and parser**
 
-Create `skills/acqdemo-review/scripts/check.py`:
+Create `skills/review/scripts/check.py`:
 
 ```python
 """Deterministic checks for AcqDemo self-assessment drafts.
@@ -239,13 +239,13 @@ def char_count(text: str) -> int:
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: 5 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo-review/scripts
+git add skills/review/scripts
 git commit -m "feat(review): parse factor files and count characters"
 ```
 
@@ -254,12 +254,12 @@ git commit -m "feat(review): parse factor files and count characters"
 ### Task 9: Structure, mandatory paragraphs, and length checks
 
 **Files:**
-- Modify: `skills/acqdemo-review/scripts/check.py` (append)
-- Modify: `skills/acqdemo-review/scripts/tests/test_check.py` (append)
+- Modify: `skills/review/scripts/check.py` (append)
+- Modify: `skills/review/scripts/tests/test_check.py` (append)
 
 - [ ] **Step 1: Append the failing tests**
 
-Append to `skills/acqdemo-review/scripts/tests/test_check.py`:
+Append to `skills/review/scripts/tests/test_check.py`:
 
 ```python
 # ---------------------------------------------------------------- structure and mandatory
@@ -343,12 +343,12 @@ def test_char_limits(tmp_path, target, critical, warning):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: the new tests FAIL with `AttributeError: module 'check' has no attribute 'run_checks'`; the 5 parsing tests still pass.
 
 - [ ] **Step 3: Append the checks and a first `run_checks`**
 
-Append to `skills/acqdemo-review/scripts/check.py`:
+Append to `skills/review/scripts/check.py`:
 
 ```python
 # ---------------------------------------------------------------- structure
@@ -435,13 +435,13 @@ def run_checks(folder: Path, min_entries: int, acq: bool = False, fm: bool = Fal
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: 17 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo-review/scripts
+git add skills/review/scripts
 git commit -m "feat(review): check C-R-I structure, mandatory paragraphs, and length"
 ```
 
@@ -450,12 +450,12 @@ git commit -m "feat(review): check C-R-I structure, mandatory paragraphs, and le
 ### Task 10: Repeat, name, and style checks
 
 **Files:**
-- Modify: `skills/acqdemo-review/scripts/check.py` (insert new sections, replace `run_checks`)
-- Modify: `skills/acqdemo-review/scripts/tests/test_check.py` (append)
+- Modify: `skills/review/scripts/check.py` (insert new sections, replace `run_checks`)
+- Modify: `skills/review/scripts/tests/test_check.py` (append)
 
 - [ ] **Step 1: Append the failing tests**
 
-Append to `skills/acqdemo-review/scripts/tests/test_check.py`:
+Append to `skills/review/scripts/tests/test_check.py`:
 
 ```python
 # ---------------------------------------------------------------- repeats
@@ -537,12 +537,12 @@ def test_what_too_long(tmp_path):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: new tests FAIL with `TypeError: run_checks() got an unexpected keyword argument 'prior'` (or `'names'`), `AttributeError: ... 'roster_names'`, and missing style warnings; earlier 17 still pass.
 
 - [ ] **Step 3: Insert repeat, name, and style checks above the orchestration section**
 
-In `skills/acqdemo-review/scripts/check.py`, insert this block immediately before the line `# ---------------------------------------------------------------- orchestration`:
+In `skills/review/scripts/check.py`, insert this block immediately before the line `# ---------------------------------------------------------------- orchestration`:
 
 ```python
 # ---------------------------------------------------------------- repeats
@@ -701,13 +701,13 @@ def run_checks(folder: Path, min_entries: int, acq: bool = False, fm: bool = Fal
 
 - [ ] **Step 5: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: 25 passed.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add skills/acqdemo-review/scripts
+git add skills/review/scripts
 git commit -m "feat(review): check prior-cycle and cross-factor repeats, names, and style"
 ```
 
@@ -716,12 +716,12 @@ git commit -m "feat(review): check prior-cycle and cross-factor repeats, names, 
 ### Task 11: Command-line interface and report
 
 **Files:**
-- Modify: `skills/acqdemo-review/scripts/check.py` (append)
-- Modify: `skills/acqdemo-review/scripts/tests/test_check.py` (append)
+- Modify: `skills/review/scripts/check.py` (append)
+- Modify: `skills/review/scripts/tests/test_check.py` (append)
 
 - [ ] **Step 1: Append the failing tests**
 
-Append to `skills/acqdemo-review/scripts/tests/test_check.py`:
+Append to `skills/review/scripts/tests/test_check.py`:
 
 ```python
 # ---------------------------------------------------------------- CLI
@@ -779,12 +779,12 @@ def test_read_text_handles_utf16_bom_and_cp1252(tmp_path):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: 6 new tests FAIL with `AttributeError: module 'check' has no attribute 'main'`.
 
 - [ ] **Step 3: Append loaders, report, and `main`**
 
-Append to `skills/acqdemo-review/scripts/check.py`:
+Append to `skills/review/scripts/check.py`:
 
 ```python
 def load_prior(paths: list[Path]) -> dict[str, str]:
@@ -844,12 +844,12 @@ if __name__ == "__main__":
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/acqdemo-review/scripts/tests/test_check.py`
+Run: `python -m pytest skills/review/scripts/tests/test_check.py`
 Expected: 31 passed.
 
 - [ ] **Step 5: Smoke-test the CLI by hand**
 
-Run: `python skills/acqdemo-review/scripts/check.py --help`
+Run: `python skills/review/scripts/check.py --help`
 Expected: usage text beginning with the module docstring.
 
 - [ ] **Step 6: Run the full suite and commit**
@@ -858,7 +858,7 @@ Run: `python -m pytest`
 Expected: all pass.
 
 ```bash
-git add skills/acqdemo-review/scripts
+git add skills/review/scripts
 git commit -m "feat(review): add check.py command-line interface and report"
 ```
 

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship an installable Claude Code plugin with the `acqdemo` router, `acqdemo-harvest`, `acqdemo-annual`, and `acqdemo-review` skills, their shared references, and three tested scripts (`check.py`, `git_harvest.py`, `calendar_harvest.py`), validated on fictional personas and a real private backtest.
+**Goal:** Ship an installable Claude Code plugin with the `acqdemo:start` router, `acqdemo:harvest`, `acqdemo:annual`, and `acqdemo:review` skills, their shared references, and three tested scripts (`check.py`, `git_harvest.py`, `calendar_harvest.py`), validated on fictional personas and a real private backtest.
 
-**Architecture:** The repository root is the plugin root (`.claude-plugin/plugin.json` + `marketplace.json`). Skills live in `skills/<name>/SKILL.md`; shared references and templates live under `skills/acqdemo/` and are referenced by other skills through `../acqdemo/...` paths. Deterministic rules are Python scripts with pytest suites; judgment rules live in skill instructions. All work happens in the private workspace and is mirrored to the public repo with `tools/sync/sync_public.py` at the end of each phase.
+**Architecture:** The repository root is the plugin root (`.claude-plugin/plugin.json` + `marketplace.json`). Skills live in `skills/<name>/SKILL.md`; shared references and templates live under `skills/start/` and are referenced by other skills through `../start/...` paths. Deterministic rules are Python scripts with pytest suites; judgment rules live in skill instructions. All work happens in the private workspace and is mirrored to the public repo with `tools/sync/sync_public.py` at the end of each phase.
 
 **Tech Stack:** Claude Code plugins and skills (Markdown with YAML frontmatter), Python 3.11+ standard library, pytest, git, GitHub CLI (`gh`, optional for harvesting GitHub repos), pdftotext (descriptor verification).
 
@@ -17,7 +17,7 @@
 | Phase | File | Tasks | Produces |
 |---|---|---|---|
 | 1 | [phase-1-scaffold-and-references.md](2026-09-15-acqdemo-wave1/phase-1-scaffold-and-references.md) | 1-7 | Plugin manifests, structure tests, shared references (levels, descriptors, rules, certification templates, question bank, writing style, ledger format), templates |
-| 2 | [phase-2-check-script.md](2026-09-15-acqdemo-wave1/phase-2-check-script.md) | 8-11 | `skills/acqdemo-review/scripts/check.py` with full tests |
+| 2 | [phase-2-check-script.md](2026-09-15-acqdemo-wave1/phase-2-check-script.md) | 8-11 | `skills/review/scripts/check.py` with full tests |
 | 3 | [phase-3-harvest-scripts.md](2026-09-15-acqdemo-wave1/phase-3-harvest-scripts.md) | 12-15 | `git_harvest.py` and `calendar_harvest.py` with full tests |
 | 4 | [phase-4-skills.md](2026-09-15-acqdemo-wave1/phase-4-skills.md) | 16-20 | Four `SKILL.md` files, local plugin install |
 | 5 | [phase-5-validation-and-release.md](2026-09-15-acqdemo-wave1/phase-5-validation-and-release.md) | 21-26 | Personas (test D), trigger check (E), known-problem review (B), backtest (C), dry run (F), README install section, release sync |
@@ -96,7 +96,7 @@ skills/
 ## Self-review record
 
 Spec coverage (spec section -> task):
-- 3.1 plugin layout -> Tasks 1, 16-19 (templates moved under `skills/acqdemo/templates/` so every skill reaches them through the same `../acqdemo/` prefix; spec 3.1 listed root `templates/`)
+- 3.1 plugin layout -> Tasks 1, 16-19 (templates moved under `skills/start/templates/` so every skill reaches them through the same `../start/` prefix; spec 3.1 listed root `templates/`)
 - 3.2 skills (Wave 1 subset) -> Tasks 16-19
 - 3.3 personal workspace layout -> Task 7 (templates), Task 19 (router first-time setup)
 - 3.4 data contracts -> Task 7 (`ledger-format.md`, templates)
@@ -108,9 +108,9 @@ Spec coverage (spec section -> task):
 - 9 calendar -> Task 7 (`paypool.md`), Task 19 (stage detection)
 - 10 privacy -> existing `tools/`; Task 19 (setup guidance); conventions above
 - 11 testing A-F -> Tasks 8-15 (A), 23 (B), 24 (C), 21 (D), 22 (E), 25 (F)
-- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan`) gets its own plan
+- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`) gets its own plan
 - 13 open questions -> Task 20 verifies plugin path resolution; character counting stays conservative (Task 9)
 
 Deviations from spec, recorded:
-1. Templates live in `skills/acqdemo/templates/` instead of root `templates/`.
+1. Templates live in `skills/start/templates/` instead of root `templates/`.
 2. Cross-factor repeat check uses 8-word runs (prior-cycle check keeps 6) to avoid false positives on shared organization names; both accept an allow-phrase list.

@@ -158,7 +158,7 @@ git commit -m "feat: add plugin manifests and structure tests"
 ### Task 2: Career path levels reference
 
 **Files:**
-- Create: `skills/acqdemo/references/levels.md`
+- Create: `skills/start/references/levels.md`
 - Create: `tests/test_references.py`
 
 - [ ] **Step 1: Write the failing test**
@@ -208,7 +208,7 @@ Expected: FAIL with `FileNotFoundError` for `levels.md`.
 
 - [ ] **Step 3: Create the reference**
 
-Create `skills/acqdemo/references/levels.md`:
+Create `skills/start/references/levels.md`:
 
 ```markdown
 # Career Paths, Broadband Levels, and Score Ranges
@@ -272,7 +272,7 @@ Expected: 1 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo/references/levels.md tests/test_references.py
+git add skills/start/references/levels.md tests/test_references.py
 git commit -m "feat: add career path levels reference"
 ```
 
@@ -281,9 +281,9 @@ git commit -m "feat: add career path levels reference"
 ### Task 3: Factor descriptors for NH, NJ, NK
 
 **Files:**
-- Create: `skills/acqdemo/references/descriptors/nh.md`
-- Create: `skills/acqdemo/references/descriptors/nj.md`
-- Create: `skills/acqdemo/references/descriptors/nk.md`
+- Create: `skills/start/references/descriptors/nh.md`
+- Create: `skills/start/references/descriptors/nj.md`
+- Create: `skills/start/references/descriptors/nk.md`
 - Create: `tests/test_descriptors.py`
 
 The descriptor files are a faithful transcription of `AcqDemo Factor Descriptors and Discriminators.pdf`. The test enforces structure (factors, levels, ranges, bullet counts) and fidelity (every bullet's words appear in the PDF in order).
@@ -508,7 +508,7 @@ Expected: 6 passed. If `test_bullets_faithful_to_pdf` lists a bullet, compare it
 
 ```bash
 rm descriptors-raw.txt
-git add skills/acqdemo/references/descriptors tests/test_descriptors.py
+git add skills/start/references/descriptors tests/test_descriptors.py
 git commit -m "feat: add NH, NJ, NK factor descriptors with fidelity tests"
 ```
 
@@ -517,8 +517,8 @@ git commit -m "feat: add NH, NJ, NK factor descriptors with fidelity tests"
 ### Task 4: Program rules summary and certification templates
 
 **Files:**
-- Create: `skills/acqdemo/references/rules/ccas-core.md`
-- Create: `skills/acqdemo/references/cert-templates.md`
+- Create: `skills/start/references/rules/ccas-core.md`
+- Create: `skills/start/references/cert-templates.md`
 - Modify: `tests/test_references.py` (append tests)
 
 - [ ] **Step 1: Append the failing tests**
@@ -559,7 +559,7 @@ Expected: 2 failed with `FileNotFoundError`.
 
 - [ ] **Step 3: Create the rules summary**
 
-Create `skills/acqdemo/references/rules/ccas-core.md`:
+Create `skills/start/references/rules/ccas-core.md`:
 
 ```markdown
 # CCAS Rules Summary
@@ -628,7 +628,7 @@ These paragraphs are not C-R-I and do not count toward the minimum.
 
 - [ ] **Step 4: Create the certification templates**
 
-Create `skills/acqdemo/references/cert-templates.md`:
+Create `skills/start/references/cert-templates.md`:
 
 ```markdown
 # Certification Self-Statement Templates
@@ -673,7 +673,7 @@ Expected: 3 passed.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add skills/acqdemo/references/rules skills/acqdemo/references/cert-templates.md tests/test_references.py
+git add skills/start/references/rules skills/start/references/cert-templates.md tests/test_references.py
 git commit -m "feat: add CCAS rules summary and certification templates"
 ```
 
@@ -682,7 +682,7 @@ git commit -m "feat: add CCAS rules summary and certification templates"
 ### Task 5: Question bank
 
 **Files:**
-- Create: `skills/acqdemo/references/question-bank.md`
+- Create: `skills/start/references/question-bank.md`
 - Modify: `tests/test_references.py` (append test)
 
 - [ ] **Step 1: Append the failing test**
@@ -716,7 +716,7 @@ Expected: FAIL with `FileNotFoundError`.
 
 - [ ] **Step 3: Create the question bank**
 
-Create `skills/acqdemo/references/question-bank.md`:
+Create `skills/start/references/question-bank.md`:
 
 ```markdown
 # Question Bank
@@ -902,7 +902,7 @@ Expected: 1 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo/references/question-bank.md tests/test_references.py
+git add skills/start/references/question-bank.md tests/test_references.py
 git commit -m "feat: add question bank with recall sweeps and estimate protocol"
 ```
 
@@ -911,7 +911,7 @@ git commit -m "feat: add question bank with recall sweeps and estimate protocol"
 ### Task 6: Writing style reference
 
 **Files:**
-- Create: `skills/acqdemo/references/writing-style.md`
+- Create: `skills/start/references/writing-style.md`
 - Modify: `tests/test_references.py` (append test)
 
 - [ ] **Step 1: Append the failing test**
@@ -938,7 +938,7 @@ Expected: FAIL with `FileNotFoundError`.
 
 - [ ] **Step 3: Create the style reference**
 
-Create `skills/acqdemo/references/writing-style.md`:
+Create `skills/start/references/writing-style.md`:
 
 ````markdown
 # Writing Style for Paste-Ready Text
@@ -1059,7 +1059,7 @@ Expected: 1 passed.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/acqdemo/references/writing-style.md tests/test_references.py
+git add skills/start/references/writing-style.md tests/test_references.py
 git commit -m "feat: add writing style reference"
 ```
 
@@ -1068,12 +1068,12 @@ git commit -m "feat: add writing style reference"
 ### Task 7: Ledger format and templates
 
 **Files:**
-- Create: `skills/acqdemo/references/ledger-format.md`
-- Create: `skills/acqdemo/templates/profile.md`
-- Create: `skills/acqdemo/templates/paypool.md`
-- Create: `skills/acqdemo/templates/roster.md`
-- Create: `skills/acqdemo/templates/session-state.md`
-- Create: `skills/acqdemo/templates/working-doc.md`
+- Create: `skills/start/references/ledger-format.md`
+- Create: `skills/start/templates/profile.md`
+- Create: `skills/start/templates/paypool.md`
+- Create: `skills/start/templates/roster.md`
+- Create: `skills/start/templates/session-state.md`
+- Create: `skills/start/templates/working-doc.md`
 - Modify: `tests/test_references.py` (append tests)
 
 - [ ] **Step 1: Append the failing tests**
@@ -1124,7 +1124,7 @@ Expected: 6 failed with `FileNotFoundError`.
 
 - [ ] **Step 3: Create the ledger format reference**
 
-Create `skills/acqdemo/references/ledger-format.md`:
+Create `skills/start/references/ledger-format.md`:
 
 ````markdown
 # Ledger, Roster, Session State, Profile, and Pay Pool Overlay
@@ -1229,7 +1229,7 @@ See `templates/paypool.md`. Skills read due dates, minimums, mandatory paragraph
 
 - [ ] **Step 4: Create the templates**
 
-Create `skills/acqdemo/templates/profile.md`:
+Create `skills/start/templates/profile.md`:
 
 ```markdown
 # Profile
@@ -1278,7 +1278,7 @@ Create `skills/acqdemo/templates/profile.md`:
 | github | owner/repo | |
 ```
 
-Create `skills/acqdemo/templates/paypool.md`:
+Create `skills/start/templates/paypool.md`:
 
 ```markdown
 # Pay Pool Overlay
@@ -1313,7 +1313,7 @@ Values below are the example pay pool's defaults. Replace them with your pay poo
 - notes:
 ```
 
-Create `skills/acqdemo/templates/roster.md`:
+Create `skills/start/templates/roster.md`:
 
 ```markdown
 # Roster
@@ -1324,7 +1324,7 @@ Names are private. They help recall and produce counts; they never appear in fac
 |---|---|---|---|---|---|---|
 ```
 
-Create `skills/acqdemo/templates/session-state.md`:
+Create `skills/start/templates/session-state.md`:
 
 ```markdown
 # Session State
@@ -1335,7 +1335,7 @@ Create `skills/acqdemo/templates/session-state.md`:
 - updated:
 ```
 
-Create `skills/acqdemo/templates/working-doc.md`:
+Create `skills/start/templates/working-doc.md`:
 
 ```markdown
 # FY<yy> Working Doc
@@ -1408,7 +1408,7 @@ Run: `python -m pytest`
 Expected: all pass (tools, structure, references, descriptors).
 
 ```bash
-git add skills/acqdemo/references/ledger-format.md skills/acqdemo/templates tests/test_references.py
+git add skills/start/references/ledger-format.md skills/start/templates tests/test_references.py
 git commit -m "feat: add ledger format reference and workspace templates"
 ```
 

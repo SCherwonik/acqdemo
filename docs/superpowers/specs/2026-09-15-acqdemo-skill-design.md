@@ -42,7 +42,7 @@ A Claude Code **plugin** containing a primary skill plus smaller single-purpose 
 ### 3.1 Plugin layout (this public repo)
 ```
 skills/
-  acqdemo/                 primary: detects cycle stage + available inputs, routes
+  start/                   primary: detects cycle stage + available inputs, routes
     references/            shared by all skills
       descriptors/nh.md    full transcription of factor descriptors + discriminators
       descriptors/nj.md
@@ -54,12 +54,12 @@ skills/
       ledger-format.md     data contracts (Section 3.4)
       cert-templates.md    acquisition + DoD FM self-certification templates
       examples/            fully fictional personas only
-  acqdemo-harvest/         git + document mining -> candidate ledger entries
-  acqdemo-log/             capture one accomplishment any time -> ledger entry
-  acqdemo-annual/          intake + drafting for the annual self-assessment
-  acqdemo-midpoint/        same engine, midpoint minimums and framing
-  acqdemo-plan/            contribution plan with labeled objectives (JA1, CT1, MS1)
-  acqdemo-review/          compliance + panel-read check on any draft
+  harvest/         git + document mining -> candidate ledger entries
+  log/             capture one accomplishment any time -> ledger entry
+  annual/          intake + drafting for the annual self-assessment
+  midpoint/        same engine, midpoint minimums and framing
+  plan/            contribution plan with labeled objectives (JA1, CT1, MS1)
+  review/          compliance + panel-read check on any draft
     scripts/check.py       deterministic checks (Section 8.1)
 templates/
   profile.md               blank personal profile
@@ -72,13 +72,13 @@ Shared references live under the primary skill. Other skills reference them by r
 
 | Skill | Purpose | Reads | Writes | Standalone use |
 |---|---|---|---|---|
-| `acqdemo` | Detect stage (date vs. calendar in overlay), inventory inputs, resume sessions, route | profile, paypool, session-state, ledger | session-state | "Where am I in the cycle?" |
-| `acqdemo-harvest` | Mine git repos, calendar exports, and prior documents for the rating period | profile (repo list), `FY<yy>/evidence/` calendar exports, prior-cycle submissions | ledger (`candidate` entries), harvest snapshots | "Pull what I did from git and my calendar" |
-| `acqdemo-log` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
-| `acqdemo-annual` | Gate, dump, recall sweeps, deep-dives, allocate, draft, finalize | all | ledger, roster, drafts, final outputs | "Let's do my annual" |
-| `acqdemo-midpoint` | Same flow, minimum 1 C-R-I per factor, no scores | all | same | "Midpoint time" |
-| `acqdemo-plan` | Contribution plan from PRD duties + expected work, labeled objectives, KPIs | profile, PRD, prior plan | plan draft | "Write my plan" |
-| `acqdemo-review` | Script checks + judgment checks, fix loop | any draft, prior-cycle text, current midpoint, roster, ledger | findings, fixed draft | "Check my draft" |
+| `acqdemo:start` | Detect stage (date vs. calendar in overlay), inventory inputs, resume sessions, route | profile, paypool, session-state, ledger | session-state | "Where am I in the cycle?" |
+| `acqdemo:harvest` | Mine git repos, calendar exports, and prior documents for the rating period | profile (repo list), `FY<yy>/evidence/` calendar exports, prior-cycle submissions | ledger (`candidate` entries), harvest snapshots | "Pull what I did from git and my calendar" |
+| `acqdemo:log` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
+| `acqdemo:annual` | Gate, dump, recall sweeps, deep-dives, allocate, draft, finalize | all | ledger, roster, drafts, final outputs | "Let's do my annual" |
+| `acqdemo:midpoint` | Same flow, minimum 1 C-R-I per factor, no scores | all | same | "Midpoint time" |
+| `acqdemo:plan` | Contribution plan from PRD duties + expected work, labeled objectives, KPIs | profile, PRD, prior plan | plan draft | "Write my plan" |
+| `acqdemo:review` | Script checks + judgment checks, fix loop | any draft, prior-cycle text, current midpoint, roster, ledger | findings, fixed draft | "Check my draft" |
 
 ### 3.3 Personal workspace layout (NOT in this repo)
 ```
@@ -172,7 +172,7 @@ Unknown Tier 0 items do not block drafting; they are flagged in the working doc.
 6. **Arm the supervisor** via the crib sheet (Section 7).
 
 ### 4.5 Next-cycle capture
-- Monthly 5-minute ramble (`acqdemo-log`), plus after any briefing, release or praise email.
+- Monthly 5-minute ramble (`acqdemo:log`), plus after any briefing, release or praise email.
 - Brag folder: praise emails, slide titles, attendance counts, award notices.
 - Contribution plan with labeled objectives (JA1-3, CT1-3, MS1-3); tag every ledger entry.
 - KPIs chosen at plan time (for example: people trained, tool users, senior-leader briefings, estimates supported and dollar value, defects found, hours saved per cycle).
@@ -316,13 +316,13 @@ Defaults below are examples; each pay pool's overlay sets real dates.
 | When | What | Skill |
 |---|---|---|
 | Cycle start (1 Oct) | New cycle | acqdemo |
-| Within 30 days | Contribution plan approved | acqdemo-plan |
-| Monthly | 5-minute capture | acqdemo-log |
-| Mar/Apr | Midpoint | acqdemo-midpoint |
+| Within 30 days | Contribution plan approved | acqdemo:plan |
+| Monthly | 5-minute capture | acqdemo:log |
+| Mar/Apr | Midpoint | acqdemo:midpoint |
 | ~90 days before cycle end | Plan-change lock and eligibility cutoff warning | acqdemo |
-| Mid to late Aug | Harvest + recall sweeps (prep, no writing) | acqdemo-harvest |
-| Early Sep | Deep-dives | acqdemo-annual |
-| About 1 week before due | Allocate, draft, review | acqdemo-annual, acqdemo-review |
+| Mid to late Aug | Harvest + recall sweeps (prep, no writing) | acqdemo:harvest |
+| Early Sep | Deep-dives | acqdemo:annual |
+| About 1 week before due | Allocate, draft, review | acqdemo:annual, acqdemo:review |
 | **3 days before due** | Submit (buffer) | |
 | Employee due date (example: 15 Sep) | Self-assessment to supervisor | |
 | Supervisor due date (example: 30 Sep) | Supervisor narrative; crib sheet delivered by the employee due date | |
@@ -358,8 +358,8 @@ Defaults below are examples; each pay pool's overlay sets real dates.
 ---
 
 ## 12. Build phases
-1. **Wave 1:** shared references (full descriptor transcription for NH, NJ, NK; levels; core rules; question bank; style; ledger format; cert templates), `acqdemo`, `acqdemo-harvest`, `acqdemo-annual`, `acqdemo-review` + `check.py`. Tests A and B during build; C, D and E after; F before first real use.
-2. **Wave 2:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan`, each with its own tests.
+1. **Wave 1:** shared references (full descriptor transcription for NH, NJ, NK; levels; core rules; question bank; style; ledger format; cert templates), `acqdemo:start`, `acqdemo:harvest`, `acqdemo:annual`, `acqdemo:review` + `check.py`. Tests A and B during build; C, D and E after; F before first real use.
+2. **Wave 2:** `acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`, each with its own tests.
 
 ---
 

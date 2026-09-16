@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-REF = ROOT / "skills" / "acqdemo" / "references"
-TPL = ROOT / "skills" / "acqdemo" / "templates"
+REF = ROOT / "skills" / "start" / "references"
+TPL = ROOT / "skills" / "start" / "templates"
 
 
 def read(path):
@@ -94,6 +94,11 @@ def test_question_bank():
             "### Artifact prompts",
             "## Estimate protocol", "## Coverage grid and stop rule",
             "What else does that bring to mind?",
+            "## Voice and transcription",
+            "### Resolve before asking", "### Match on sound, not spelling",
+            "### Correct silently, confirm once", "### Never guess a name",
+            "### Never drop a garbled term", "### Numbers by ear",
+            "## Transcription glossary",
         ],
     )
 

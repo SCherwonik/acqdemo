@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-DESC = ROOT / "skills" / "acqdemo" / "references" / "descriptors"
+DESC = ROOT / "skills" / "start" / "references" / "descriptors"
 PDF = ROOT / "AcqDemo Factor Descriptors and Discriminators.pdf"
 sys.path.insert(0, str(ROOT / "tools" / "hooks"))
 import scan_pii  # noqa: E402  (reuses find_pdftotext)

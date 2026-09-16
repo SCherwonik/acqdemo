@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-EXAMPLES = ROOT / "skills" / "acqdemo" / "references" / "examples"
-CHECK = ROOT / "skills" / "acqdemo-review" / "scripts" / "check.py"
+EXAMPLES = ROOT / "skills" / "start" / "references" / "examples"
+CHECK = ROOT / "skills" / "review" / "scripts" / "check.py"
 PERSONAS = sorted(p for p in EXAMPLES.iterdir() if (p / "final").is_dir()) if EXAMPLES.exists() else []
 
 

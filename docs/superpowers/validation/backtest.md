@@ -1,6 +1,6 @@
 # Backtest (test C)
 
-Date: 2026-09-15. Skill under test: `acqdemo-annual` with `acqdemo-review`. One prior cycle, one employee. Scorecard from the design spec, Section 11.
+Date: 2026-09-15. Skill under test: `acqdemo:annual` with `acqdemo:review`. One prior cycle, one employee. Scorecard from the design spec, Section 11.
 
 ## Method
 - Drafting ran in a subagent that saw only an employee-side packet (contribution plan, midpoint and closeout self-assessment, question-and-answer notes, gate answers) plus the skills. It played both the skill and the employee, answering only from the packet.
