@@ -440,7 +440,7 @@ The toolkit already ships the factor descriptors, the CCAS assessment guidance, 
 |---|---|---|
 | Setup | This intake; profile and pay pool filled | 10 to 20 minutes |
 | Gather | Mine git, the calendar export, the midpoint, prior cycles into candidate entries | 5 minutes, mostly automatic |
-| Remember | Brain dump, timeline walk, people sweep, artifact prompts | 20 to 40 minutes of talking |
+| Remember | Brain dump, timeline walk, people sweep, artifact prompts | 10 to 20 minutes of talking |
 | Dig | Project deep-dives: numbered questions per project until each entry holds facts, numbers, and audience | 10 to 20 minutes per project |
 | Choose | Allocate the strongest entries across the three factors, with the rest on the bench | 10 minutes |
 | Write | Paste-ready C-R-I text for each factor | automatic, then edits |
@@ -459,20 +459,6 @@ During the year, `acqdemo:log` captures wins as they happen, `acqdemo:plan` writ
     claude plugin marketplace remove acqdemo
     claude plugin marketplace add SCherwonik/acqdemo
     claude plugin install acqdemo@acqdemo
-
-**Skill names changed in 0.3.0.** The skills used to stutter (`acqdemo:acqdemo-annual`). They are now:
-
-| Version 0.2.x and earlier | 0.3.0 and later |
-|---|---|
-| `acqdemo:acqdemo` | `acqdemo:start` |
-| `acqdemo:acqdemo-annual` | `acqdemo:annual` |
-| `acqdemo:acqdemo-midpoint` | `acqdemo:midpoint` |
-| `acqdemo:acqdemo-plan` | `acqdemo:plan` |
-| `acqdemo:acqdemo-log` | `acqdemo:log` |
-| `acqdemo:acqdemo-harvest` | `acqdemo:harvest` |
-| `acqdemo:acqdemo-review` | `acqdemo:review` |
-
-You rarely type these: describing what you want is enough, and `acqdemo:start` routes you. Nothing in your workspace changes when you update; the skills read the same files as before.
 
 Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
 
@@ -632,4 +618,4 @@ The skills run in your Claude Code session. Your files stay where you keep them.
 ---
 
 ## 17. Disclaimer
-- **This is not an official DoD or Department of the Air Force product.** Rules summarized here are for orientation only and vary by pay pool and year. Always follow your pay pool's current business rules, guidance, and your supervisor's direction. You are responsible for the accuracy of everything you submit.
+**This is not an official DoD or Department of the Air Force product.** Rules summarized here are for orientation only and vary by pay pool and year. Always follow your pay pool's current business rules, guidance, and your supervisor's direction. You are responsible for the accuracy of everything you submit.
