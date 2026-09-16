@@ -1,6 +1,6 @@
 # Trigger Check (Test E)
 
-Date: 2026-09-15. Plugin loaded with `claude -p --plugin-dir <repo>` in an empty folder, one headless session per prompt, only the `Skill` tool allowed. The first `Skill` tool call in the `stream-json` event stream decides the result; the harness stops reading at that call because a loaded skill keeps working afterward. Each run uses a fresh folder so Claude's per-folder memory cannot carry over between runs.
+Date: 2026-09-15. Plugin loaded with `claude -p --plugin-dir <repo>` in an empty folder, one headless session per prompt, only the `Skill` tool allowed. Loading it from the repository was a mistake that cost two workspace cleanups; rerun these with `python tools/probe/run_probe.py "<prompt>"`, which sandboxes the plugin and hashes the repository around the run. The first `Skill` tool call in the `stream-json` event stream decides the result; the harness stops reading at that call because a loaded skill keeps working afterward. Each run uses a fresh folder so Claude's per-folder memory cannot carry over between runs.
 
 | # | Prompt | Expected | Result |
 |---|---|---|---|

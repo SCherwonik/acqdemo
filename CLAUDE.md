@@ -20,6 +20,7 @@ An AcqDemo evaluation toolkit: a design and recipe for writing contribution plan
 ## Conventions
 - Python 3.11+, standard library only for tools; tests with `python -m pytest` (config in `pytest.ini`, tests under `tools/*/tests/`).
 - Test-first for tool changes. Tests must build sensitive-looking values at runtime (for example `"123" + "-45-" + "6789"`) so test files never trip the PII hook.
+- **Headless skill probes run only through `python tools/probe/run_probe.py "<prompt>"`.** It copies the plugin to a temp sandbox, runs in a throwaway folder, disables the installed release so stale descriptions cannot answer, and hashes this repository before and after so a leak is reported the moment it happens. Never point `--plugin-dir` at this repository: a skill reads the `profile.md` at its root as a workspace and writes there. That mistake has put fake ledger entries and duplicate harvest snapshots into the real workspace twice, and once blanked a ledger.
 - Paste-ready assessment text is plain text: `C:` `R:` `I:` labels, no em dashes, no Markdown, at most 3,900 characters per factor.
 - Final assessment text never contains people's names; names live only in private notes.
 - Rules differ by pay pool and year. Local rules belong in a pay pool overlay, not in skill code.

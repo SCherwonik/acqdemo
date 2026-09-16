@@ -35,13 +35,14 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | Design spec (`docs/superpowers/specs/2026-09-15-acqdemo-skill-design.md`) | Done |
 | PII pre-commit guard (`tools/hooks/`) with tests | Done |
 | Private-to-public mirror tool (`tools/sync/`) with tests | Done |
+| Probe harness (`tools/probe/`) with tests: sandboxed skill probes and a workspace tripwire | Done |
 | Reference documents (descriptors, CCAS guidance, business rules, training deck) | Included |
 | Implementation plan for Wave 1 | Done |
 | **Wave 1 skills:** `acqdemo:start` (router), `acqdemo:extract`, `acqdemo:annual`, `acqdemo:review` + shared references | Done |
 | Validation records (`docs/superpowers/validation/`): personas, trigger tests, known problems, backtest, dry run | Done |
 | **Wave 2 skills:** `acqdemo:midpoint`, `acqdemo:plan` | Done |
 
-All seven skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+All six skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
 
 ---
 
@@ -346,6 +347,9 @@ Dates come from your pay pool overlay (`paypool.md`); the defaults below match t
 │   │   ├── pre-commit              runs the PII guard on every commit
 │   │   ├── scan_pii.py             blocks SSNs, dates of birth, PII/CUI banners, sensitive file names
 │   │   └── tests/
+│   ├── probe/
+│   │   ├── run_probe.py            sandboxed headless skill probe, with a workspace tripwire
+│   │   └── tests/
 │   └── sync/
 │       ├── sync_public.py          mirrors a private workspace into a public repo
 │       ├── personal-paths.example.txt
@@ -539,6 +543,7 @@ python -m pytest
 |---|---|
 | `tools/hooks/tests/test_scan_pii.py` | Clean files pass; SSNs, dates of birth, banners, sensitive names, and SSNs inside `.docx` and `.pdf` block; the scanner does not match its own source |
 | `tools/sync/tests/test_sync_public.py` | Marker stripping (including malformed blocks), path exclusion (folders, wildcards, file globs), tracked-files-only mirroring, denylist and PII aborts with nothing written, stale-file deletion, dry run |
+| `tools/probe/tests/test_run_probe.py` | The sandbox copies the plugin and leaves the workspace behind, keeps templates that share workspace file names, and refuses a plugin folder that is also a workspace; the tripwire sees added, changed, and removed files, ignores git and caches, and reports without deleting; a probe cannot run with its plugin folder or working directory inside the repository |
 
 Planned skill validation (from the design spec):
 - **A.** Unit tests for the deterministic draft checker.
