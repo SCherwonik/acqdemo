@@ -38,7 +38,7 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | Reference documents (descriptors, CCAS guidance, business rules, training deck) | Included |
 | Implementation plan for Wave 1 | Done |
 | **Wave 1 skills:** `acqdemo:start` (router), `acqdemo:extract`, `acqdemo:annual`, `acqdemo:review` + shared references | Done |
-| Validation records (`docs/superpowers/validation/`): personas, trigger tests, known problems, backtest | Done (dry run with a real user pending) |
+| Validation records (`docs/superpowers/validation/`): personas, trigger tests, known problems, backtest, dry run | Done |
 | **Wave 2 skills:** `acqdemo:midpoint`, `acqdemo:plan` | Done |
 
 All seven skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.

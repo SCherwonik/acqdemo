@@ -1,39 +1,49 @@
-# Dry Run with a Session Reset (Test F)
+# Dry Run (Test F)
 
-Status: **partial.** A quick agent-driven run on 2026-09-15 proved the resume path after one fix. The full run with the real user answering (Task 25 as written) is still to do.
+Status: **done.** Two runs cover it. An agent-driven run proved the session reset path on 2026-09-15, and a real user then wrote a complete annual self-assessment with the toolkit on 2026-09-15 into 2026-09-16, ending in paste-ready text.
 
-## Quick run (agent answering from project files only)
-- Plugin loaded from the repository (`claude -p --plugin-dir <repo>`, installed release disabled for the session), a scratch copy of the private workspace, one project.
-- Session 1: "Let's do my annual, but only one project for a dry run." Gate unknowns parked; deep-dive round 1 asked and answered.
-- Session 2 (brand new session, same folder): "Where am I in the AcqDemo cycle?"
+## Run 1: session reset, agent answering from project files
+Plugin loaded from the repository, a scratch copy of a private workspace, one project.
+- Session 1: "Let's do my annual, but only one project for a dry run." Gate unknowns parked, deep-dive round 1 asked and answered.
+- Session 2, a brand new session in the same folder: "Where am I in the AcqDemo cycle?"
 
-| Check | Result | Notes |
-|---|---|---|
-| Session state written before questions | FAIL, then PASS after fix | First attempt asked 8 questions without saving; new "Save before you ask" rule fixed it |
-| Router reports the annual stage | PASS | |
-| Router finds session state and summarizes the unfinished deep-dive | PASS | Reported step 4, current entry, round 2, open fields |
-| Resume offered | PASS | Offered to resume the deep-dive |
-| No lost answers | PASS | Round 1 answers were in the ledger entry before the session ended |
-| Questions numbered | PASS | |
-| "What else does that bring to mind?" asked each round | PARTIAL | Asked in round 1, missing from the round 2 message |
-| Estimates proposed with a basis | not reached | |
-| Names kept out of factor text | not reached | No drafting in this run |
-| Deep-dive finished to `status: ready` | not reached | |
+| Check | Result |
+|---|---|
+| Session state written before questions | FAIL, then PASS after the fix below |
+| Router reports the cycle stage | PASS |
+| Router finds session state and summarizes the unfinished deep-dive | PASS, reported step, entry, round, open fields |
+| Resume offered | PASS |
+| No lost answers | PASS, round 1 answers were already in the ledger |
+| Questions numbered | PASS |
+| Recall prompt each round | PARTIAL, present in round 1, missing from a later round |
 
-## Open issues to fix
-1. Deep-dive wrote values outside the allowed lists (`role: sole developer`, `sustained: no`). Map answers to allowed values and run `ledger_check.py` after every ledger save, not only before `ready`.
-2. Deep-dive asked the user to paste PRD duties although `../plan/scripts/prd_text.py` can read the PRD; point the annual skill at it for `prd_duty`.
-3. "What else does that bring to mind?" was dropped from a later round.
-4. The router suggested `acqdemo:extract` to finish open ledger fields; unfinished deep-dives should resume in `acqdemo:annual` (or `acqdemo:midpoint`).
-5. The router led with the due-date warning and inventory; lead with the resume summary when `next_action` exists.
-6. Test isolation: headless test sessions started in an empty folder still found and wrote to the real workspace (trigger-check "log a win" runs). Future tests must name a scratch workspace explicitly, and skills should use only the workspace the user names or confirms.
+The first attempt asked eight questions and saved nothing, so a closed window would have restarted at the gate. Fixed with a "save before you ask" rule and a richer session-state template (current entry, round, pending questions). Retested and passed.
 
-## Retest after the fixes (2026-09-15)
-- Resume: a new session on a paused workspace opened directly on the unfinished deep-dive (entry, round 2), read the PRD duties itself with `prd_text.py`, and ended with the recall prompt. It did not send the user to `acqdemo:extract`.
-- Workspace scope: "log a win" in a folder with no `profile.md` now asks for the workspace path and writes nothing.
+## Run 2: a real user, real workspace, whole cycle
+An NH-IV employee wrote the FY26 annual end to end in one working session: intake, evidence extraction from four repositories and a 344 meeting calendar export, five rounds of deep-dive questions answered by voice, allocation across the three factors, five drafts, both review layers, and a final package.
 
-## Bug found during the retest
-The log skill treated the plugin's own folder as the workspace because that folder contained a `profile.md` (the toolkit repository doubles as the maintainer's workspace, and the test loaded the plugin from it). It blanked the real ledger, which git restored. Fixed: the router, annual, and log skills never use their own skill folder or the plugin folder above it as a workspace, and they wait for the user's answer before writing. Tests that load the plugin from a directory must use a copy holding only `.claude-plugin/` and `skills/`.
+| Check | Result |
+|---|---|
+| Estimates proposed with a basis | PASS, every hedged number recorded as an estimate with its wording preserved |
+| Names kept out of factor text | PASS, names live only in the roster and the ledger |
+| Minimum entries per factor | PASS, five per factor against a minimum of three |
+| Character budget respected | PASS, 3,419 to 3,542 against a 3,900 cap |
+| Deterministic checker clean at the end | PASS, 0 CRITICAL and 0 WARNING |
+| Judgment review applied | PASS, two passes, evidence audit and panel read, both acted on |
+| Prior-cycle repeats avoided | PASS, the checker plus a manual comparison against the prior annual and the midpoint |
+| Finalize step completed | FAIL, see below |
+
+Output: three paste-ready factor files, a working doc with an evidence table for every claim, a bench, a descriptor map, and a separate supervisor brief.
+
+## What the real run exposed, and what changed
+1. **Documents were never requested up front.** A returning user goes straight into questions without being told to pull the prior cycle's salary appraisal, this cycle's midpoint and plan, and a calendar export. The annual and midpoint skills now open with that list in plain language, with the reason for each, before any gate question.
+2. **Retrieval was undocumented.** Users had no idea which CAS2Net menus produce those files. Added a retrieval reference with the exact path, which form sections to include, and which to leave unchecked.
+3. **Evidence discipline broke under conversation pressure.** Several answers given by voice were drafted straight into text without being written to the ledger first, and a later review flagged them as unsourced. The fix is procedural: answers reach the ledger before they reach a draft, and the skill says so.
+4. **The finalize step did not run.** Every entry stayed `candidate` after the text was final, so a later cycle would not know what had already been claimed. Entries that reach the submitted text must be marked `submitted` with their factors recorded, which the annual's finalize step already specifies and which was skipped in practice.
+5. **Voice transcription mangles domain terms.** Program names, acronyms, and people's names arrived garbled and differently each time. Added a rule to match unfamiliar words against the user's own documents, correct silently, say the term back once, never guess a name, and keep a glossary at the end of each saved ramble.
+6. **Allocation needed the user's judgment.** The panel read and the user disagreed about ordering inside Mission Support. The skill proposes an order and the user decides; that stayed a proposal, not a rule.
 
 ## Harness notes
-- Headless multi-turn: pass the prompt as the positional argument after `-p` (stdin input breaks `--resume`), and use a fresh folder per run because Claude's per-folder memory can carry answers between runs.
+- Headless multi-turn: pass the prompt as the positional argument after `-p`, since stdin input breaks `--resume`, and use a fresh folder per run because per-folder memory can carry answers between runs.
+- When testing a repository copy of the plugin, disable the installed release for that session, or both copies load and results reflect whichever descriptions the session preferred.
+- Do not point `--plugin-dir` at a folder that also contains a workspace `profile.md`. A skill found that profile and wrote to it; skills now refuse their own plugin folder as a workspace.
