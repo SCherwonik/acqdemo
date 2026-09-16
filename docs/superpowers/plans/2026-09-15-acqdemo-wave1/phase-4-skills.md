@@ -361,7 +361,7 @@ Compare today's date with `paypool.md`:
 | Window | Stage | Next skill |
 |---|---|---|
 | Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo:plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
-| After plan due, before midpoint window | Capture | `acqdemo:capture` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
+| After plan due, before midpoint window | Capture | `acqdemo:log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
 | Midpoint window | Midpoint | `acqdemo:midpoint` when available; until then, run `acqdemo:annual` with a minimum of one C-R-I per factor and no crib sheet |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
 | Mid-August to employee due date | Annual | `acqdemo:extract`, then `acqdemo:annual` |

@@ -1,6 +1,6 @@
 ---
 name: extract
-description: Use when pulling, mining, or gathering a whole rating period of work out of git repositories, an Outlook calendar export, or prior assessment documents, to build many candidate entries at once. Typical requests are pull what I did this year from git and my calendar, mine my repos for the rating period, gather my AcqDemo evidence, and what did I work on this year. Not for a single accomplishment; that is acqdemo:capture.
+description: Use when pulling, mining, or gathering a whole rating period of work out of git repositories, an Outlook calendar export, or prior assessment documents, to build many candidate entries at once. Typical requests are pull what I did this year from git and my calendar, mine my repos for the rating period, gather my AcqDemo evidence, and what did I work on this year. Not for a single accomplishment the user just finished.
 ---
 
 # AcqDemo Harvest

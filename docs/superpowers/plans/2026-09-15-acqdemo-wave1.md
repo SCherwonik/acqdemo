@@ -108,7 +108,7 @@ Spec coverage (spec section -> task):
 - 9 calendar -> Task 7 (`paypool.md`), Task 19 (stage detection)
 - 10 privacy -> existing `tools/`; Task 19 (setup guidance); conventions above
 - 11 testing A-F -> Tasks 8-15 (A), 23 (B), 24 (C), 21 (D), 22 (E), 25 (F)
-- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo:capture`, `acqdemo:midpoint`, `acqdemo:plan`) gets its own plan
+- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`) gets its own plan
 - 13 open questions -> Task 20 verifies plugin path resolution; character counting stays conservative (Task 9)
 
 Deviations from spec, recorded:

@@ -74,7 +74,7 @@ Shared references live under the primary skill. Other skills reference them by r
 |---|---|---|---|---|
 | `acqdemo:start` | Detect stage (date vs. calendar in overlay), inventory inputs, resume sessions, route | profile, paypool, session-state, ledger | session-state | "Where am I in the cycle?" |
 | `acqdemo:extract` | Mine git repos, calendar exports, and prior documents for the rating period | profile (repo list), `FY<yy>/evidence/` calendar exports, prior-cycle submissions | ledger (`candidate` entries), harvest snapshots | "Pull what I did from git and my calendar" |
-| `acqdemo:capture` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
+| `acqdemo:log` | Capture a single win from a ramble | ledger | ledger | "Log a win" |
 | `acqdemo:annual` | Gate, dump, recall sweeps, deep-dives, allocate, draft, finalize | all | ledger, roster, drafts, final outputs | "Let's do my annual" |
 | `acqdemo:midpoint` | Same flow, minimum 1 C-R-I per factor, no scores | all | same | "Midpoint time" |
 | `acqdemo:plan` | Contribution plan from PRD duties + expected work, labeled objectives, KPIs | profile, PRD, prior plan | plan draft | "Write my plan" |
@@ -172,7 +172,7 @@ Unknown Tier 0 items do not block drafting; they are flagged in the working doc.
 6. **Arm the supervisor** via the crib sheet (Section 7).
 
 ### 4.5 Next-cycle capture
-- Monthly 5-minute ramble (`acqdemo:capture`), plus after any briefing, release or praise email.
+- Monthly 5-minute ramble (`acqdemo:log`), plus after any briefing, release or praise email.
 - Brag folder: praise emails, slide titles, attendance counts, award notices.
 - Contribution plan with labeled objectives (JA1-3, CT1-3, MS1-3); tag every ledger entry.
 - KPIs chosen at plan time (for example: people trained, tool users, senior-leader briefings, estimates supported and dollar value, defects found, hours saved per cycle).
@@ -317,7 +317,7 @@ Defaults below are examples; each pay pool's overlay sets real dates.
 |---|---|---|
 | Cycle start (1 Oct) | New cycle | acqdemo |
 | Within 30 days | Contribution plan approved | acqdemo:plan |
-| Monthly | 5-minute capture | acqdemo:capture |
+| Monthly | 5-minute capture | acqdemo:log |
 | Mar/Apr | Midpoint | acqdemo:midpoint |
 | ~90 days before cycle end | Plan-change lock and eligibility cutoff warning | acqdemo |
 | Mid to late Aug | Harvest + recall sweeps (prep, no writing) | acqdemo:extract |
@@ -359,7 +359,7 @@ Defaults below are examples; each pay pool's overlay sets real dates.
 
 ## 12. Build phases
 1. **Wave 1:** shared references (full descriptor transcription for NH, NJ, NK; levels; core rules; question bank; style; ledger format; cert templates), `acqdemo:start`, `acqdemo:extract`, `acqdemo:annual`, `acqdemo:review` + `check.py`. Tests A and B during build; C, D and E after; F before first real use.
-2. **Wave 2:** `acqdemo:capture`, `acqdemo:midpoint`, `acqdemo:plan`, each with its own tests.
+2. **Wave 2:** `acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`, each with its own tests.
 
 ---
 
