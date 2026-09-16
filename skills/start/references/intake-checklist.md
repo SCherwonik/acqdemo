@@ -29,6 +29,8 @@ Record the answer in `profile.md` (`first_cycle`, entry date, supervisors and da
 | **The CAS2Net export for the last completed cycle** (the full appraisal or assessment package; usually a PDF) | Holds the prior cycle's submitted assessments, the supervisor narrative, scores, EOCS, value of position, and often the prior contribution plan. It shows what this person does, how their pay pool words things, and what they must not repeat this year. | Text into `prior/FY<yy>/`; profile values (EOCS, value of position, scores) into `profile.md`. Keep the source PDF out of git (see Privacy). |
 | **This cycle's midpoint review** (PDF, docx, text, or markdown) | The starting point for the annual: work already claimed, in the user's own words, which the annual builds on with a delta rather than repeating. | `FY<yy>/midpoint/final/`, one file per factor when it splits cleanly |
 
+If the user does not have either one saved, both come out of CAS2Net; the click-by-click steps, and which sections to tick, are in `getting-your-documents.md`.
+
 Read them with `../scripts/doc_text.py` (pdf, docx, pptx, txt, md). Long export PDFs read in page ranges. If a format will not open, ask the user to paste the text instead; never make them retype a document.
 
 ## Then these, if they exist

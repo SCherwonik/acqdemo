@@ -77,6 +77,38 @@ def test_intake_checklist():
     )
 
 
+def test_getting_your_documents():
+    assert_contains(
+        REF / "getting-your-documents.md",
+        [
+            "## What to pull, by task",
+            "## Fiscal Year Based Reports",
+            "## Salary appraisal and archived appraisals",
+            "## What to do with each file",
+            "## While you are in there",
+            "## When CAS2Net is out of reach",
+            "Employee > Reports",
+            "Employee Reports",
+            "Fiscal Year Based Reports",
+            "Select ACDP Assessment Form Sections",
+            "Check All",
+            "Part 1: ACDP Assessment Details",
+            "include Compensation Detail",
+            "Supervisor Assessment",
+            "include Employee Assessment",
+            "Employee > Salary Appraisal",
+            "Employee > Archived Appraisals",
+            "Contribution Plan",
+            "Midpoint Assessment",
+            "Annual Assessment",
+            "Closeout Assessment",
+            "Points of Contact",
+            "User Notifications",
+            "15 minutes",
+        ],
+    )
+
+
 def test_question_bank():
     assert_contains(
         REF / "question-bank.md",

@@ -27,6 +27,8 @@ Documents come first: the last CAS2Net export shows what the pay pool must not s
 the current midpoint or closeout is the starting point everything else builds on. Do not repeat
 the full checklist here; point the user at `../start/references/intake-checklist.md` for what
 each document is, why it matters, and what to do when they have none of it.
+When a document is not saved anywhere, offer to walk the CAS2Net retrieval steps with them
+(`../start/references/getting-your-documents.md`) before falling back to the sweeps.
 
 Read every document with the toolkit's shared reader, `../start/scripts/doc_text.py` (pdf,
 docx, pptx, txt, md). It supports --pages N-M for long files and --out PATH to save what it
