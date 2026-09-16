@@ -41,6 +41,8 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | **Wave 1 skills:** `acqdemo:start` (router), `acqdemo:extract`, `acqdemo:annual`, `acqdemo:review` + shared references | Done |
 | Validation records (`docs/superpowers/validation/`): personas, trigger tests, known problems, backtest, dry run | Done |
 | **Wave 2 skills:** `acqdemo:midpoint`, `acqdemo:plan` | Done |
+| **Chat-agent port (`gen_ai/`):** one primary agent, five subagents, a knowledge bundle, a worksheet, and an offline checker for people with no shell and no plugin loader | Done |
+| Live run of the port against a real cycle, with 26 findings applied (`docs/superpowers/validation/gen-ai-live-run.md`) | Done |
 
 All six skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
 

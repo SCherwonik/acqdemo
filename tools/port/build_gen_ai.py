@@ -592,7 +592,9 @@ exactly as shown. `# Session state` has a lowercase "state".
 - step: 4 deep-dives
 - current_entry: L-007
 - round: 3
-- pending_questions: 2
+- pending_questions:
+  - 1. How many analysts used the tool in the second half of the cycle?
+  - 2. Who asked for the rebuild, and what were they unable to do before it?
 - next_action: deep-dive on L-007, then coverage grid
 - open_questions:
   - EOCS after the promotion

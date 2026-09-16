@@ -250,6 +250,12 @@ var ACQ_ENGINE = (function () {
   var SOFT_LIMIT = 3900;
   var PRIOR_RUN = 6;
   var CROSS_RUN = 8;
+  // Deliberately the longest of the three. This one compares two pieces of text inside the same
+  // factor, where the mandatory opening paragraphs are short, formulaic and impossible to delete,
+  // so overlap is expected rather than suspicious. The longest boilerplate run those paragraphs
+  // actually carry is "for the current cycle ending 30 Sep 2026", eight words; the threshold sits
+  // above it so the rule fires on restated substance, not on the scaffolding.
+  var PREAMBLE_RUN = 10;
   var CONTRIBUTION_MAX_WORDS = 35;
   var FACTOR_KEYS = ["JA", "CT", "MS"];
   var FACTOR_NAMES = {
@@ -556,6 +562,32 @@ var ACQ_ENGINE = (function () {
     return out;
   }
 
+  // CROSS_FACTOR_REPEAT compares factors against each other and PRIOR_REPEAT compares a factor
+  // against a completed cycle, so neither one sees an entry echoing the certification or
+  // supervisory statement sitting four lines above it in the same file. Runs are reported from
+  // the entries, never from the preamble: the preamble is required text the employee cannot
+  // remove, so the entry is the only side of the overlap they can rewrite. A factor with no
+  // opening paragraphs has nothing to compare and produces nothing here, and entry-against-entry
+  // is out of scope on purpose.
+  function checkPreamble(factors, allow) {
+    var out = [];
+    FACTOR_KEYS.forEach(function (key) {
+      var factor = factors[key];
+      if (!factor.preamble.length || !factor.entries.length) return;
+      var opening = shingles(segments(factor.preamble.join("\n\n"), allow), PREAMBLE_RUN);
+      // Blank line between every field so a run can never bridge two fields or two entries,
+      // which is the same contract segments() gives the other two repeat checks.
+      var fields = [];
+      factor.entries.forEach(function (entry) { fields.push(entry.C, entry.R, entry.I); });
+      sharedRuns(segments(fields.join("\n\n"), allow), opening, PREAMBLE_RUN).forEach(function (run) {
+        out.push(finding("WARNING", "PREAMBLE_REPEAT", key,
+          run.split(" ").length + "-word run also in this factor's opening paragraphs: \"" +
+          run + "\"", run));
+      });
+    });
+    return out;
+  }
+
   // ------------------------------------------------------------- names
 
   function rosterNames(text) {
@@ -682,6 +714,7 @@ var ACQ_ENGINE = (function () {
     findings = findings.concat(checkMandatory(factors, !!opts.acq, !!opts.fm, !!opts.supervisor));
     findings = findings.concat(checkPrior(factors, stripBom(opts.prior || ""), allow));
     findings = findings.concat(checkCross(factors, allow));
+    findings = findings.concat(checkPreamble(factors, allow));
     findings = findings.concat(checkNames(factors, opts.names || []));
     findings = stableSort(findings, function (a, b) {
       if (SEVERITY_ORDER[a.severity] !== SEVERITY_ORDER[b.severity]) {
@@ -1063,6 +1096,63 @@ var ACQ_ENGINE = (function () {
       "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
     },
     "prior": "Supported the Office of the Regional Cost Estimating Directorate staff.",
+    "allow": [
+      "Office of the Regional Cost Estimating Directorate"
+    ],
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "entry restates its own certification paragraph",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "I am fully certified in BUS-CE (Advanced) as of 20 Aug 2024 and have completed 80 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.\n\nC: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Kept my acquisition certification current all year.\nR: Completed 80 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.\nI: The branch kept its certified estimator coverage.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "PREAMBLE_REPEAT"
+    ]
+  },
+  {
+    "name": "certification named once is not a preamble repeat",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "I am fully certified in BUS-CE (Advanced) as of 20 Aug 2024 and have completed 80 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.\n\nC: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Mentored an analyst through the BUS-CE (Advanced) package.\nR: They certified in June.\nI: The branch gained a second certified estimator.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "opening paragraph restated word for word",
+    "mode": "annual",
+    "factors": {
+      "JA": "I represent the Office of the Regional Cost Estimating Directorate on the data governance board.\n\nC: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Briefed the Office of the Regional Cost Estimating Directorate on the data governance board.\nR: Got a decision in one meeting.\nI: The estimate moved forward that week.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "PREAMBLE_REPEAT"
+    ]
+  },
+  {
+    "name": "allowed phrase is not a preamble repeat",
+    "mode": "annual",
+    "factors": {
+      "JA": "I represent the Office of the Regional Cost Estimating Directorate on the data governance board.\n\nC: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Briefed the Office of the Regional Cost Estimating Directorate on the data governance board.\nR: Got a decision in one meeting.\nI: The estimate moved forward that week.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
     "allow": [
       "Office of the Regional Cost Estimating Directorate"
     ],

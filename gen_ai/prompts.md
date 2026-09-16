@@ -60,8 +60,13 @@ You are helping me write my Department of Defense AcqDemo self-assessment. Follo
 the rest of this conversation, including in any new chat where I paste this block again.
 
 Never-miss rules, no exceptions, and tell me plainly if I ask you to set one aside:
-1. Never invent events, audiences, awards, or recognition. If I did not say it happened and no
-   document says it happened, it does not go in the draft.
+1. Never invent events, audiences, awards, recognition, dates, or how a system behaves. If I did
+   not say it happened and no document says it happened, it does not go in the draft. A date I did
+   not give you and no document states is blank and goes in open_questions. Never take a date off a
+   document's own creation date, and never write today's date, a future date, or a date you worked
+   out from context into any field, including updated. What CAS2Net or the personnel system does is
+   what my documents and I say it does and nothing else: say what a record shows and what it
+   appears to correspond to, name what you do not know, and give me the question to go and ask.
 2. Numbers are proposed as estimates, confirmed by me, and recorded with a basis showing how the
    number was arrived at.
 3. No people's names in the finished factor text. Names are welcome in my notes and in the ledger's
@@ -72,6 +77,23 @@ Never-miss rules, no exceptions, and tell me plainly if I ask you to set one asi
    me say the same contribution in unclassified terms: scope, audience, effect, difficulty.
 6. At most 3,900 characters per factor. Do not count characters yourself; a separate offline
    checker does that.
+
+When two values disagree, that is a question, never a merge:
+- Stop and ask me which one governs. It makes no difference where the two came from: two
+  documents, a document and me, or me twice. Do not keep both in separate fields, do not
+  concatenate them into one, and do not silently prefer the newer one, or the document, or me.
+- Mark the field itself, so nothing downstream can draft from it without seeing it. On the line the
+  value would have gone on, write "[CONFLICT]", then each value with the source and the date it
+  came from and the page if you have one, then "Pending confirmation before drafting."
+- Put a matching one-line question in open_questions, worded as you will ask it, so it survives
+  into the next round instead of sitting in a field nobody reads again.
+- Clear the marker only when I say which value governs. Then write the value in plainly and record
+  who said so and when, keeping the superseded value and its source on the same line.
+- Me correcting myself is not a conflict. "No, it was 12 analysts, not 14" is me telling you which
+  governs, so write 12 and note what it superseded.
+- Be most careful with my expected overall contribution score and my broadband level. Two documents
+  stating different broadband levels usually means a promotion inside the rating period, which is
+  the situation the whole toolkit exists to handle.
 
 How to work with me:
 - Ask five to eight numbered questions per round, so I can answer "1 yes, 2 no, 3 about forty".
@@ -108,15 +130,28 @@ asked and does not apply. Ids only increase and are never reused.
 A block labeled workspace, holding exactly four headings in this order:
 # Profile: career_path (NH, NJ, NK), level, target_level, series_and_title, organization,
 first_cycle, rating_period, eocs (expected overall contribution score), value_of_position,
-supervises (exact counts), supervisor, prior_supervisors, certifications with status, dates and
-point counts, promotions, mission statements one and two levels up.
+supervises (counts by category, such as "0 military, 4 civilians, 2 contractors", never yes or no),
+supervisor, prior_supervisors, certifications with status, dates and point counts, promotions,
+mission statements one and two levels up. A certification statement you read out of a completed
+cycle's appraisal is written with "confirmed: no", naming that document and that cycle, and a
+refresh question goes in open_questions. Never draft from a certification I have not confirmed this
+cycle: a year-old statement is well formed, passes every check, and is still wrong. If my expected
+overall contribution score or my broadband level changed mid-cycle, each value gets its own line
+with its own date range; never blend two into one number.
 # Pay pool: pay_pool, business_rules_source, what_label (C or W), mandatory_paragraph_order,
 min_entries_annual, min_entries_midpoint, midpoint_window, employee_due, supervisor_due,
-promotion_window_days, char_limit, allow_phrases.
+promotion_window_days, char_limit, allow_phrases. Nothing goes in this section that I did not tell
+you or that you did not read in a document, and every line says which, ending in
+"| source: 2026 contribution plan p. 1" or "| toolkit default, not confirmed". An invented rule recorded here becomes my pay pool's policy for
+every chat after this one, and nobody ever questions it again.
 # Roster: a table of Ring, Name, Organization, Role, Worked on, Frequency, Ledger. Rings are
 1 my own office, 2 other divisions, 3 government outside my organization, 4 contractors,
 5 leadership.
-# Session state: step, current_entry, round, pending_questions, next_action, open_questions, updated.
+# Session state: step, current_entry, round, pending_questions, next_action, open_questions,
+updated. current_entry is exactly one entry id such as L-007, or blank, never a title or a step
+name. pending_questions holds the questions themselves, word for word and numbered, never a count
+of them, because the field exists so a new chat can ask me the same questions again. updated is a
+date I gave you, or blank.
 
 I read both blocks when you print them, which is how a wrong number gets caught while it is still
 cheap to fix. I may also copy them out to carry this work into another chat or into the Claude Code
@@ -157,9 +192,17 @@ calendar export]. Read it and give me, in this order:
    appearing more than once; and any months with no meetings at all.
 6. Candidate entries in my ledger format, all at status candidate, numbering on from the highest
    entry id already in my ledger. Leave every field blank that this document does not answer.
+7. CONFLICTS: any standing fact stated at two different values across everything I have given you,
+   one line each. Broadband level, supervisor of record, organization, expected overall
+   contribution score, certification status. Give both values, the file and page each came from
+   spelled exactly as I spelled it, and the cycle that file covers, and end the line with the
+   question I have to answer. Do not pick one, and do not treat a prior-cycle value that also
+   appears in a current-cycle document as a confirmation.
 
-Rules for this: never create a candidate from a completed cycle, since that is the thing I must not
-repeat. Every midpoint statement from THIS cycle does become a candidate, with
+Rules for this: every fact and every person you report carries the cycle it came from, on the same
+line, because a prior cycle's supervisor or broadband level carried across with no cycle attached
+arrives looking current. Never create a candidate from a completed cycle, since that is the thing I
+must not repeat. Every midpoint statement from THIS cycle does become a candidate, with
 prior_cycle_overlap: continuing (cycle delta: unknown). Do not create candidates from a plan; a plan
 says what was supposed to happen. Copy numbers exactly as written, never rounded or totalled. Never
 infer a role, an audience size, or an impact from a meeting title.
@@ -173,11 +216,38 @@ document. If you have no documents at all, skip to Stage 2 and say so.
 ## Stage 2: situation and profile
 
 ```
-Three questions first, then fill my profile.
+Eight questions first, three about my situation and five about anything special that happened to
+this cycle, then fill my profile.
 
 1. Have I been through an AcqDemo cycle before and submitted a self-assessment?
 2. Did I write a midpoint self-assessment this cycle?
 3. Did my position or my supervisor change during this cycle?
+
+Then the special-situation questions, all five, numbered, before we get anywhere near my individual
+pieces of work. Ask them even if you think you know the answers, and never settle one by inference
+or by deciding which document looks more recent:
+
+4. Broadband level. Name every level you have seen and the document and cycle each came from, then
+   ask which level I held at the start of the rating period, which I hold now, and the effective
+   date of any change. A prior appraisal at one level and this cycle's plan at the level above is
+   not a level and a target, it is two levels, and the likeliest reason is a promotion mid-cycle.
+5. Supervisor. Name every supervisor of record you have seen with its cycle, then ask who mine is
+   now, who it was at the start of the cycle, and the date of any change.
+6. Closeout. Say whether a closeout turned up in what I gave you, name it, and ask what it was
+   written for and the effective date of whatever it covers. If none turned up but something
+   changed, ask whether one was written and whether one is still owed.
+7. Organization. Did my office, division, directorate, or command change, and on what date?
+8. Certification. Did any certification, its status, its level, or its point count change this
+   cycle, and did I start or finish anything?
+
+When an answer turns up a change, record it with its effective date, split anything the change
+split, meaning a mid-cycle broadband level or expected score gets one line per value with its own
+date range, and say out loud what the situation demands. A promotion inside my pay pool's promotion
+window needs substantial justification and needs continuity shown on both sides of the effective
+date, so the deep-dives have to look for higher-level work before it as well as after. Count the
+days from the effective date to my employee due date and tell me the number, and ask me for either
+date rather than estimating it. A supervisor or position change needs a closeout within 30 calendar
+days. An organization change changes who my audience was and what counts as my scope.
 
 After I answer, ask me five to eight numbered questions for whatever is still blank in my Profile
 and Pay pool sections. Ask career path, current level, and target level first; nothing later works
@@ -300,6 +370,15 @@ one factor. A project may appear in a second factor only from a genuinely differ
 different wording, and no fact and no number appears in more than one factor. Never allocate an
 entry whose prior-cycle overlap has no delta. Everything else ready goes to the bench. If a factor
 cannot be filled, tell me plainly that it is thin rather than padding it with a reused project.
+
+Use one bench test on every candidate and use the same one on all of them. An entry is allocated
+when it passes all four and benched when it fails any one: 1, somebody other than me is better off
+for it, so work whose only beneficiary is my own skills or credentials is personal professional
+development and benches unless I can say who else it served; 2, it has a result, meaning something
+exists or works differently that did not before; 3, it has an audience beyond me; 4, its
+prior_cycle_overlap is none, or continuing with a stated delta. Two candidates resting on the same
+ground get the same answer. Give every benched entry one line naming which of the four it failed,
+so I am reading the rule instead of guessing it from your choices.
 ```
 
 ```
@@ -310,11 +389,18 @@ Use my career path, my current broadband level, my target level, and my pay pool
 my workspace block, and the descriptors I pasted at the start. Draft only from recorded entries;
 if something we discussed is not in an entry, say so and ask me rather than writing it in.
 
-Mandatory paragraphs first, in my pay pool's order, and they are paragraphs, not C-R-I statements:
-if I supervise anyone, the supervisory paragraph opens Job Achievement with the exact sentence
-"I supervise X military, Y civilians, and manage Z contractors." followed by the scope of
-supervision. Certification statements open Mission Support, filled from the template, and ask me for
-any value you do not have rather than guessing a date or a point count.
+Mandatory paragraphs first, in my pay pool's order, and they are paragraphs, not C-R-I statements.
+The supervisory paragraph opens Job Achievement only when my supervises counts are not all zero;
+read the counts, and if they are 0 military, 0 civilians, 0 contractors there is no supervisory
+paragraph at all. When they are not all zero it is the exact sentence "I supervise X military, Y
+civilians, and manage Z contractors." followed by the scope of supervision. Certification statements
+open Mission Support, filled from the template, and ask me for any value you do not have rather than
+guessing a date or a point count, and never draft from a certification still marked "confirmed: no".
+
+Every mandatory paragraph has to come from somewhere you can name: my contribution plan lists it as
+an objective, my business rules say so, or I told you. Never add one because a factor looks like it
+should have one, and never write an added one into my Pay pool section, because that block is what a
+later chat reads back and trusts as my pay pool's policy.
 
 Then the statements, greatest impact first, each one three labeled lines:
 C: what I did, one sentence, at most 35 words

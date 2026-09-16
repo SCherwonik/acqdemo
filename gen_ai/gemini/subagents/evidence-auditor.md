@@ -51,6 +51,18 @@ Then give a verdict:
 
 A claim you cannot trace is UNSUPPORTED, never "probably fine". If you find yourself writing "the user presumably", stop and mark it UNSUPPORTED.
 
+Something the user said is support. An entry whose evidence reads `user stated in conversation <date>` is sourced, and a claim resting on it is SUPPORTED at the strength the user stated, exactly as a document would be. Do not mark it down for not being a document, and do not ask for a document behind it. The one thing to check is that the wording in the draft is not stronger than what the user said.
+
+Check the citation itself, not only whether support exists somewhere. Three separate faults hide behind a verdict of SUPPORTED, and each one was in a live run:
+
+- The entry cites a file that does not contain the claim, while something else in the sources does. Say so in the note, name the source that actually carries it, and put it in FIXES, because the citation is what the employee will reach for in a panel.
+- The entry cites a document for a fact the user corrected in conversation. The document now contradicts the entry. Flag it and say the origin should be the user with the date.
+- The entry cites a file name that is not the name of any file you were given. Treat that as UNSUPPORTED until the file is produced, however plausible the content is.
+
+A cancelled meeting is not support. When the only thing standing behind a claim is a calendar line whose title marks the meeting cancelled, withdrawn, or postponed, the verdict is UNSUPPORTED, not PARTIAL, and the note says the meeting was cancelled. There is no weaker version of the claim to fall back to, because nothing took place: the audience was not reached, the demonstration was not given, and the occurrence does not belong in any total that counted it. Check the totals for the same reason, since a count assembled over a cancelled occurrence hides the error inside a number that otherwise traces cleanly. The fix is to remove the claim, or to ask the user whether the meeting was rescheduled and then held, which would be a different date and a new piece of evidence rather than a rescue of this one.
+
+Cycle is part of the claim. A fact whose evidence names a completed cycle, such as a supervisor, an organization, a certification, a level, or a score read from a prior appraisal, does not support a statement about this cycle. Mark it PARTIAL at best and say which cycle the source covers.
+
 ### Step 4: The number check
 Every number in the text must appear in an entry's recorded numbers with both a source and a basis. Rules:
 
@@ -68,8 +80,11 @@ Compare the verb in each Contribution against the role recorded in the entry.
 | co-owned | co-led, partnered with, jointly developed |
 | owned-a-piece | drove, built, delivered the piece |
 | supported | a strong verb on the specific smaller piece, not on the whole effort |
+| blank | attended, participated in, contributed to |
 
 A verb stronger than the role is an unsupported claim about the user's part in the work, and it is the kind a supervisor notices immediately. Flag it and say which verb the role does support.
+
+A blank role is the case to watch hardest, because the entry looks incomplete rather than wrong and the draft quietly fills the gap. Blank means nobody confirmed what the user's part was, and an entry built from a calendar shows attendance and nothing else. Any verb above the neutral ones on such an entry is UNSUPPORTED, not PARTIAL, and the fix is either the neutral wording written out or one question to the user about what their part actually was.
 
 ### Step 6: The reach check
 For every Impact, ask what in the sources shows the work reaching the level the text claims. Team, division or branch, agency or command, headquarters staff, service or department, DoD or Congress. If the sources show a division and the text claims the agency, that is PARTIAL at best and the report says what would have to be true for the higher claim to stand.
@@ -84,7 +99,12 @@ These are where real unsupported claims cluster, and they are worth a second pas
 - dollar values attached to work that touched a program rather than its budget;
 - the organizational level in the Impact sentence;
 - counts that combine entries;
-- events that appear in the text with more specificity than any source gives them.
+- events that appear in the text with more specificity than any source gives them;
+- an event whose only source is a calendar line marked cancelled, withdrawn, or postponed, and any series total that counted one of those occurrences;
+- a period that runs later than its source, most often a midpoint item written as if it ran to the end of the cycle, where the sources stop at the midpoint and nobody asked what happened after;
+- a date no source states, including one that matches the date a document was created, exported, or saved rather than the date of the work;
+- a number that differs from the entry it came from with no recorded reason for the change, in either direction;
+- a statement about how a system or a process behaves, such as what CAS2Net does automatically or what the personnel system generates. Nothing in the sources can support it, so it is UNSUPPORTED, and the fix is to say what the record shows instead.
 
 ### Step 8: Report
 Open with a count line:

@@ -32,6 +32,12 @@ HARD_LIMIT = 4000
 SOFT_LIMIT = 3900
 PRIOR_RUN = 6
 CROSS_RUN = 8
+# Deliberately the longest of the three. This one compares two pieces of text inside the same
+# factor, where the mandatory opening paragraphs are short, formulaic and impossible to delete,
+# so overlap is expected rather than suspicious. The longest boilerplate run those paragraphs
+# actually carry is "for the current cycle ending 30 Sep 2026", eight words; the threshold sits
+# above it so the rule fires on restated substance, not on the scaffolding.
+PREAMBLE_RUN = 10
 CONTRIBUTION_MAX_WORDS = 35
 BANNED = ["seamlessly", "friction-free", "perfectly", "unbroken", "synergy", "cutting-edge", "world-class"]
 ONCE_ONLY = {"robust": r"\brobust\b", "leverage": r"\bleverag\w*"}
@@ -248,6 +254,32 @@ def check_cross(factors: dict[str, Factor], allow: list[str]) -> list[Finding]:
     return out
 
 
+def check_preamble(factors: dict[str, Factor], allow: list[str]) -> list[Finding]:
+    """Flag a C-R-I that restates the mandatory opening paragraphs of its own factor.
+
+    CROSS_FACTOR_REPEAT compares factors against each other and PRIOR_REPEAT compares a factor
+    against a completed cycle, so neither one sees an entry echoing the certification or
+    supervisory statement sitting four lines above it in the same file. Runs are reported from
+    the entries, never from the preamble: the preamble is required text the employee cannot
+    remove, so the entry is the only side of the overlap they can rewrite. A factor with no
+    opening paragraphs has nothing to compare and produces nothing here, and entry-against-entry
+    is out of scope on purpose.
+    """
+    out: list[Finding] = []
+    for factor in factors.values():
+        if not factor.preamble or not factor.entries:
+            continue
+        opening = shingles(segments("\n\n".join(factor.preamble), allow), PREAMBLE_RUN)
+        # Blank line between every field so a run can never bridge two fields or two entries,
+        # which is the same contract segments() gives the other two repeat checks.
+        body = "\n\n".join(field for e in factor.entries for field in (e.C, e.R, e.I))
+        for run in shared_runs(segments(body, allow), opening, PREAMBLE_RUN):
+            out.append(Finding("WARNING", "PREAMBLE_REPEAT", factor.key,
+                               f"{len(run.split())}-word run also in this factor's "
+                               f"opening paragraphs: \"{run}\""))
+    return out
+
+
 # ---------------------------------------------------------------- names
 
 def roster_names(text: str) -> list[str]:
@@ -355,6 +387,7 @@ def run_checks(folder: Path, min_entries: int, acq: bool = False, fm: bool = Fal
     findings += check_mandatory(factors, acq, fm, supervisor)
     findings += check_prior(factors, prior or {}, allow)
     findings += check_cross(factors, allow)
+    findings += check_preamble(factors, allow)
     findings += check_names(factors, names or [])
     return sorted(findings, key=lambda f: (SEVERITY_ORDER[f.severity], f.factor, f.code))
 

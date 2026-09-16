@@ -99,6 +99,32 @@ pass silently, so two never-miss rules would go unchecked. The orchestrator hold
 the Document Extractor returns the prior-cycle text and the roster carries the names. It therefore
 emits a ready-to-paste checker setup block naming every field's value before sending the user to the page.
 
+## Rules the live run forced
+Sixteen findings from a real employee running the pack against his own documents
+(`docs/superpowers/validation/gen-ai-live-run.md`). Most collapse into five rules, and each belongs
+in one place so the agents cannot disagree about it.
+
+1. **Conflict is a question, never a merge.** When a new value contradicts one already held, from a
+   document or from the user, stop and ask which governs. Do not store both in separate fields, do
+   not concatenate them, do not silently prefer the newer one. This one rule covers a missed
+   promotion (a prior appraisal and a plan disagreed about broadband level), an unreconciled
+   expected contribution score, and a supervisor carried in from the wrong cycle. It is the single
+   highest-value fix in the list.
+2. **Instructions are answered before attachments are read.** Every instruction in a message is
+   applied, refused, or asked about, and named in the reply, before any uploaded file is processed.
+   A turn that carried three corrections and an answer alongside an upload delivered the document
+   work perfectly and dropped all four, including an answer to a question the same reply then asked
+   again. Resending them without the attachment landed all four, which isolates the cause.
+3. **Evidence names the true origin.** A fact the user supplied is `user stated in conversation
+   <date>`, not the document the entry came from. A file is named exactly as supplied. A fact read
+   from a prior-cycle document carries that cycle with it.
+4. **Never invent extends past events.** It already covers events, audiences, awards and
+   recognition. It also covers dates, including inferring one from a document's own date, and how a
+   system behaves. Say what a record shows and what it appears to correspond to.
+5. **A correction propagates.** Changing a value in the workspace block updates every ledger entry
+   whose text restates it, or lists them for the user. Two blocks disagreeing is the failure the
+   split was meant to avoid.
+
 ## Layout
 ```
 gen_ai/

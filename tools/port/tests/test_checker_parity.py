@@ -75,7 +75,8 @@ PORTED_CODES = {
     "ACQ_CERT", "BANNED_WORD", "CHAR_COUNT", "CHAR_LIMIT", "CHAR_SOFT_LIMIT",
     "CONTRIBUTION_TOO_LONG", "CROSS_FACTOR_REPEAT", "EM_DASH", "ENTRY_INCOMPLETE",
     "FM_CERT", "LABEL_CASE", "LABEL_STYLE", "MARKDOWN", "MIN_ENTRIES", "NAME_IN_TEXT",
-    "ORPHAN_LABEL", "OVERUSED_WORD", "PRIOR_REPEAT", "SMART_QUOTES", "SUPERVISOR_STATEMENT",
+    "ORPHAN_LABEL", "OVERUSED_WORD", "PREAMBLE_REPEAT", "PRIOR_REPEAT", "SMART_QUOTES",
+    "SUPERVISOR_STATEMENT",
 }
 NETWORK = re.compile(r"https?://|\bfetch\s*\(|XMLHttpRequest|WebSocket|navigator\.sendBeacon|"
                      r"<script[^>]+\bsrc=|<link[^>]+\bhref=|<img[^>]+\bsrc=|@import")
@@ -304,6 +305,59 @@ def test_the_page_and_check_py_agree_on_a_draft_that_crowds_one_factor(tmp_path)
     assert from_page == from_cli
     crowded = [f for f in from_cli if f[0] == "CRITICAL" and f[1] == "JA"]
     assert len({f[2] for f in crowded}) >= 3, "this draft no longer crowds one severity and factor"
+
+
+def fixtures_by_expectation(code, expected):
+    return [(i, f) for i, f in enumerate(FIXTURES) if (code in f["expect"]) is expected]
+
+
+def test_the_corpus_pairs_the_within_factor_repeat_with_an_allowed_phrase():
+    """One firing fixture and the same draft with the phrase allowed.
+
+    Without the pair, a corpus could cover PREAMBLE_REPEAT while proving nothing about the
+    allow-phrases path, which is the only escape hatch an employee has for a mandatory
+    paragraph they are required to quote.
+    """
+    groups = {}
+    for fixture in FIXTURES:
+        groups.setdefault(json.dumps(fixture["factors"], sort_keys=True), []).append(fixture)
+    pairs = [group for group in groups.values()
+             if len(group) == 2
+             and {"PREAMBLE_REPEAT" in one["expect"] for one in group} == {True, False}
+             and any(one.get("allow") for one in group)]
+    assert pairs, "no fixture pair shows an allowed phrase suppressing PREAMBLE_REPEAT"
+
+
+def test_both_engines_fire_the_within_factor_repeat(tmp_path):
+    """The firing direction. Whole findings, so a drifted message or severity fails here."""
+    needs_node()
+    cases = fixtures_by_expectation("PREAMBLE_REPEAT", True)
+    assert cases, "the corpus no longer exercises PREAMBLE_REPEAT"
+    for index, fixture in cases:
+        folder = tmp_path / f"fires-{index}"
+        folder.mkdir()
+        from_cli = sorted(canonical(f.severity, f.factor, f.code, f.message)
+                          for f in run_fixture(fixture, folder) if f.code == "PREAMBLE_REPEAT")
+        from_page = sorted(canonical(*row) for row in page_findings()[index]
+                           if row[2] == "PREAMBLE_REPEAT")
+        assert from_cli, f"{fixture['name']}: check.py did not fire PREAMBLE_REPEAT"
+        assert from_page, f"{fixture['name']}: the page did not fire PREAMBLE_REPEAT"
+        assert from_cli == from_page, f"{fixture['name']}: the two engines word it differently"
+        # A WARNING, never a CRITICAL: the overlap is with text the employee must carry, and a
+        # false CRITICAL there cannot be cleared by deleting the paragraph.
+        assert {row[0] for row in from_cli} == {"WARNING"}
+
+
+def test_neither_engine_invents_the_within_factor_repeat(tmp_path):
+    """The quiet direction, over every other fixture, including the ones with no preamble."""
+    needs_node()
+    for index, fixture in fixtures_by_expectation("PREAMBLE_REPEAT", False):
+        folder = tmp_path / f"quiet-{index}"
+        folder.mkdir()
+        assert [f.code for f in run_fixture(fixture, folder) if f.code == "PREAMBLE_REPEAT"] == [], \
+            f"{fixture['name']}: check.py invented a PREAMBLE_REPEAT"
+        assert [row for row in page_findings()[index] if row[2] == "PREAMBLE_REPEAT"] == [], \
+            f"{fixture['name']}: the page invented a PREAMBLE_REPEAT"
 
 
 def separator_drafts():

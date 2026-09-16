@@ -133,6 +133,108 @@ to break.
     read. *Fix: `orchestrator.md` raises any conflict between a document value and a user-supplied
     value as a question at the moment the second one arrives, rather than keeping both.*
 
+17. **It invented a mandatory requirement and then wrote the invention into the persistent block.** At
+    allocation it opened Job Achievement with a supervisory paragraph for an employee who supervises
+    nobody, and added "Supervisory objective (0/0/0 counts)" to the Pay pool block's
+    `mandatory_objectives`, where the plan lists only the two certification statements. Inventing a
+    requirement is bad; recording it as a pay pool rule is worse, because the workspace block is what
+    a later session reads back and trusts. *Fix: `orchestrator.md` and `factor-drafter.md` derive
+    mandatory paragraphs from the plan's stated objectives and the profile's supervisory counts, and
+    nothing is added to `mandatory_objectives` that was not read from a document or supplied by the
+    user. A supervisory paragraph is required only when the counts are not all zero.*
+18. **A correction fixed the instance, not the class.** Told two rounds earlier that a calendar-derived
+    candidate must not claim the employee led a series the calendar shows only attendance at, the
+    agent fixed that entry, then at drafting time wrote "Led 9 one-on-one technical exchange
+    sessions" for a different calendar-derived entry whose `role` was blank. The rule has to live
+    where the drafting happens, not only where the correction landed. *Fix: `factor-drafter.md`
+    refuses an ownership verb for any entry whose `role` is blank, and says which entry and which
+    verb it declined to use.*
+19. **A factor repeated its own mandatory paragraph.** Mission Support's certification statements gave
+    both certifications, their dates and the point count; the third C-R-I in the same factor restated
+    all three. Nothing catches this: `CROSS_FACTOR_REPEAT` compares factors against each other and
+    `PRIOR_REPEAT` compares against a completed cycle, so a statement repeating the preamble sitting
+    directly above it passes clean. *Fix: `factor-drafter.md` treats the mandatory paragraphs as
+    already-spent material for that factor. Worth considering in the deterministic layer too, in both
+    `skills/review/scripts/check.py` and the offline page: a within-factor repeat check comparing each
+    entry against that factor's own preamble.*
+20. **Bench reasoning was applied inconsistently.** One entry was benched as "personal professional
+    development rather than an organizational contribution" while another resting on the same ground
+    was allocated. *Fix: `orchestrator.md` states the bench test once and applies it to every entry,
+    and the allocation names the test it used.*
+
+## The drafting stage, scored against the real checker
+The draft was run through `check.py` with the employee's real prior-cycle text, real midpoint, real
+roster and real certification flags. What it got right first, because it is not nothing: the three
+factors came in at 3,759, 3,475 and 3,744 characters against a target band of 3,400 to 3,800, and
+those are the exact figures it claimed, to the character, for an agent that is told not to count.
+Zero people's names. Zero contractor company names. Every one of four corrections applied.
+
+Then: **8 CRITICAL**, and one fabrication the checker cannot see.
+
+21. **It invented a number.** A Result line claimed a named efficiency gain as a percentage. That
+    figure appears nowhere: not in the ledger, not in any of the five rambles, zero occurrences
+    across every source the session had. Never-miss rule 2 failed at the only stage where it
+    decides anything, and no deterministic check can catch it, because an invented number is
+    well-formed. *Fix: `factor-drafter.md` writes no number that is not carried on the entry it is
+    drafting, and lists in LEFT OUT any number it wanted and did not have.*
+22. **Eight prior-cycle repeats, runs of six to twelve words**, lifted from the employee's own
+    midpoint and prior annual, including a twelve-word run in Communication and Teamwork. Rule 4 is
+    a never-miss rule. The drafter had never been handed the prior text, so it could not have
+    avoided them. *Fix: the Factor Drafter handoff in `orchestrator.md` includes the prior-cycle and
+    midpoint text, and `factor-drafter.md` checks each statement against it before writing, the way
+    it already checks against the factor's own preamble.*
+23. **Three of nine Impact lines opened with verbatim descriptor text**, phrases lifted whole from
+    the career path's level descriptors. Writing style says take phrasing from the descriptors, not
+    paste them; a panel reading its own rubric back hears the rubric, not the contribution. *Fix:
+    `factor-drafter.md` uses descriptor vocabulary, never a descriptor sentence, and the Panel
+    Reader flags a factor whose Impact lines open with descriptor text.*
+24. **Unevidenced specificity used as padding.** Multi-decade records, structured weekly
+    instruction, live code refactoring, recurring requests eliminated. None supported by an entry.
+    Individually small, collectively the texture that makes a fabricated draft read as a real one.
+
+### The finding that explains the other four
+The character target caused them. The drafter was asked for 3,400 to 3,800 characters from a ledger
+where half the entries had no result and no numbers, and it hit the band exactly. The only material
+available to reach it was invented specificity and recycled prior-cycle phrasing. A character target
+plus thin evidence produces fabrication, reliably, and the target is what makes the result fluent
+enough to look finished.
+
+*Fix, and this is the important one: the character count is a ceiling, never a quota.* A factor
+short on evidence comes out short, with a line saying which entries were thin and what would have to
+be answered to lengthen it honestly. The drafter never writes toward a number. The existing rule
+about enriching a thin factor from the ledger stands; inventing to fill it does not.
+
+## The supervisor crib sheet
+The right shape, and two errors a panel could check in a minute.
+
+Right: a substantial-justification paragraph, a pre-promotion versus post-promotion continuity matrix,
+discriminators per factor, and payout guidance that draws the correct distinction, sustained
+capability arguing base pay while a one-time high-stakes turnaround argues the award.
+
+25. **The continuity matrix placed events on the wrong side of the promotion date.** Nine contractor
+    sessions that all took place three to four weeks before the effective date were listed under
+    post-promotion, and a demonstration series spanning seven months was listed as though all of it
+    followed the promotion. This is the one artifact where the dates are the entire argument: a
+    promotion inside the pay pool's window is defended by showing higher-level work on both sides of
+    the line, so a matrix assembled by guesswork undoes the thing it exists to prove, in a document
+    that goes to the pay pool manager. *Fix: the pre and post columns are built only from entries
+    carrying dates, each item is placed by its own date, an entry spanning the effective date is
+    split or marked as spanning, and an entry with no date is listed separately as undated rather
+    than assigned to a column.*
+26. **A cancelled meeting was counted as an event that happened.** A calendar line beginning
+    "Canceled:" became a demonstration to an external agency's cost team in the roster and part of a
+    count of ten sessions. The word was in the title. *Fix: `document-extractor.md` drops calendar
+    lines whose title marks them cancelled and never counts them in a series total, and
+    `evidence-auditor.md` treats a claim supported only by a cancelled line as unsupported rather
+    than partial. Not a deterministic check: `check.py` and the offline page see the factor text and
+    the prior-cycle text and never the calendar, so neither can know a meeting was cancelled. This
+    one is caught at extraction or not at all, which is an argument for the extractor being strict
+    rather than the checker being clever.*
+
+Also, unprompted: it assigned itself categorical scores and a rating of record. Those are the panel's
+to set, not the employee's, and stating them in a document written for the supervisor invites the
+argument the assessment is meant to avoid.
+
 ## Resolved watch item
 The supervisor's full name was not fabricated. Challenged, the agent named the document and the two
 pages: the name came from the prior cycle's appraisal, where that person was the supervisor of

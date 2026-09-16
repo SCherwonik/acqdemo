@@ -184,6 +184,85 @@ def test_cross_factor_repeat_flags_eight_word_run(tmp_path):
     assert "CROSS_FACTOR_REPEAT" in codes(findings, "CRITICAL")
 
 
+# ------------------------------------------------- within-factor (preamble) repeats
+
+# The Result restates the certification date, the point count and the cycle end: thirteen
+# words straight out of the mandatory paragraph above it. This is the live-run shape that
+# CROSS_FACTOR_REPEAT and PRIOR_REPEAT both miss, because the repeat never leaves the factor.
+RESTATES_ACQ = ("C: Kept my acquisition certification current all year.\n"
+                "R: Completed 80 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.\n"
+                "I: The branch kept its certified estimator coverage.\n")
+
+
+def test_preamble_repeat_flags_an_entry_restating_its_own_certification(tmp_path):
+    ms = factor_text("charlie", 2, preamble=[ACQ]) + RESTATES_ACQ
+    findings = check.run_checks(write_dir(tmp_path, ms=ms), 3)
+    hits = [f for f in findings if f.code == "PREAMBLE_REPEAT"]
+    assert [f.factor for f in hits] == ["MS"]
+    assert hits[0].severity == "WARNING"
+    assert "continuous learning points clps for the cycle ending" in hits[0].message
+    # WARNING on purpose: the preamble is text the employee is required to carry, so this rule
+    # must never be able to fail a draft whose only sin is echoing text it cannot delete.
+    assert codes(findings, "CRITICAL") == []
+
+
+def test_preamble_repeat_allows_naming_a_certification_once(tmp_path):
+    """An entry may name the certification; it may not restate the paragraph."""
+    ms = factor_text("charlie", 2, preamble=[ACQ]) + (
+        "C: Mentored an analyst through the BUS-CE (Advanced) package.\n"
+        "R: They certified in June.\n"
+        "I: The branch gained a second certified estimator.\n")
+    assert "PREAMBLE_REPEAT" not in codes(check.run_checks(write_dir(tmp_path, ms=ms), 3))
+
+
+def test_preamble_repeat_leaves_the_mandatory_date_tail_alone(tmp_path):
+    """'for the current cycle ending 30 Sep 2026' is eight words of unavoidable scaffolding.
+
+    It is the longest boilerplate run the mandatory paragraphs actually contain, and
+    PREAMBLE_RUN sits above it on purpose. A six- or eight-word threshold would fire here,
+    on a sentence that repeats nothing of substance.
+    """
+    ms = factor_text("charlie", 2, preamble=[FM]) + (
+        "C: Delivered the branch estimate on the published schedule.\n"
+        "R: Issued the position for the current cycle ending 30 Sep 2026.\n"
+        "I: The comptroller locked the funding line without a second pass.\n")
+    assert "PREAMBLE_REPEAT" not in codes(check.run_checks(write_dir(tmp_path, ms=ms), 3))
+
+
+def test_preamble_repeat_needs_a_preamble(tmp_path):
+    """No opening paragraphs, nothing to compare against, even when entries repeat each other.
+
+    Entry-against-entry is deliberately out of scope. This rule is about the mandatory text
+    the employee cannot delete, not about self-similar entries.
+    """
+    shared = "C: Ran the quarterly data pull for every program estimate in the branch.\n"
+    ms = (shared + "R: Done.\nI: Faster.\n\n"
+          + shared + "R: Repeated.\nI: Faster still.\n\n" + cri("charlie", 3))
+    assert "PREAMBLE_REPEAT" not in codes(check.run_checks(write_dir(tmp_path, ms=ms), 3))
+
+
+def test_preamble_repeat_ignores_allowed_phrase(tmp_path):
+    org = "Office of the Regional Cost Estimating Directorate"
+    ja = factor_text("alpha", 2, preamble=[f"I represent the {org} on the data governance board."]) + (
+        f"C: Briefed the {org} on the data governance board.\n"
+        "R: Got a decision in one meeting.\n"
+        "I: The estimate moved forward that week.\n")
+    folder = write_dir(tmp_path, ja=ja)
+    assert "PREAMBLE_REPEAT" in codes(check.run_checks(folder, 3))
+    assert "PREAMBLE_REPEAT" not in codes(check.run_checks(folder, 3, allow=[org]))
+
+
+def test_preamble_repeat_covers_the_supervisory_paragraph(tmp_path):
+    """The supervisory statement is a mandatory paragraph like any other; no carve-out."""
+    ja = factor_text("alpha", 2, preamble=[SUP]) + (
+        "C: Ran the branch feedback program.\n"
+        "R: I held monthly feedback sessions and completed all required personnel actions on time.\n"
+        "I: No appraisal slipped past its due date.\n")
+    hits = [f for f in check.run_checks(write_dir(tmp_path, ja=ja), 3, supervisor=True)
+            if f.code == "PREAMBLE_REPEAT"]
+    assert [f.factor for f in hits] == ["JA"] and hits[0].severity == "WARNING"
+
+
 # ---------------------------------------------------------------- names
 
 ROSTER = """# Roster
