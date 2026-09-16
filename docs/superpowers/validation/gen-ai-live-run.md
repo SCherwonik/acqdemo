@@ -100,6 +100,26 @@ Ranked. Each names the file that owns it.
 13. **`current_entry` held a value that is not an entry id.** Minor, but the resume path reads it.
     *Fix: the workspace skeleton says it is one id or blank.*
 
+14. **Four user corrections were silently dropped in one turn.** The user's message carried three
+    corrections and one answer, with a document attached. The reply processed the document
+    correctly and did not acknowledge, apply, or refuse a single one of the four. One of them was
+    an answer to a question the reply then asked again. The three previous turns had applied
+    corrections faithfully, and the difference was the attachment, so the working hypothesis is
+    that document processing consumed the turn. This is the most serious behavioral finding of the
+    run: a user who says "stop claiming X" and receives a clean-looking reply has no signal that X
+    survived. *Fix: `orchestrator.md` answers or refuses every instruction in a message before
+    processing an attachment, and names each one it acted on. Diagnostic first: resend the same
+    items with no attachment. If they land, the cause is the upload competing with them. If they
+    drop again, it is instruction decay over conversation length, which is a different and worse
+    problem.*
+
+## Confirmed by a negative test
+The closeout export contained no narrative: one record skipped by an administrator, one an empty
+draft. The agent reported exactly that and concluded the annual must carry the partial period
+itself. It did not manufacture a supervisor narrative from surrounding context, which is the failure
+this condition is built to provoke. The rule against inventing events held where it was most likely
+to break.
+
 ## Watch, not yet a finding
 A supervisor's full name appeared that the user had not supplied, in a run where other full names
 plausibly came from an uploaded PDF. Unverified either way. If the name was not in a document it is
