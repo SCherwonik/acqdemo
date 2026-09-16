@@ -844,7 +844,7 @@ Ask for this before the timeline walk. If `FY<yy>/evidence/` has no calendar fil
 3. Optional: right-click column headers > **Remove This Column**; keep **Subject** and **Start**.
 4. Click the first meeting, **Shift**+click the last, **Ctrl + C**.
 5. Paste into Notepad and save as `FY<yy>/evidence/calendar-<YYYY-MM-DD>.txt`.
-Then run the calendar harvest (see the acqdemo-harvest skill). Remind the user never to export from a classified system and to delete sensitive titles.
+Then run the calendar harvest (see the acqdemo-extract skill). Remind the user never to export from a classified system and to delete sensitive titles.
 
 ### Timeline walk
 1. Build a month list from the first to the last month of the rating period.

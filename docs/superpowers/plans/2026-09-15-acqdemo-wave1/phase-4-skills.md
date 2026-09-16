@@ -115,11 +115,11 @@ git commit -m "feat(review): add acqdemo-review skill"
 ### Task 17: Harvest skill
 
 **Files:**
-- Create: `skills/harvest/SKILL.md`
+- Create: `skills/extract/SKILL.md`
 
 - [ ] **Step 1: Create the skill**
 
-Create `skills/harvest/SKILL.md`:
+Create `skills/extract/SKILL.md`:
 
 ````markdown
 ---
@@ -198,8 +198,8 @@ Expected: 6 passed.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/harvest/SKILL.md
-git commit -m "feat(harvest): add acqdemo-harvest skill"
+git add skills/extract/SKILL.md
+git commit -m "feat(harvest): add acqdemo-extract skill"
 ```
 
 ---
@@ -252,7 +252,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
    - Special situations: a promotion inside `paypool.md` `promotion_window_days` (needs substantial justification), a position or supervisor change (closeouts exist), supervisory duties (supervisory paragraph), certifications (certification statements).
 
 ## Step 2: Harvest
-Run the `acqdemo:harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue.
+Run the `acqdemo:extract` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue.
 
 ## Step 3: Brain dump
 1. Say: "Tell me everything you worked on this cycle, in any order. Ramble; I'll organize it." Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
@@ -361,10 +361,10 @@ Compare today's date with `paypool.md`:
 | Window | Stage | Next skill |
 |---|---|---|
 | Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo:plan` when available; until then, draft objectives from the PRD duties using the question bank and `references/writing-style.md`, with labeled objectives (JA1, CT1, MS1) |
-| After plan due, before midpoint window | Capture | `acqdemo:log` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
+| After plan due, before midpoint window | Capture | `acqdemo:capture` when available; until then, add `candidate` entries to `FY<yy>/ledger.md` directly |
 | Midpoint window | Midpoint | `acqdemo:midpoint` when available; until then, run `acqdemo:annual` with a minimum of one C-R-I per factor and no crib sheet |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
-| Mid-August to employee due date | Annual | `acqdemo:harvest`, then `acqdemo:annual` |
+| Mid-August to employee due date | Annual | `acqdemo:extract`, then `acqdemo:annual` |
 | Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo:review` on the final text |
 | After the cycle ends | Next cycle | read next-cycle seeds from the working doc, then contribution plan |
 
@@ -374,7 +374,7 @@ Always mention: days until the employee due date; any promotion inside the pay p
 Report briefly: profile completeness; pay pool overlay present; roster rows; for the current `FY<yy>/`: ledger entries by status, harvest snapshots, draft versions, final files. If `FY<yy>/session-state.md` has a `next_action`, offer to resume it.
 
 ## Step 5: Route
-Invoke the matching skill: `acqdemo:harvest`, `acqdemo:annual`, or `acqdemo:review`. For stages whose skill is not available yet, follow the interim approach in the table.
+Invoke the matching skill: `acqdemo:extract`, `acqdemo:annual`, or `acqdemo:review`. For stages whose skill is not available yet, follow the interim approach in the table.
 
 ## Safety
 - The workspace is private; names never appear in paste-ready text; classified information never enters any file or conversation.

@@ -1,4 +1,4 @@
-"""Content checks for the harvest SKILL.md.
+"""Content checks for the extract SKILL.md.
 
 Frontmatter and relative-path validity are covered generically for every
 skill by tests/test_plugin_structure.py. This file checks the anchors,
@@ -8,7 +8,7 @@ export and midpoint/closeout ingestion).
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "harvest" / "SKILL.md"
+SKILL = ROOT / "skills" / "extract" / "SKILL.md"
 
 REQUIRED_ANCHORS = [
     "## Step 1: Documents",

@@ -2,26 +2,26 @@
 
 Back to [plan index](../2026-09-15-acqdemo-wave1.md).
 
-Two standard-library scripts turn raw evidence into Markdown that the harvest skill (Task 17) clusters into candidate ledger entries:
-- `skills/harvest/scripts/git_harvest.py`: commits, months, authors, and tags from local repositories (`git log`) and GitHub repositories (`gh api`), merge commits skipped.
-- `skills/harvest/scripts/calendar_harvest.py`: a calendar list export (Subject and Start, tab-separated; README Section 6.4) filtered to the rating period, with canceled meetings skipped, recurring series counted, and meetings listed by month.
+Two standard-library scripts turn raw evidence into Markdown that the extract skill (Task 17) clusters into candidate ledger entries:
+- `skills/extract/scripts/git_harvest.py`: commits, months, authors, and tags from local repositories (`git log`) and GitHub repositories (`gh api`), merge commits skipped.
+- `skills/extract/scripts/calendar_harvest.py`: a calendar list export (Subject and Start, tab-separated; README Section 6.4) filtered to the rating period, with canceled meetings skipped, recurring series counted, and meetings listed by month.
 
-Tests live in `skills/harvest/scripts/tests/`.
+Tests live in `skills/extract/scripts/tests/`.
 
 ---
 
 ### Task 12: Git harvest parsing, filtering, and Markdown
 
 **Files:**
-- Create: `skills/harvest/scripts/git_harvest.py`
-- Create: `skills/harvest/scripts/tests/test_git_harvest.py`
+- Create: `skills/extract/scripts/git_harvest.py`
+- Create: `skills/extract/scripts/tests/test_git_harvest.py`
 
 - [ ] **Step 1: Write the failing tests**
 
-Create `skills/harvest/scripts/tests/test_git_harvest.py`:
+Create `skills/extract/scripts/tests/test_git_harvest.py`:
 
 ```python
-"""Tests for skills/harvest/scripts/git_harvest.py."""
+"""Tests for skills/extract/scripts/git_harvest.py."""
 import json
 import os
 import subprocess
@@ -77,12 +77,12 @@ def test_render_markdown_totals_errors_and_order():
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_git_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_git_harvest.py`
 Expected: collection ERROR with `ModuleNotFoundError: No module named 'git_harvest'`.
 
 - [ ] **Step 3: Write the data classes, parsers, filter, and renderer**
 
-Create `skills/harvest/scripts/git_harvest.py`:
+Create `skills/extract/scripts/git_harvest.py`:
 
 ```python
 """Summarize git activity for an AcqDemo rating period as Markdown.
@@ -194,13 +194,13 @@ def render_markdown(summaries: list[RepoSummary], since: str, until: str) -> str
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_git_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_git_harvest.py`
 Expected: 5 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/harvest/scripts
+git add skills/extract/scripts
 git commit -m "feat(harvest): parse, filter, and render git activity"
 ```
 
@@ -209,12 +209,12 @@ git commit -m "feat(harvest): parse, filter, and render git activity"
 ### Task 13: Git harvest readers and command line
 
 **Files:**
-- Modify: `skills/harvest/scripts/git_harvest.py` (append)
-- Modify: `skills/harvest/scripts/tests/test_git_harvest.py` (append)
+- Modify: `skills/extract/scripts/git_harvest.py` (append)
+- Modify: `skills/extract/scripts/tests/test_git_harvest.py` (append)
 
 - [ ] **Step 1: Append the failing tests**
 
-Append to `skills/harvest/scripts/tests/test_git_harvest.py`:
+Append to `skills/extract/scripts/tests/test_git_harvest.py`:
 
 ```python
 def make_repo(tmp_path):
@@ -284,12 +284,12 @@ def test_main_requires_a_source(capsys):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_git_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_git_harvest.py`
 Expected: 6 new tests FAIL with `AttributeError: module 'git_harvest' has no attribute 'local_summary'` (or `'github_summary'`, `'main'`); the first 5 still pass.
 
 - [ ] **Step 3: Append the readers and `main`**
 
-Append to `skills/harvest/scripts/git_harvest.py`:
+Append to `skills/extract/scripts/git_harvest.py`:
 
 ```python
 def run(cmd: list[str]) -> str:
@@ -356,18 +356,18 @@ if __name__ == "__main__":
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_git_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_git_harvest.py`
 Expected: 11 passed.
 
 - [ ] **Step 5: Smoke-test against a real repository**
 
-Run: `python skills/harvest/scripts/git_harvest.py --since 2025-10-01 --until 2026-09-30 --local .`
+Run: `python skills/extract/scripts/git_harvest.py --since 2025-10-01 --until 2026-09-30 --local .`
 Expected: Markdown starting `# Git harvest: 2025-10-01 to 2026-09-30` with a row for this repository and its commit subjects. (GitHub form, if `gh` is authenticated: `--github <owner>/<repo>`.)
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add skills/harvest/scripts
+git add skills/extract/scripts
 git commit -m "feat(harvest): read local and GitHub repositories from the command line"
 ```
 
@@ -376,15 +376,15 @@ git commit -m "feat(harvest): read local and GitHub repositories from the comman
 ### Task 14: Calendar export parsing and recurring series
 
 **Files:**
-- Create: `skills/harvest/scripts/calendar_harvest.py`
-- Create: `skills/harvest/scripts/tests/test_calendar_harvest.py`
+- Create: `skills/extract/scripts/calendar_harvest.py`
+- Create: `skills/extract/scripts/tests/test_calendar_harvest.py`
 
 - [ ] **Step 1: Write the failing tests**
 
-Create `skills/harvest/scripts/tests/test_calendar_harvest.py`. The export below uses real tab characters between columns (`\t`):
+Create `skills/extract/scripts/tests/test_calendar_harvest.py`. The export below uses real tab characters between columns (`\t`):
 
 ```python
-"""Tests for skills/harvest/scripts/calendar_harvest.py."""
+"""Tests for skills/extract/scripts/calendar_harvest.py."""
 import codecs
 import sys
 from datetime import date, datetime
@@ -459,12 +459,12 @@ def test_read_text_handles_utf16_and_cp1252(tmp_path):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_calendar_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_calendar_harvest.py`
 Expected: collection ERROR with `ModuleNotFoundError: No module named 'calendar_harvest'`.
 
 - [ ] **Step 3: Write the reader, parser, filter, and series grouping**
 
-Create `skills/harvest/scripts/calendar_harvest.py`:
+Create `skills/extract/scripts/calendar_harvest.py`:
 
 ```python
 """Summarize a calendar list export for an AcqDemo rating period as Markdown.
@@ -585,13 +585,13 @@ def recurring(meetings: list[Meeting]) -> list[tuple[str, int, date, date]]:
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_calendar_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_calendar_harvest.py`
 Expected: 12 passed.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add skills/harvest/scripts
+git add skills/extract/scripts
 git commit -m "feat(harvest): parse calendar exports and group recurring meetings"
 ```
 
@@ -600,12 +600,12 @@ git commit -m "feat(harvest): parse calendar exports and group recurring meeting
 ### Task 15: Calendar Markdown and command line
 
 **Files:**
-- Modify: `skills/harvest/scripts/calendar_harvest.py` (append)
-- Modify: `skills/harvest/scripts/tests/test_calendar_harvest.py` (append)
+- Modify: `skills/extract/scripts/calendar_harvest.py` (append)
+- Modify: `skills/extract/scripts/tests/test_calendar_harvest.py` (append)
 
 - [ ] **Step 1: Append the failing tests**
 
-Append to `skills/harvest/scripts/tests/test_calendar_harvest.py`:
+Append to `skills/extract/scripts/tests/test_calendar_harvest.py`:
 
 ```python
 def test_render_markdown_sections():
@@ -635,12 +635,12 @@ def test_main_writes_file_and_missing_file(tmp_path, capsys):
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_calendar_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_calendar_harvest.py`
 Expected: 3 new tests FAIL with `AttributeError: module 'calendar_harvest' has no attribute 'render_markdown'` (or `'main'`); the first 12 still pass.
 
 - [ ] **Step 3: Append the renderer and `main`**
 
-Append to `skills/harvest/scripts/calendar_harvest.py`:
+Append to `skills/extract/scripts/calendar_harvest.py`:
 
 ```python
 def render_markdown(result: Harvest, since: date, until: date) -> str:
@@ -694,7 +694,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
-Run: `python -m pytest skills/harvest/scripts/tests/test_calendar_harvest.py`
+Run: `python -m pytest skills/extract/scripts/tests/test_calendar_harvest.py`
 Expected: 15 passed.
 
 - [ ] **Step 5: Run the full suite and commit**
@@ -703,7 +703,7 @@ Run: `python -m pytest`
 Expected: all pass.
 
 ```bash
-git add skills/harvest/scripts
+git add skills/extract/scripts
 git commit -m "feat(harvest): render calendar harvest and add command line"
 ```
 

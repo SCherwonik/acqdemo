@@ -1,4 +1,4 @@
-"""Tests for skills/harvest/scripts/git_harvest.py."""
+"""Tests for skills/extract/scripts/git_harvest.py."""
 import json
 import os
 import subprocess

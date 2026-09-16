@@ -33,7 +33,7 @@ Say this once, in plain words, so the user knows what they are signing up for:
 | Stage | What happens | Skill | Roughly |
 |---|---|---|---|
 | Setup | This checklist; profile and pay pool filled | `acqdemo:start` | 10 to 20 minutes |
-| Gather | Mine git, the calendar export, the midpoint, prior cycles into candidate entries | `acqdemo:harvest` | 5 minutes, mostly automatic |
+| Gather | Mine git, the calendar export, the midpoint, prior cycles into candidate entries | `acqdemo:extract` | 5 minutes, mostly automatic |
 | Remember | Brain dump, timeline walk, people sweep, artifact prompts | `acqdemo:annual` | 20 to 40 minutes of talking |
 | Dig | Project deep-dives: numbered questions per project until each entry holds facts, numbers, and audience | `acqdemo:annual` | 10 to 20 minutes per project |
 | Choose | Allocate the strongest entries across the three factors, with the rest on the bench | `acqdemo:annual` | 10 minutes |
@@ -41,7 +41,7 @@ Say this once, in plain words, so the user knows what they are signing up for:
 | Check | Deterministic checks plus a panel-style read, then fixes | `acqdemo:review` | 5 to 10 minutes |
 | Hand off | Final files, working doc, and a crib sheet for the supervisor | `acqdemo:annual` | 5 minutes |
 
-Then: during the year, `acqdemo:log` captures wins as they happen, `acqdemo:plan` writes the contribution plan, and `acqdemo:midpoint` handles the midpoint and any closeout.
+Then: during the year, add a ledger entry for each win as it happens, `acqdemo:plan` writes the contribution plan, and `acqdemo:midpoint` handles the midpoint and any closeout.
 
 ## Step 3: Detect the stage
 Compare today's date with `paypool.md`:
@@ -49,10 +49,10 @@ Compare today's date with `paypool.md`:
 | Window | Stage | Next skill |
 |---|---|---|
 | Cycle start to plan due (about 30 days) | Contribution plan | `acqdemo:plan` |
-| After plan due, before midpoint window | Capture | `acqdemo:log` for each win (monthly, and after any briefing, release, or praise email) |
+| After plan due, before midpoint window | Capture | Append a `candidate` entry to `FY<yy>/ledger.md` for each win (monthly, and after any briefing, release, or praise email) |
 | Midpoint window | Midpoint | `acqdemo:midpoint` |
 | After midpoint, before mid-August | Capture | as above; warn when the plan-change lock or the 90-day plan rule is near |
-| Mid-August to employee due date | Annual | `acqdemo:harvest`, then `acqdemo:annual` |
+| Mid-August to employee due date | Annual | `acqdemo:extract`, then `acqdemo:annual` |
 | Employee due date to supervisor due date | Handoff | confirm the crib sheet reached the supervisor; offer `acqdemo:review` on the final text |
 | After the cycle ends | Next cycle | read next-cycle seeds from the working doc, then contribution plan |
 
@@ -61,18 +61,18 @@ Always mention: days until the employee due date; any promotion inside the pay p
 ## Step 4: Inventory and resume
 When `FY<yy>/session-state.md` has a `next_action`, that comes first: open with the unfinished work (step, `current_entry`, round, pending questions, what the ledger already holds) and the offer to resume, then the inventory, then dates.
 
-Report briefly: profile completeness; pay pool overlay present; roster rows; for the current `FY<yy>/`: ledger entries by status, open fields per entry (the `OPEN_FIELDS` lines from `python ../log/scripts/ledger_check.py --file FY<yy>/ledger.md`), harvest snapshots, draft versions, final files. Resume with the skill that owns the saved `step`, not the one that produced the data:
+Report briefly: profile completeness; pay pool overlay present; roster rows; for the current `FY<yy>/`: ledger entries by status, open fields per entry (the `OPEN_FIELDS` lines from `python scripts/ledger_check.py --file FY<yy>/ledger.md`), harvest snapshots, draft versions, final files. Resume with the skill that owns the saved `step`, not the one that produced the data:
 
 | Saved step | Resume with |
 |---|---|
-| 2 harvest, or harvest snapshots missing | `acqdemo:harvest` |
+| 2 harvest, or harvest snapshots missing | `acqdemo:extract` |
 | 3 dump, 3b sweeps, 4 deep-dive, 5 allocate, 6 draft, 8 finalize | `acqdemo:annual`, or `acqdemo:midpoint` when the state names a midpoint or closeout |
 | 7 review | `acqdemo:review` |
 
-Blank fields in ledger entries (`OPEN_FIELDS`) are deep-dive work, so they resume in `acqdemo:annual` or `acqdemo:midpoint`. `acqdemo:harvest` only gathers new evidence; never send the user there to finish an entry.
+Blank fields in ledger entries (`OPEN_FIELDS`) are deep-dive work, so they resume in `acqdemo:annual` or `acqdemo:midpoint`. `acqdemo:extract` only gathers new evidence; never send the user there to finish an entry.
 
 ## Step 5: Route
-Invoke the matching skill: `acqdemo:plan`, `acqdemo:log`, `acqdemo:midpoint`, `acqdemo:harvest`, `acqdemo:annual`, or `acqdemo:review`.
+Invoke the matching skill: `acqdemo:plan`, `acqdemo:midpoint`, `acqdemo:extract`, `acqdemo:annual`, or `acqdemo:review`.
 
 ## Safety
 - The workspace is private; names never appear in paste-ready text; classified information never enters any file or conversation.

@@ -1,6 +1,6 @@
 # AcqDemo Wave 2 Skills and Validation Plan
 
-**Goal:** Add the three remaining skills from the design spec (`acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`), wire them into the router, and run the Wave 1 validation tasks (Tasks 21-25 in `2026-09-15-acqdemo-wave1/phase-5-validation-and-release.md`).
+**Goal:** Add the three remaining skills from the design spec (`acqdemo:capture`, `acqdemo:midpoint`, `acqdemo:plan`), wire them into the router, and run the Wave 1 validation tasks (Tasks 21-25 in `2026-09-15-acqdemo-wave1/phase-5-validation-and-release.md`).
 
 **Approach:** Each Wave 2 skill is built by one worker in its own git worktree, test-first for scripts, following the patterns of the Wave 1 skills (`skills/annual/SKILL.md`, `skills/review/scripts/check.py`). Validation Tasks 21, 23 and 24 run in parallel with the build. Reviews run in batches of three finished tasks. The maintainer integrates (Task W2-4), then runs the trigger check (Task 22) across all seven skills and the dry run (Task 25) with a real user.
 
@@ -8,9 +8,9 @@
 
 ---
 
-## Task W2-1: `acqdemo:log` (capture one win)
+## Task W2-1: `acqdemo:capture` (capture one win)
 
-**Files:** `skills/log/SKILL.md`, `skills/log/scripts/ledger_check.py`, `skills/log/scripts/tests/test_ledger_check.py`
+**Files:** `skills/capture/SKILL.md`, `skills/start/scripts/ledger_check.py`, `skills/capture/scripts/tests/test_ledger_check.py`
 
 **Skill flow:**
 1. Find the workspace and current `FY<yy>/` the same way the router does; create `FY<yy>/ledger.md` and `FY<yy>/rambles/` if missing.
@@ -90,6 +90,6 @@ CT1: ...
 ## Validation (Wave 1 plan Tasks 21-25)
 
 - **Task 21** personas: an agent follows `acqdemo:annual` step by step and answers only from each persona's ramble; the record says the sessions were simulated.
-- **Task 22** trigger check runs after W2-4 and adds three prompts: "Log a win: I briefed the new tool to 40 analysts today" (`acqdemo:log`), "Midpoint time, help me write it" (`acqdemo:midpoint`), "Write my contribution plan from my PRD" (`acqdemo:plan`). Each prompt runs in a headless session; the first `Skill` tool call in the event stream decides pass or fail.
+- **Task 22** trigger check runs after W2-4 and adds three prompts: "Log a win: I briefed the new tool to 40 analysts today" (`acqdemo:capture`), "Midpoint time, help me write it" (`acqdemo:midpoint`), "Write my contribution plan from my PRD" (`acqdemo:plan`). Each prompt runs in a headless session; the first `Skill` tool call in the event stream decides pass or fail.
 - **Tasks 23 and 24** use maintainer-local data; committed summaries contain finding codes and scores only.
 - **Task 25** runs with a real user after W2-4, using the installed plugin.

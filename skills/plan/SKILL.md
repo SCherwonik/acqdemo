@@ -63,7 +63,7 @@ Fix every CRITICAL finding (`MIN_OBJECTIVES`, `DUPLICATE_LABEL`, `LABEL_FACTOR_M
 ## Step 6: Remind the user
 - The plan must be approved (in CAS2Net) within `plan_due_days` of the cycle start or the position/appraisal change.
 - No changes to an approved plan in the last `plan_change_lock_days` of the cycle.
-- From now on, tag new ledger entries (`acqdemo:log`) and deep-dives (`acqdemo:annual`) with the objective label they support, for example `plan_tag: JA1`.
+- From now on, tag new ledger entries and deep-dives (`acqdemo:annual`) with the objective label they support, for example `plan_tag: JA1`.
 
 ## Rules
 - Never invent PRD duties, KPIs, or targets the user has not confirmed.

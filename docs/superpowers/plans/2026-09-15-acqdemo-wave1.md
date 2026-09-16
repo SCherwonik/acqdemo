@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship an installable Claude Code plugin with the `acqdemo:start` router, `acqdemo:harvest`, `acqdemo:annual`, and `acqdemo:review` skills, their shared references, and three tested scripts (`check.py`, `git_harvest.py`, `calendar_harvest.py`), validated on fictional personas and a real private backtest.
+**Goal:** Ship an installable Claude Code plugin with the `acqdemo:start` router, `acqdemo:extract`, `acqdemo:annual`, and `acqdemo:review` skills, their shared references, and three tested scripts (`check.py`, `git_harvest.py`, `calendar_harvest.py`), validated on fictional personas and a real private backtest.
 
 **Architecture:** The repository root is the plugin root (`.claude-plugin/plugin.json` + `marketplace.json`). Skills live in `skills/<name>/SKILL.md`; shared references and templates live under `skills/start/` and are referenced by other skills through `../start/...` paths. Deterministic rules are Python scripts with pytest suites; judgment rules live in skill instructions. All work happens in the private workspace and is mirrored to the public repo with `tools/sync/sync_public.py` at the end of each phase.
 
@@ -108,7 +108,7 @@ Spec coverage (spec section -> task):
 - 9 calendar -> Task 7 (`paypool.md`), Task 19 (stage detection)
 - 10 privacy -> existing `tools/`; Task 19 (setup guidance); conventions above
 - 11 testing A-F -> Tasks 8-15 (A), 23 (B), 24 (C), 21 (D), 22 (E), 25 (F)
-- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo:log`, `acqdemo:midpoint`, `acqdemo:plan`) gets its own plan
+- 12 build phases -> Wave 1 only; Wave 2 (`acqdemo:capture`, `acqdemo:midpoint`, `acqdemo:plan`) gets its own plan
 - 13 open questions -> Task 20 verifies plugin path resolution; character counting stays conservative (Task 9)
 
 Deviations from spec, recorded:

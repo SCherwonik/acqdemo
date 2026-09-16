@@ -1,4 +1,4 @@
-"""Tests for skills/log/scripts/ledger_check.py."""
+"""Tests for skills/start/scripts/ledger_check.py."""
 import json
 import sys
 from pathlib import Path

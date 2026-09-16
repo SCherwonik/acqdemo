@@ -1,4 +1,4 @@
-"""Tests for skills/harvest/scripts/calendar_harvest.py."""
+"""Tests for skills/extract/scripts/calendar_harvest.py."""
 import codecs
 import sys
 from datetime import date, datetime

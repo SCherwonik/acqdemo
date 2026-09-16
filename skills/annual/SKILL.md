@@ -19,7 +19,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 - **Recall first.** Ask many numbered questions. No cap. End every message that asks questions, including later rounds and single follow-ups, with "What else does that bring to mind?"
 - **Save constantly.** Write ledger, roster, rambles, and session state after every meaningful exchange; the session can end at any moment.
 - **Save before you ask.** Before sending any message that waits on the user, write `FY<yy>/session-state.md`: `step`, `current_entry`, `round`, `pending_questions` (the numbered questions you are about to ask, verbatim), `next_action`, `updated`. Write answers already given into the ledger first. A message that asks questions without this save is a bug.
-- **Allowed values only.** `status`, `role`, `sustained`, and number `source` use the lists in `../start/references/ledger-format.md`. Translate what the user says into a list value ("I built it myself" is `owned`, "one and done" is `one-time`) and keep their words in `notes`. Run `python ../log/scripts/ledger_check.py --file FY<yy>/ledger.md` after every ledger save and fix each CRITICAL before the next question.
+- **Allowed values only.** `status`, `role`, `sustained`, and number `source` use the lists in `../start/references/ledger-format.md`. Translate what the user says into a list value ("I built it myself" is `owned`, "one and done" is `one-time`) and keep their words in `notes`. Run `python ../start/scripts/ledger_check.py --file FY<yy>/ledger.md` after every ledger save and fix each CRITICAL before the next question.
 - **Names** are welcome in conversation, `roster.md`, and the ledger; never in factor files.
 - **Voice transcription.** Treat every answer as dictation: resolve garbled terms against the user's own material before asking, correct silently and confirm once, and never guess a name or drop an unmatched term (question bank, Voice and transcription).
 - **Never invent** events, audiences, awards, or recognition. Numbers follow the estimate protocol: proposed, approved by the user, and recorded with a basis.
@@ -43,7 +43,7 @@ Say it roughly this way, in your own words:
 
 "Last, export your Outlook calendar for the rating period and drop it in `FY<yy>/evidence/`. It is the best memory jog there is: it recovers the briefings, working groups, trips, and training nobody remembers in September. The steps are short and I can walk you through them."
 
-Then read whatever they provide (documents step of `../harvest/SKILL.md`) before asking the gate questions, because a prior appraisal answers several of them outright.
+Then read whatever they provide (documents step of `../extract/SKILL.md`) before asking the gate questions, because a prior appraisal answers several of them outright.
 
 ## Step 1: Gate
 1. Ask only the gate questions (question bank) that `profile.md` does not already answer. Update the profile. Put unknowns in session-state `open_questions`. Never block on an unknown.
@@ -52,7 +52,7 @@ Then read whatever they provide (documents step of `../harvest/SKILL.md`) before
    - Special situations: a promotion inside `paypool.md` `promotion_window_days` (needs substantial justification), a position or supervisor change (closeouts exist), supervisory duties (supervisory paragraph), certifications (certification statements).
 
 ## Step 2: Harvest
-Run the `acqdemo:harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue. A harvested claim the user cannot expand on is confirmed with yes/no questions before it is dropped (Step 4).
+Run the `acqdemo:extract` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue. A harvested claim the user cannot expand on is confirmed with yes/no questions before it is dropped (Step 4).
 
 ## Step 3: Brain dump
 1. Ask the question bank's Brain dump prompts: 8 to 10 numbered prompts, the first few built from this user's PRD duties, plan objectives, and harvest anchors. Invite a long ramble in any order. Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
@@ -75,7 +75,7 @@ Order candidates by likely impact (scope x organizational level x novelty). For 
 3. If the user cannot expand on a claim from the midpoint, a closeout, or the plan, ask yes/no questions built from its named entities (meetings led, budget rounds, audiences; question bank, Confirm before dropping) before dropping it. If answers conflict, the later answer wins and the entry's `notes` record the conflict.
 4. Resolve numbers with the estimate protocol; confirm each; record source and basis.
 5. Fill `lenses` for all three factors, `descriptor_hits` from the target level, `sustained`, `prior_cycle_overlap` (compare with `prior/`), `prd_duty`, and `plan_tag`. Read the duties yourself with `python ../plan/scripts/prd_text.py --file "<profile prd_path>"` and the plan from `FY<yy>/plan/`; ask the user to paste a document only when the file is missing or unreadable.
-6. Run `python ../log/scripts/ledger_check.py --file FY<yy>/ledger.md` and ask about every field its `OPEN_FIELDS` line lists for this entry (write `none` when a field does not apply; blank means not asked yet). Set `status: ready` only when the entry has no `READY_INCOMPLETE` warning, save, and show the coverage grid.
+6. Run `python ../start/scripts/ledger_check.py --file FY<yy>/ledger.md` and ask about every field its `OPEN_FIELDS` line lists for this entry (write `none` when a field does not apply; blank means not asked yet). Set `status: ready` only when the entry has no `READY_INCOMPLETE` warning, save, and show the coverage grid.
 
 Continue until every factor has at least four `ready` entries counted by primary factor (each entry once, under its strongest lens), the sweeps turn up nothing new, or the user says "enough." Aim the next deep-dive at the weakest factor. Then run the question bank's Portfolio roll-up and record the confirmed totals.
 

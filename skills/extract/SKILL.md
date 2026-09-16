@@ -1,5 +1,5 @@
 ---
-name: harvest
+name: extract
 description: Use when gathering evidence of a year's work for an AcqDemo self-assessment from git repositories, a calendar export, or midpoint and closeout documents, to create candidate entries in the evidence ledger. Fires on requests like pull what I did this year from git and my calendar, mine my repos for the rating period, gather my AcqDemo evidence, or what did I work on this year.
 ---
 
