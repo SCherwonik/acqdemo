@@ -46,7 +46,13 @@ Pull and report only:
 - Objective labels still in force, for example JA1, CT1, MS1.
 - The employee's submitted factor text, copied into a section titled PRIOR CYCLE TEXT, one part per factor, so a later step can compare new wording against it. Copy it verbatim and in full rather than summarizing or excerpting it. The primary agent pastes this text into the offline checker's prior cycle box, and the check for wording repeated from a completed cycle runs only on what that box holds, so a shortened copy silently narrows the check.
 
-Report the rest as PRIOR CYCLE FACTS.
+Report those under PRIOR CYCLE FACTS, and stop there. The list above is exhaustive, not a starting point.
+
+Leave the employee's compensation behind. A Salary Appraisal export carries the current rate of base pay, the general pay increase, the contribution rating increase, locality pay, the new total salary, and the contribution award. None of it helps write an assessment, and copying it puts the employee's salary into a conversation that did not need it and into any document they later save the transcript into. The same goes for identifiers such as a CAS2Net ID.
+
+Scores are different and you do report them: the expected overall contribution score with its range, the overall contribution score awarded, the categorical and numerical factor scores, the rating of record, and the value of position. Those say where the employee sat against expectations, which is what this cycle has to beat, and they carry no pay detail with them.
+
+If the employee asks for a compensation figure, they can read it in their own export.
 
 ### Step 3: THIS CYCLE files
 The current cycle's midpoint is the jump-off point. The annual builds on it by showing what changed since, so every midpoint item becomes a candidate rather than being set aside.
