@@ -32,6 +32,19 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 2. Work only in the workspace the user named or confirmed in this conversation; never search the disk for another one, and never use this skill's own folder or the plugin folder above it, even when it contains `profile.md`. Read `profile.md`, `paypool.md`, and `FY<yy>/session-state.md`. If session state shows unfinished work, summarize it in two lines (step, current entry, what is already answered in the ledger) and continue from `next_action`; re-ask only the `pending_questions` that the ledger does not yet answer.
 3. Create any missing pieces: `FY<yy>/rambles/`, `evidence/`, `harvest/`, `drafts/`, `final/`; `FY<yy>/ledger.md` starting with `# Ledger FY<yy>`; `FY<yy>/session-state.md` and `<workspace>/roster.md` from the templates.
 
+## Step 0b: Documents to gather, said first
+Before the gate questions, tell the user what to put in the workspace and why, in two or three short paragraphs of plain speech. Offer to walk the retrieval steps (`../start/references/getting-your-documents.md`), take whatever they already have, and keep going whether they fetch the rest now or later. Never block on a missing document. Skip the prior-cycle paragraph entirely when `profile.md` says `first_cycle: yes`.
+
+Say it roughly this way, in your own words:
+
+"Pull one file from CAS2Net for your last completed cycle: the **Salary Appraisal**, exported with **Check All**. That single file carries that cycle's employee assessment, your supervisor's narrative, the midpoint, any closeout, the contribution plan it ran under, and the scores including your expected contribution score. It tells me what you already claimed, so this year's writing does not repeat it, what language your pay pool rewarded, and where your score sat."
+
+"Then pull three things from this cycle: the **Midpoint Assessment**, the **Contribution Plan**, and the **Closeout Assessment** if your supervisor or your position changed. The midpoint is the jump-off point for the annual, since the annual builds on it with what changed since; the plan carries the duty language the panel expects to hear back."
+
+"Last, export your Outlook calendar for the rating period and drop it in `FY<yy>/evidence/`. It is the best memory jog there is: it recovers the briefings, working groups, trips, and training nobody remembers in September. The steps are short and I can walk you through them."
+
+Then read whatever they provide (documents step of `../harvest/SKILL.md`) before asking the gate questions, because a prior appraisal answers several of them outright.
+
 ## Step 1: Gate
 1. Ask only the gate questions (question bank) that `profile.md` does not already answer. Update the profile. Put unknowns in session-state `open_questions`. Never block on an unknown.
 2. Decide and record:

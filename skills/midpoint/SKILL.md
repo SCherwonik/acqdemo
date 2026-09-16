@@ -58,6 +58,7 @@ The annual's operating rules apply unchanged, including **Save before you ask** 
 9. **Jump point for the annual.** This text becomes the annual's starting point.
    Continuing work at annual time needs a cycle delta describing what changed since;
    never repeat this text verbatim.
+9. **Documents to gather.** The annual's Step 0b applies with a different list, said the same way, in plain paragraphs before the gate questions. For a midpoint, ask for the last completed cycle's **Salary Appraisal** exported with **Check All**, and this cycle's **Contribution Plan**, plus any **Closeout Assessment** already written this cycle. There is no prior midpoint to build on, so the contribution plan is the jump-off point instead. Suggest the Outlook calendar export covering cycle start to today; at the midpoint it is the difference between remembering March and inventing it. Retrieval steps: `../start/references/getting-your-documents.md`. A first-cycle employee has no prior appraisal; ask only for the plan and move on.
 
 ## After saving
 Tell the user: the supervisor gives feedback with no scores and documents the date
