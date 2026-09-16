@@ -1,6 +1,6 @@
 ---
 name: extract
-description: Use when gathering evidence of a year's work for an AcqDemo self-assessment from git repositories, a calendar export, or midpoint and closeout documents, to create candidate entries in the evidence ledger. Fires on requests like pull what I did this year from git and my calendar, mine my repos for the rating period, gather my AcqDemo evidence, or what did I work on this year.
+description: Use when pulling, mining, or gathering a whole rating period of work out of git repositories, an Outlook calendar export, or prior assessment documents, to build many candidate entries at once. Typical requests are pull what I did this year from git and my calendar, mine my repos for the rating period, gather my AcqDemo evidence, and what did I work on this year. Not for a single accomplishment; that is acqdemo:capture.
 ---
 
 # AcqDemo Harvest
