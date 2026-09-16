@@ -449,10 +449,30 @@ The toolkit already ships the factor descriptors, the CCAS assessment guidance, 
 
 During the year, `acqdemo:log` captures wins as they happen, `acqdemo:plan` writes the contribution plan, and `acqdemo:midpoint` handles the midpoint and any closeout.
 
-To update later:
+**Updating.** Run both commands, the first to refresh the marketplace listing and the second to install the new version, then restart Claude Code:
 
     claude plugin marketplace update acqdemo
     claude plugin update acqdemo@acqdemo
+
+`claude plugin list` shows the installed version. If an update does not appear, remove and re-add the marketplace:
+
+    claude plugin marketplace remove acqdemo
+    claude plugin marketplace add SCherwonik/acqdemo
+    claude plugin install acqdemo@acqdemo
+
+**Skill names changed in 0.3.0.** The skills used to stutter (`acqdemo:acqdemo-annual`). They are now:
+
+| Version 0.2.x and earlier | 0.3.0 and later |
+|---|---|
+| `acqdemo:acqdemo` | `acqdemo:start` |
+| `acqdemo:acqdemo-annual` | `acqdemo:annual` |
+| `acqdemo:acqdemo-midpoint` | `acqdemo:midpoint` |
+| `acqdemo:acqdemo-plan` | `acqdemo:plan` |
+| `acqdemo:acqdemo-log` | `acqdemo:log` |
+| `acqdemo:acqdemo-harvest` | `acqdemo:harvest` |
+| `acqdemo:acqdemo-review` | `acqdemo:review` |
+
+You rarely type these: describing what you want is enough, and `acqdemo:start` routes you. Nothing in your workspace changes when you update; the skills read the same files as before.
 
 Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
 
