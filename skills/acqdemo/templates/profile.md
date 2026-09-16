@@ -6,7 +6,9 @@
 - target_level:           # usually same as level; see references/levels.md
 - series_and_title:
 - organization:
-- rating_period:          # 2025-10-01 to 2026-09-30
+- first_cycle:            # yes if this is the first AcqDemo cycle (no prior assessment to compare against)
+- entry_date:             # entry on duty or AcqDemo conversion date, when it falls inside this cycle
+- rating_period:          # start at entry_date when that falls inside the cycle, else the cycle start          # 2025-10-01 to 2026-09-30
 - eocs:                   # number; if it changed, "82 until 2026-06-13, 88 after"
 - value_of_position:
 - prd_path:               # path to the Position Requirements Document in this workspace

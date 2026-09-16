@@ -41,7 +41,7 @@ description: Use when writing an AcqDemo annual self-assessment - runs recall-fi
 Run the `acqdemo-harvest` skill for git, the calendar export, and midpoint or closeout documents. If the user wants to skip, continue. A harvested claim the user cannot expand on is confirmed with yes/no questions before it is dropped (Step 4).
 
 ## Step 3: Brain dump
-1. Say: "Tell me everything you worked on this cycle, in any order. Ramble; I'll organize it." Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
+1. Ask the question bank's Brain dump prompts: 8 to 10 numbered prompts, the first few built from this user's PRD duties, plan objectives, and harvest anchors. Invite a long ramble in any order. Save the raw text to `FY<yy>/rambles/<date>-dump.md`.
 2. Show the inventory:
 
    | # | Workstream | Evidence | JA | CT | MS |

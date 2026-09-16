@@ -1,5 +1,11 @@
 """Extract plain text from a Position Requirements Document (PRD).
 
+Thin wrapper around the shared document reader at
+``../acqdemo/scripts/doc_text.py`` (loaded by file path, since these are
+plain scripts, not an importable package) so there is one implementation of
+docx/pptx/pdf/text extraction shared across skills. This module keeps its
+own CLI and error messages for backward compatibility.
+
 Usage:
     python prd_text.py --file PATH
 
@@ -15,60 +21,31 @@ Prints plain text, one paragraph per line.
 from __future__ import annotations
 
 import argparse
-import os
-import shutil
+import importlib.util
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
 
-W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
-GIT_FOR_WINDOWS_PDFTOTEXT = r"C:\Program Files\Git\mingw64\bin\pdftotext.exe"
+_DOC_TEXT_PATH = Path(__file__).resolve().parents[2] / "acqdemo" / "scripts" / "doc_text.py"
+_spec = importlib.util.spec_from_file_location("acqdemo_doc_text", _DOC_TEXT_PATH)
+_doc_text = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_doc_text)
 
-
-def find_pdftotext() -> str | None:
-    """pdftotext ships with Git for Windows but is only on PATH inside Git Bash."""
-    exe = shutil.which("pdftotext")
-    if exe:
-        return exe
-    if os.path.exists(GIT_FOR_WINDOWS_PDFTOTEXT):
-        return GIT_FOR_WINDOWS_PDFTOTEXT
-    return None
-
-
-def read_text(path: Path) -> str:
-    data = path.read_bytes()
-    try:
-        return data.decode("utf-8-sig")
-    except UnicodeDecodeError:
-        return data.decode("cp1252", errors="replace")
-
-
-def extract_docx(path: Path) -> str:
-    with zipfile.ZipFile(path) as z:
-        xml_bytes = z.read("word/document.xml")
-    root = ET.fromstring(xml_bytes)
-    paragraphs = []
-    for p in root.iter(f"{W_NS}p"):
-        parts = []
-        for el in p.iter():  # document order, so tabs and breaks land between the right runs
-            if el.tag == f"{W_NS}t":
-                parts.append(el.text or "")
-            elif el.tag == f"{W_NS}tab":
-                parts.append("\t")
-            elif el.tag in (f"{W_NS}br", f"{W_NS}cr"):
-                parts.append("\n")
-        paragraphs.append("".join(parts))
-    return "\n".join(paragraphs)
+GIT_FOR_WINDOWS_PDFTOTEXT = _doc_text.GIT_FOR_WINDOWS_PDFTOTEXT
+find_pdftotext = _doc_text.find_pdftotext
+read_text = _doc_text.read_text
+extract_docx = _doc_text.extract_docx
 
 
 def extract_pdf(path: Path) -> str | None:
+    # Resolved through this module's own find_pdftotext (a module-level name,
+    # not a hardcoded reference), so tests can monkeypatch prd_text.find_pdftotext.
     exe = find_pdftotext()
     if not exe:
         return None
-    result = subprocess.run([exe, str(path), "-"], capture_output=True)
-    return result.stdout.decode("utf-8", "replace")
+    return _doc_text.extract_pdf(path, pdftotext=exe)
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -21,10 +21,10 @@ If there is no workspace or profile, offer the `acqdemo` skill's first-time setu
 Read `profile.md` and `paypool.md`. If either is missing required fields (`prd_path`, `min_plan_objectives_per_factor`, `plan_due_days`, `plan_change_lock_days`), ask for them and update the files.
 
 ## Step 2: Read the PRD
-Run the extractor at `scripts/prd_text.py`:
+Run the shared document reader at `../acqdemo/scripts/doc_text.py` (handles pdf, docx, pptx, txt, and md):
 
 ```
-python "<this skill folder>/scripts/prd_text.py" --file "<prd_path>"
+python "<this skill folder>/../acqdemo/scripts/doc_text.py" --file "<prd_path>"
 ```
 
 Number the duties in the output as you present them back to the user, so later steps can cite "PRD 3" or "PRD 3, 4". If it exits 2 (unsupported file, or `pdftotext` missing for a `.pdf` PRD), tell the user what to install or convert and stop.

@@ -59,11 +59,30 @@ def test_cert_templates():
     )
 
 
+def test_intake_checklist():
+    assert_contains(
+        REF / "intake-checklist.md",
+        [
+            "## Which situation is the user in",
+            "## Ask for these two first",
+            "## Then these, if they exist",
+            "## Five minutes of questions, no documents needed",
+            "## Privacy rules to state once, out loud",
+            "## What to say when the user has nothing",
+            "The CAS2Net export for the last completed cycle",
+            "This cycle's midpoint review",
+            "Position Requirements Document (PRD)",
+            "Calendar export for the rating period",
+        ],
+    )
+
+
 def test_question_bank():
     assert_contains(
         REF / "question-bank.md",
         [
-            "## How to ask", "## Drill-down ladder", "## Confirm before dropping", "## Portfolio roll-up",
+            "## How to ask", "## Brain dump prompts", "## Drill-down ladder", "## Confirm before dropping",
+            "## Portfolio roll-up",
             "## Question types",
             "## Gate questions", "## Discriminator questions",
             "### Job Achievement and/or Innovation", "### Communication and/or Teamwork", "### Mission Support",

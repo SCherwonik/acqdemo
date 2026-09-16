@@ -13,14 +13,35 @@ Front door for the toolkit. Finds the user's private workspace, sets it up the f
 3. Use only that folder. Never search the disk for a workspace, and never reuse a path from memory, an earlier session, or another project's notes without the user confirming it in this conversation. Writing into a folder the user did not name is a bug.
 4. Never treat this skill's own folder, or the plugin folder above it (the one holding `skills/`), as the workspace, even when it contains `profile.md`. When the current directory has no `profile.md`, ask and wait for the answer before creating or writing any file.
 
-## Step 2: First-time setup
-1. Explain in two sentences: the workspace is a private folder (a private git repository is recommended) that holds the user's profile, evidence, drafts, and names of people they worked with; none of it belongs in a public repository.
-2. Copy the templates into the workspace root: `templates/profile.md`, `templates/paypool.md`, `templates/roster.md` (paths relative to this skill's folder).
-3. Fill `profile.md` by asking the gate questions from `references/question-bank.md`.
-4. Fill `paypool.md`: show the example defaults and ask the user to confirm them or share their pay pool's current business rules and guidance. If they share a document, read it and fill the fields from it. Rule background: `references/rules/ccas-core.md`.
-5. Create `prior/` and ask for previous cycles' submitted self-assessment text, one folder per cycle.
-6. Recommend exporting the calendar (see "Calendar export" in the question bank).
-7. If the workspace is a git repository, recommend the PII guard: copy the toolkit's `../../tools/hooks/scan_pii.py` and `../../tools/hooks/pre-commit` into `<workspace>/tools/hooks/` and run `git config core.hooksPath tools/hooks`.
+## Step 2: First-time setup (guided)
+Walk this out loud, one item at a time; never dump the whole list and wait. Checklist with reasons and how to get each item: `references/intake-checklist.md`.
+
+1. **Say what this is and where it lives.** Two sentences: the workspace is one private folder holding the profile, evidence, drafts, and the names of people worked with; none of it belongs in a public repository. Ask where to create it and create it; a private git repository is ideal but a plain folder is fine.
+2. **Copy the templates** into the workspace root: `templates/profile.md`, `templates/paypool.md`, `templates/roster.md`.
+3. **Ask which situation they are in** before asking for any document (`references/intake-checklist.md`, Which situation is the user in): have they been through a cycle before and submitted a self-assessment, did they write a midpoint this cycle, and did they change position or supervisor mid-cycle. A first-cycle employee has no prior assessment and often no midpoint; do not ask them for either. Record the answer in `profile.md`.
+4. **Fill `profile.md`** with the gate questions (`references/question-bank.md`). Five minutes, no documents needed. Unknowns go to session-state `open_questions`; never block.
+5. **Ask for the two documents that matter most** (`references/intake-checklist.md`): the CAS2Net export for the last completed cycle (usually a PDF holding prior assessments, scores, EOCS, value of position, often the prior plan) and this cycle's midpoint review (any format). Read whatever they give you and fill `profile.md`, `prior/`, and `FY<yy>/midpoint/final/` from it; if a file will not open, ask for a paste. Then walk the rest of the checklist one line at a time: name the item, say what it buys, ask whether they have it, say where it goes. Never ask for the descriptors, CCAS guidance, or example business rules; the toolkit ships those. Skipping is always fine.
+6. **Fill `paypool.md`:** show the example defaults, ask the user to confirm them or share their pay pool's business rules and current guidance; read what they share and fill the fields from it. Background: `references/rules/ccas-core.md`.
+7. **Create the folders** they will need: `prior/` (one folder per previous cycle), `FY<yy>/evidence/`, `FY<yy>/plan/`, `FY<yy>/midpoint/final/`. Put the documents they named into them, or tell them the exact paths to drop files into.
+8. **Calendar export.** Give the steps (`references/question-bank.md`, Calendar export) and offer to wait while they do it; it is the single biggest memory jog.
+9. **Offer the PII guard** if the workspace is a git repository: copy the toolkit's `../../tools/hooks/scan_pii.py` and `../../tools/hooks/pre-commit` into `<workspace>/tools/hooks/` and run `git config core.hooksPath tools/hooks`.
+10. **Show the path** (Step 2b) and say which stage they are in today, then route.
+
+## Step 2b: The path, start to finish
+Say this once, in plain words, so the user knows what they are signing up for:
+
+| Stage | What happens | Skill | Roughly |
+|---|---|---|---|
+| Setup | This checklist; profile and pay pool filled | `acqdemo` | 10 to 20 minutes |
+| Gather | Mine git, the calendar export, the midpoint, prior cycles into candidate entries | `acqdemo-harvest` | 5 minutes, mostly automatic |
+| Remember | Brain dump, timeline walk, people sweep, artifact prompts | `acqdemo-annual` | 20 to 40 minutes of talking |
+| Dig | Project deep-dives: numbered questions per project until each entry holds facts, numbers, and audience | `acqdemo-annual` | 10 to 20 minutes per project |
+| Choose | Allocate the strongest entries across the three factors, with the rest on the bench | `acqdemo-annual` | 10 minutes |
+| Write | Paste-ready C-R-I text for each factor | `acqdemo-annual` | automatic, then edits |
+| Check | Deterministic checks plus a panel-style read, then fixes | `acqdemo-review` | 5 to 10 minutes |
+| Hand off | Final files, working doc, and a crib sheet for the supervisor | `acqdemo-annual` | 5 minutes |
+
+Then: during the year, `acqdemo-log` captures wins as they happen, `acqdemo-plan` writes the contribution plan, and `acqdemo-midpoint` handles the midpoint and any closeout.
 
 ## Step 3: Detect the stage
 Compare today's date with `paypool.md`:

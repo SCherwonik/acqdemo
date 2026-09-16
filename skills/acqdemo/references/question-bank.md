@@ -13,6 +13,28 @@ Recall is the bottleneck. Ask more, not less.
 - "I don't know" and "skip" are always acceptable. Move on without pressure.
 - Never ask about topics the user has not raised unless the question comes from a recall sweep or the gate list.
 
+## Brain dump prompts
+Open the dump with 8 to 10 numbered prompts, never a single "tell me everything". Build the list in this order and stop at ten.
+
+**First, from the user's own material** (one prompt each, naming the actual duty, objective, project, or meeting series, because a named prompt recalls far more than a general one):
+1. Position duties: read them with `../../acqdemo-plan/scripts/prd_text.py --file "<profile prd_path>"` and ask about the two or three duties that carry the most weight. "Your PRD duty 3 is <duty>. What did you do against that this cycle?"
+2. Plan objectives: for each labeled objective (JA1, CT1, MS1) in `FY<yy>/plan/`, "What did you deliver toward <objective>?"
+3. Harvest anchors, when a harvest exists: the biggest repositories, recurring meeting series, releases, and the midpoint or closeout claims. "You have <n> meetings on <series> between <month> and <month>. What was your part?"
+
+**Then fill the rest from these openers.** They work for any series, career path, and organization, and for someone whose work leaves no git or calendar trace:
+- **Products:** What did you produce this cycle that somebody else used? Estimates, models, tools, datasets, analyses, briefings, papers, policies, decisions.
+- **Recurring duties:** What does your position require every cycle that you did again this year, and what was different this time?
+- **Customers:** Who asked you for something, and what did they do with what you gave them?
+- **Firsts:** What did you do this cycle that you, your office, or your organization had never done before?
+- **Fixes:** What was broken, slow, manual, wrong, or risky that you improved? What would have happened if you had not?
+- **People:** Who did you teach, train, mentor, review, onboard, or unblock?
+- **Rooms:** Which meetings, reviews, working groups, or forums did you speak in, and who was in the room?
+- **Scope changes:** New position, new duties, new supervisor, promotion, or extra duties. What got bigger or harder?
+- **Problems:** What went wrong this cycle (shutdown, missing data, staffing, schedule, a failed tool) and what did you do about it?
+- **Volume:** Roughly how many of the main thing you do did you handle: estimates, reviews, models, requests, audits, tickets, cases?
+
+Close the round with "What else does that bring to mind?" Rambling, jumping around, and "skip" are all fine. Never suggest an accomplishment the user has not mentioned; ask about their work, do not supply it.
+
 ## Drill-down ladder
 Apply to every accomplishment until it has enough for a strong C-R-I:
 1. **What** exactly did you do? What was your role: owned, co-owned, owned a piece, or supported?

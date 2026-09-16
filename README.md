@@ -4,6 +4,7 @@ A recipe, a set of Claude Code skills, and supporting tools that help a Departme
 
 You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready C-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
 
+
 ---
 
 ## Table of contents
@@ -42,6 +43,7 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | **Wave 2 skills:** `acqdemo-log`, `acqdemo-midpoint`, `acqdemo-plan` | Done |
 
 All seven skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+
 
 ---
 
@@ -376,9 +378,12 @@ skills/
 tests/                plugin structure, references, and skill tests
 ```
 
+
 ---
 
 ## 10. Getting started
+
+Most readers only need to skip straight to 10.5: install the plugin, open a new private folder, and start talking. Sections 10.1 to 10.4 cover heavier setup, cloning the repository for reference, turning on the PII guard, and building a git-backed private workspace with sync tooling, useful if you want to keep your own workspace in git the way this project does.
 
 ### 10.1 Prerequisites
 | Tool | Why | Check |
@@ -420,7 +425,32 @@ From a terminal with Claude Code installed:
     claude plugin marketplace add SCherwonik/acqdemo
     claude plugin install acqdemo@acqdemo
 
-Restart Claude Code, open your private workspace folder, and say: "Where am I in the AcqDemo cycle?"
+Restart Claude Code, open a new, empty, private folder as your session's working directory, and say: "help me with my AcqDemo self-assessment." The guided setup walks the intake for you, one item at a time, and builds the rest of your workspace as it goes. You do not need to read anything else in this README first.
+
+**What to have ready.** Nothing is required to start; the guided setup asks for each of these by name and takes "skip" for anything you do not have. In the order that matters most:
+
+1. **The CAS2Net export for your last completed cycle**, usually a PDF. It holds your prior self-assessment, the supervisor narrative, scores, EOCS, value of position, and often your prior contribution plan. Privacy: this export is normally marked PII or CUI and often carries salary figures. The guided setup extracts only the text it needs; keep the source PDF itself out of git, stored outside your workspace or in a folder your workspace ignores.
+2. **This cycle's midpoint review**, in any format (PDF, docx, text, or a paste). It is the starting point the annual builds on.
+3. Then, if you have them: your current contribution plan, your Position Requirements Document (PRD), a calendar export for the rating period (Section 6.4), praise emails or award citations, and any git repositories or shared folders you work in.
+
+The toolkit already ships the factor descriptors, the CCAS assessment guidance, and an example pay pool's business rules (Section 14). You never need to supply those yourself.
+
+**If you are new.** A new hire, or someone new to AcqDemo, starts the same way. You have no prior assessment and usually no midpoint, so say so when asked: the intake asks a few questions about your position and goes straight to the memory sweep. Your first cycle leans on your contribution plan and your PRD in place of prior documents.
+
+**The path, start to finish.** Said once, out loud, so you know what you are signing up for:
+
+| Stage | What happens | Roughly |
+|---|---|---|
+| Setup | This intake; profile and pay pool filled | 10 to 20 minutes |
+| Gather | Mine git, the calendar export, the midpoint, prior cycles into candidate entries | 5 minutes, mostly automatic |
+| Remember | Brain dump, timeline walk, people sweep, artifact prompts | 20 to 40 minutes of talking |
+| Dig | Project deep-dives: numbered questions per project until each entry holds facts, numbers, and audience | 10 to 20 minutes per project |
+| Choose | Allocate the strongest entries across the three factors, with the rest on the bench | 10 minutes |
+| Write | Paste-ready C-R-I text for each factor | automatic, then edits |
+| Check | Deterministic checks plus a panel-style read, then fixes | 5 to 10 minutes |
+| Hand off | Final files, working doc, and a crib sheet for the supervisor | 5 minutes |
+
+During the year, `acqdemo-log` captures wins as they happen, `acqdemo-plan` writes the contribution plan, and `acqdemo-midpoint` handles the midpoint and any closeout.
 
 To update later:
 
@@ -428,6 +458,7 @@ To update later:
     claude plugin update acqdemo@acqdemo
 
 Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
+
 
 ---
 

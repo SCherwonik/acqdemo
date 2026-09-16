@@ -75,6 +75,7 @@ def test_pdf_with_pdftotext_available(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(prd_text, "find_pdftotext", lambda: "pdftotext")
 
     class FakeResult:
+        returncode = 0
         stdout = b"Duty 1: Extracted from PDF.\n"
 
     def fake_run(cmd, capture_output=True):
