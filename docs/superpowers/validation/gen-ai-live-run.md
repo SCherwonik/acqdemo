@@ -120,11 +120,33 @@ itself. It did not manufacture a supervisor narrative from surrounding context, 
 this condition is built to provoke. The rule against inventing events held where it was most likely
 to break.
 
-## Watch, not yet a finding
-A supervisor's full name appeared that the user had not supplied, in a run where other full names
-plausibly came from an uploaded PDF. Unverified either way. If the name was not in a document it is
-a fabrication of a person's name, which is the one thing the never-miss rules forbid outright, and
-it would be the most serious finding of the run.
+15. **A system's behavior was asserted as fact.** Asked why a closeout record existed three days
+    after a promotion, the agent explained that the personnel system automatically generates one
+    when a personnel change is processed. It has no source for that. The conclusion it supported
+    was reasonable; the mechanism invented to justify it was not. *Fix: the never-invent rule
+    covers how a system behaves, not only events and audiences. Say what the record shows and what
+    it appears to correspond to.*
+16. **A document-versus-user conflict was recorded on both sides and never raised.** Two documents
+    and a third reference gave one expected contribution score; the user gave a different one from
+    a live system check. Both were stored, in different fields, and the disagreement was never put
+    to the user. That number is the bar the whole narrative has to clear and it drives the panel
+    read. *Fix: `orchestrator.md` raises any conflict between a document value and a user-supplied
+    value as a question at the moment the second one arrives, rather than keeping both.*
+
+## Resolved watch item
+The supervisor's full name was not fabricated. Challenged, the agent named the document and the two
+pages: the name came from the prior cycle's appraisal, where that person was the supervisor of
+record for the prior cycle's midpoint and closeout. It had been carried into the current cycle's
+supervisor list. A wrong-cycle attribution rather than an invention, and it cited its source when
+asked, which is the behavior wanted. Recorded as a lesser finding: facts read from a prior-cycle
+document must carry that cycle with them.
+
+## Diagnostic result
+The four dropped corrections were resent with no attachment, in the same conversation at the same
+length, and all four landed, with an audit of the other entries volunteered alongside. So finding 14
+is instructions losing to document processing within a turn, not instruction decay over conversation
+length. The fix is a single rule in `orchestrator.md`: answer or refuse every instruction in a
+message, naming each one, before processing an attachment.
 
 ## What the run has proved about the deterministic layer
 Every defect above is one a well-formed document passes cleanly: a stale certification statement, a
