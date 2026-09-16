@@ -22,6 +22,9 @@ When harvesting mid-cycle, pass `--until` as the earlier of today and the rating
 date, for both `git_harvest.py` and `calendar_harvest.py`, so the harvest never asks about
 commits or meetings that have not happened yet.
 
+## Step 0: Check the scope
+This skill mines a whole rating period. When the user is handing over one item instead, a praise email, a single briefing, one release, append it to `FY<yy>/ledger.md` as a single `candidate` entry the way `../start/SKILL.md` does in its one-win step, ask only for what that entry is missing, and stop. Run the full period harvest below only when the user wants the year covered.
+
 ## Step 1: Documents
 Documents come first: the last CAS2Net export shows what the pay pool must not see repeated, and
 the current midpoint or closeout is the starting point everything else builds on. Do not repeat

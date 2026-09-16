@@ -1,6 +1,6 @@
 ---
 name: start
-description: Use when an AcqDemo, CCAS, or CAS2Net request is general rather than one specific task, for example where am I in the appraisal cycle, help me with my self-assessment, I am new to AcqDemo, or set up my workspace. Prefer this skill over the task skills whenever the user has not named a specific task. Finds or creates the private workspace, walks first-time intake, works out the cycle stage from the pay pool calendar, resumes unfinished work, and routes to harvest, annual, midpoint, plan, log, or review.
+description: Use when an AcqDemo, CCAS, or CAS2Net request is general rather than one specific task, for example where am I in the appraisal cycle, help me with my self-assessment, I am new to AcqDemo, or set up my workspace. Prefer this skill over the task skills whenever the user has not named a specific task. Finds or creates the private workspace, walks first-time intake, works out the cycle stage from the pay pool calendar, resumes unfinished work, and routes to harvest, annual, midpoint, plan, log, or review. Also handles a single win the user wants written down now, for example log a win, save this praise email, or I just briefed the new tool.
 ---
 
 # AcqDemo
@@ -73,6 +73,9 @@ Blank fields in ledger entries (`OPEN_FIELDS`) are deep-dive work, so they resum
 
 ## Step 5: Route
 Invoke the matching skill: `acqdemo:plan`, `acqdemo:midpoint`, `acqdemo:extract`, `acqdemo:annual`, or `acqdemo:review`.
+
+## Step 6: One win, written down now
+When the user hands over a single thing that just happened rather than asking for a whole assessment, do not start a longer flow. Save their words to `FY<yy>/rambles/<YYYY-MM-DD>-<slug>.md`, append one `candidate` entry to `FY<yy>/ledger.md` using `references/ledger-format.md`, and ask at most six questions for the fields the entry is missing, in this order: numbers with a basis, audience (highest rank, headcount), role, decision fed, obstacle, plan objective tag. People's names go in `roster.md` only. Run `python scripts/ledger_check.py --file FY<yy>/ledger.md` and fix any CRITICAL finding. Confirm in two lines: the entry id and title, and the one fact most worth capturing next time. Never invent events, audiences, or awards.
 
 ## Safety
 - The workspace is private; names never appear in paste-ready text; classified information never enters any file or conversation.
