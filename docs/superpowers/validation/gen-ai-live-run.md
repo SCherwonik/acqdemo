@@ -29,6 +29,19 @@ mid-run would make the comparison against the answer key meaningless.
 ## To fix after the run
 Ranked. Each names the file that owns it.
 
+0. **A mid-cycle promotion went unnoticed, with the evidence in hand.** The extractor read a prior
+   appraisal written at one broadband level and a contribution plan written at the next level up,
+   recorded `level` from the first and `target_level` from the second, and asked nothing. The
+   employee had in fact been promoted inside the rating period, 108 days before the due date and
+   inside the pay pool's promotion window. Three things follow from that and all three were lost:
+   the drafting descriptors come from the wrong level, the expected contribution score changed at
+   the promotion and the profile held one blended value plus a third figure from the plan, and the
+   assessment needs substantial justification and continuity shown on both sides of the effective
+   date. A promotion is the special situation the toolkit exists to handle, and this is the most
+   expensive miss of the run. *Fix: `document-extractor.md` reports a broadband level appearing at
+   two different values across documents as a conflict rather than resolving it silently, and
+   `orchestrator.md` treats any level difference, any supervisor difference, and any closeout
+   document as a special-situation question asked before deep-dives begin.*
 1. **Certifications are never refreshed.** The extractor pulls the prior cycle's certification
    statements, and nothing afterwards asks whether they changed. The run carried FY25 values
    (one certification level, an in-progress second, a CLP count) into an FY26 profile where all
@@ -64,6 +77,22 @@ Ranked. Each names the file that owns it.
 9. **An occurrence count changed between two messages** without explanation, from the inventory's
    figure to a higher one in the candidate. *Fix: a number restated later must either match or
    say why it changed.*
+10. **A profile correction did not reach the entry that restated the same fact.** Certifications
+    were corrected in Profile while the ledger entry describing that professional development kept
+    the superseded wording, so the two blocks disagreed and only a note recorded it. *Fix:
+    `ledger-keeper.md` checks entries for text restating a profile fact that just changed, and
+    either updates them or lists them for the user.*
+11. **Two expected contribution scores were held in one field** with a third figure from the plan
+    appended in parentheses, none of them reconciled. The score drives the panel read and the Very
+    High judgment. *Fix: the Profile skeleton carries dated values when a score changes mid-cycle,
+    as the promotion case requires, and a conflict between documents is asked about rather than
+    concatenated.*
+
+## What the run has proved about the deterministic layer
+Every defect above is one a well-formed document passes cleanly: a stale certification statement, a
+wrong broadband level, an invented date, a role verb the calendar does not support. None of them can
+be caught by a character counter or a repeat detector. They are caught by asking the employee, which
+is why the question rounds are the product and the checker is only the last gate.
 
 ## Method note
 The employee answers deep-dive questions from memory rather than from the finished annual. Feeding
