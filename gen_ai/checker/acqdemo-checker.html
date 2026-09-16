@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AcqDemo draft checker</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #16181d;
+  --muted: #5a6070;
+  --line: #d6dae2;
+  --field: #ffffff;
+  --accent: #1f4f9c;
+  --accent-ink: #ffffff;
+  --critical: #a4162a;
+  --critical-bg: #fdeced;
+  --warning: #8a5300;
+  --warning-bg: #fdf3e2;
+  --info: #235c68;
+  --info-bg: #e9f4f7;
+  --ok: #1e6b3a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161b;
+    --panel: #1c1f26;
+    --ink: #e9ecf2;
+    --muted: #a3abbb;
+    --line: #333844;
+    --field: #11131a;
+    --accent: #6ea8ff;
+    --accent-ink: #0d1117;
+    --critical: #ff8e9b;
+    --critical-bg: #351b20;
+    --warning: #f0c078;
+    --warning-bg: #332816;
+    --info: #86ccdd;
+    --info-bg: #15272d;
+    --ok: #7fd99f;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+main { max-width: 1040px; margin: 0 auto; }
+h1 { font-size: 1.35rem; margin: 0 0 4px; }
+h2 { font-size: 1.05rem; margin: 0 0 8px; }
+p.lede { color: var(--muted); margin: 0 0 16px; }
+section.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  margin: 0 0 14px;
+}
+label { display: block; font-weight: 600; margin: 0 0 4px; }
+.hint { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
+textarea, select, input[type="text"] {
+  width: 100%;
+  max-width: 100%;
+  background: var(--field);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.95rem;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+}
+select { font-family: inherit; }
+textarea { min-height: 150px; resize: vertical; line-height: 1.45; }
+textarea.small { min-height: 84px; }
+.grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.grid > div { flex: 1 1 200px; min-width: 0; }
+.checks { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+.checks label { font-weight: 400; display: flex; align-items: center; gap: 6px; }
+.checks input { margin: 0; }
+.factor { margin-bottom: 16px; }
+.factor:last-child { margin-bottom: 0; }
+.counter {
+  float: right;
+  font-weight: 600;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.counter.warn { color: var(--warning); }
+.counter.over { color: var(--critical); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px; }
+button {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+button.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+button:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.summary { font-weight: 600; margin: 0 0 12px; }
+.group { margin: 0 0 14px; }
+.group h3 { font-size: 0.95rem; margin: 0 0 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+ul.findings { list-style: none; margin: 0; padding: 0; }
+ul.findings li {
+  border-left: 4px solid var(--line);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin: 0 0 6px;
+  background: var(--bg);
+}
+/* These must outrank "ul.findings li" above, or every severity renders the same grey. */
+ul.findings li.CRITICAL { border-left-color: var(--critical); background: var(--critical-bg); }
+ul.findings li.WARNING { border-left-color: var(--warning); background: var(--warning-bg); }
+ul.findings li.INFO { border-left-color: var(--info); background: var(--info-bg); }
+li .code { font-weight: 700; font-family: ui-monospace, Consolas, monospace; }
+li.CRITICAL .code { color: var(--critical); }
+li.WARNING .code { color: var(--warning); }
+li.INFO .code { color: var(--info); }
+li .where { color: var(--muted); font-size: 0.85rem; }
+li pre {
+  margin: 6px 0 0;
+  padding: 6px 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+}
+.pass { color: var(--ok); font-weight: 600; }
+.fail { color: var(--critical); font-weight: 600; }
+table.selftest { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+table.selftest td { border-bottom: 1px solid var(--line); padding: 5px 6px; vertical-align: top; }
+table.selftest td:first-child { width: 4.5rem; }
+footer { color: var(--muted); font-size: 0.85rem; margin: 18px 0 0; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AcqDemo draft checker</h1>
+  <p class="lede">Arithmetic and string matching only. Everything runs in this page, offline. Nothing is sent anywhere, and nothing is saved when you close the tab.</p>
+
+  <section class="panel">
+    <h2>Setup</h2>
+    <div class="grid">
+      <div>
+        <label for="mode">Cycle stage</label>
+        <select id="mode">
+          <option value="annual">Annual (3 entries per factor)</option>
+          <option value="midpoint">Midpoint (1 entry per factor)</option>
+          <option value="closeout">Closeout (1 entry per factor)</option>
+        </select>
+      </div>
+      <div>
+        <label for="path">Career path</label>
+        <select id="path">
+          <option value="nh">NH Business Management and Technical</option>
+          <option value="nj">NJ Technical Management Support</option>
+          <option value="nk">NK Administrative Support</option>
+        </select>
+      </div>
+      <div>
+        <label for="whatLabel">Contribution label <span class="hint">pay pool style</span></label>
+        <select id="whatLabel">
+          <option value="C">C: for Contribution</option>
+          <option value="W">W: for What</option>
+        </select>
+      </div>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="supervisor"> I supervise people</label>
+      <label><input type="checkbox" id="acq"> I hold an acquisition certification</label>
+      <label><input type="checkbox" id="fm"> I hold a DoD FM certification</label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Factor text</h2>
+    <div class="factor">
+      <label for="JA"><span class="counter" id="count-JA">0 / 3900</span>Job Achievement and Innovation</label>
+      <textarea id="JA" spellcheck="true" placeholder="C: ...&#10;R: ...&#10;I: ..."></textarea>
+    </div>
+    <div class="factor">
+      <label for="CT"><span class="counter" id="count-CT">0 / 3900</span>Communication and Teamwork</label>
+      <textarea id="CT" spellcheck="true" placeholder="C: ...&#10;R: ...&#10;I: ..."></textarea>
+    </div>
+    <div class="factor">
+      <label for="MS"><span class="counter" id="count-MS">0 / 3900</span>Mission Support</label>
+      <textarea id="MS" spellcheck="true" placeholder="C: ...&#10;R: ...&#10;I: ..."></textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Context</h2>
+    <div class="factor">
+      <label for="prior">Prior cycle and midpoint text <span class="hint">what you already submitted, so this draft does not repeat it</span></label>
+      <textarea id="prior" class="small" spellcheck="false"></textarea>
+    </div>
+    <div class="factor">
+      <label for="names">Names to keep out of the text <span class="hint">optional, one per line or a roster table with a Name column</span></label>
+      <textarea id="names" class="small" spellcheck="false"></textarea>
+    </div>
+    <div class="factor">
+      <label for="allow">Allowed repeated phrases <span class="hint">optional, one per line, for office and system names</span></label>
+      <textarea id="allow" class="small" spellcheck="false"></textarea>
+    </div>
+    <div class="factor">
+      <label for="ledger">Evidence ledger <span class="hint">optional, not checked, carried into the copied findings so an agent has your evidence</span></label>
+      <textarea id="ledger" class="small" spellcheck="false"></textarea>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button id="run">Check draft</button>
+    <button id="copy" class="secondary">Copy findings</button>
+  </div>
+
+  <section class="panel" id="results" aria-live="polite">
+    <h2>Findings</h2>
+    <p class="summary" id="summary">Paste your factor text above. Checks run as you type.</p>
+    <div id="groups"></div>
+  </section>
+
+  <section class="panel" id="copyPanel" hidden>
+    <h2>Findings as plain text</h2>
+    <p class="lede" id="copyNote">Select all and copy if the copy button is blocked.</p>
+    <textarea id="copyText" readonly spellcheck="false"></textarea>
+  </section>
+
+  <footer>Rules ported from skills/review/scripts/check.py. Character counts treat a line break as 2 characters and the soft cap is 3900. Findings are advice, not a rating.</footer>
+</main>
+
+<script>
+// ENGINE:START
+var ACQ_ENGINE = (function () {
+  "use strict";
+
+  var HARD_LIMIT = 4000;
+  var SOFT_LIMIT = 3900;
+  var PRIOR_RUN = 6;
+  var CROSS_RUN = 8;
+  var CONTRIBUTION_MAX_WORDS = 35;
+  var FACTOR_KEYS = ["JA", "CT", "MS"];
+  var FACTOR_NAMES = {
+    JA: "Job Achievement and Innovation",
+    CT: "Communication and Teamwork",
+    MS: "Mission Support"
+  };
+  var BANNED = ["seamlessly", "friction-free", "perfectly", "unbroken", "synergy", "cutting-edge", "world-class"];
+  // Accepted difference, not a bug to fix: Python \b and \w know Unicode letters, JavaScript's know
+  // only ASCII, so "robuste" with an accent on the e reads as one word to check.py and as two here,
+  // and this page would count one use too many. Spelling out a Unicode letter class in ES5 means a
+  // hand-built range table, and getting it slightly wrong breaks the common case instead: an em dash
+  // straight after a banned word is a boundary to both engines today. A rare wrong count beats that.
+  var ONCE_ONLY = [["robust", "\\brobust\\b"], ["leverage", "\\bleverag\\w*"]];
+  var SEVERITY_ORDER = { CRITICAL: 0, WARNING: 1, INFO: 2 };
+
+  // Python's str.isspace set, so strip() and rstrip() behave as check.py does.
+  var PY_SPACE = "[ \t\n\r\v\f\x1c-\x1f\x85\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]";
+  var RSTRIP_RE = new RegExp(PY_SPACE + "+$");
+  var LSTRIP_RE = new RegExp("^" + PY_SPACE + "+");
+  var SPLIT_RE = new RegExp(PY_SPACE + "+");
+
+  // Python regex classes are not JavaScript ones. Python \s covers U+001C-U+001F and U+0085 but
+  // not U+FEFF, and Python "." stops only at a newline while JavaScript "." also stops at a
+  // carriage return, U+2028 and U+2029. Written with \s and ".", one invisible separator pasted
+  // mid-line makes the label stop matching and a whole C-R-I entry silently becomes preamble.
+  // Spell the class out and take the body with [\s\S]. Keep those characters out of this file:
+  // a literal U+2028 ends a // comment and breaks the page.
+  var LABEL_RE = new RegExp("^" + PY_SPACE + "*(W|C|R|I)" + PY_SPACE + "*:" + PY_SPACE + "?([\\s\\S]*)$", "i");
+  // JavaScript "m" starts a line after a carriage return, U+2028 and U+2029 as well as after a
+  // newline; Python's re.M starts one only after a newline. "(^|\n)" spells out Python's anchor
+  // set, and PY_SPACE spells out its \s, so these counts cannot drift on pasted text.
+  //
+  // LABEL_PREFIX_RE deliberately keeps the JavaScript form. It is the only one of the four used
+  // with .replace(), and "(^|\n)" would swallow the newline it anchors on, which feeds the
+  // blank-line split in segments() and so the repeat detector. The reward is a WARNING count, the
+  // risk is PRIOR_REPEAT and CROSS_FACTOR_REPEAT, so it stays as it is. Probed with a separator
+  // inside a repeated run and it did not drift; if you change it, prove that case again.
+  var LABEL_PREFIX_RE = /^\s*[WCRI]\s*:\s?/gim;
+  var LOWER_LABEL_RE = new RegExp("(^|\\n)" + PY_SPACE + "*[wcri]" + PY_SPACE + "*:", "g");
+  var LABEL_STYLE_RE = {
+    W: new RegExp("(^|\\n)" + PY_SPACE + "*W" + PY_SPACE + "*:", "gi"),
+    C: new RegExp("(^|\\n)" + PY_SPACE + "*C" + PY_SPACE + "*:", "gi")
+  };
+  var SUPERVISOR_RE = /I supervise \d+ military, \d+ civilians?,? and manage \d+ contractors?\.?/i;
+  var CERT_RE = /certif/i;
+  var FM_RE = /\bDoD\s+FM\b|\bCETs?\b/i;
+  var ACQ_RE = /\bBUS-[A-Z]{2}\b|\bCLPs?\b|\bacquisition\b|\bDAWIA\b/i;
+  // Escaped, not literal: these two rules are the only non-ASCII in the file, and an editor or a
+  // mail gateway that re-saves it in another encoding would mojibake them and silently kill both.
+  var EM_DASH_RE = /\u2014/;
+  var SMART_QUOTES_RE = /[\u2018\u2019\u201c\u201d]/;
+  var MARKDOWN_RE = new RegExp("(^|\\n)" + PY_SPACE + "*(#{1,6}" + PY_SPACE + "|[-*+]" + PY_SPACE +
+    ")|\\*\\*|__|`");
+
+  // check.py reads files with utf-8-sig, so a leading byte order mark never reaches its rules.
+  // Pasted text can still carry one, and U+FEFF is whitespace to JavaScript but not to Python.
+  function stripBom(s) { return String(s).replace(/^\uFEFF/, ""); }
+  function rstrip(s) { return String(s).replace(RSTRIP_RE, ""); }
+  function strip(s) { return rstrip(String(s).replace(LSTRIP_RE, "")); }
+  function words(s) { var t = strip(s); return t === "" ? [] : t.split(SPLIT_RE); }
+  function reEscape(s) { return String(s).replace(/[.*+?^${}()|[\]\\\-\/]/g, "\\$&"); }
+  function countMatches(text, rx) { var m = String(text).match(rx); return m ? m.length : 0; }
+
+  // len() in Python counts code points, and so did Array.from(s).length. Array.from is ES2015 and
+  // this engine is otherwise ES5 on purpose, because a browser too old for it would throw here and
+  // render an empty page with no console open to say why. Count the units, skip the low half of
+  // each surrogate pair, and a lone surrogate still counts as one, exactly as Array.from did.
+  function codePoints(s) {
+    var text = String(s);
+    var total = 0;
+    for (var i = 0; i < text.length; i++) {
+      var unit = text.charCodeAt(i);
+      if (unit >= 0xD800 && unit <= 0xDBFF && i + 1 < text.length) {
+        var next = text.charCodeAt(i + 1);
+        if (next >= 0xDC00 && next <= 0xDFFF) i++;
+      }
+      total++;
+    }
+    return total;
+  }
+
+  function charCount(text) {
+    var body = rstrip(stripBom(text).replace(/\r\n/g, "\n"));
+    return codePoints(body) + countMatches(body, /\n/g);
+  }
+
+  // Array.prototype.sort is only guaranteed stable from ES2019, and check.py leans on sorted()
+  // being stable to keep findings in the order the rules produced them: ORPHAN_LABEL line 2 before
+  // line 10, not sorted as text. Carry the original index as the last tiebreak and the order is
+  // the same on every engine.
+  function stableSort(items, compare) {
+    var order = [];
+    for (var i = 0; i < items.length; i++) order.push(i);
+    order.sort(function (a, b) { return compare(items[a], items[b]) || a - b; });
+    return order.map(function (index) { return items[index]; });
+  }
+
+  function finding(severity, code, factor, message, snippet) {
+    return { severity: severity, code: code, factor: factor, message: message, snippet: snippet || "" };
+  }
+
+  function lineAt(text, number) {
+    var lines = String(text).replace(/\r\n/g, "\n").split("\n");
+    return number >= 1 && number <= lines.length ? strip(lines[number - 1]) : "";
+  }
+
+  function lineMatching(text, rx) {
+    var lines = String(text).replace(/\r\n/g, "\n").split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      rx.lastIndex = 0;
+      if (rx.test(lines[i])) return strip(lines[i]);
+    }
+    return "";
+  }
+
+  // ------------------------------------------------------------- parsing
+
+  function parseFactor(key, text) {
+    text = stripBom(text).replace(/\r\n/g, "\n");
+    var factor = { key: key, text: text, preamble: [], entries: [], orphans: [] };
+    var para = [];
+    var current = null;
+    var lastField = null;
+    var lines = text.split("\n");
+    for (var number = 1; number <= lines.length; number++) {
+      var line = rstrip(lines[number - 1]);
+      var match = LABEL_RE.exec(line);
+      if (match) {
+        var label = match[1].toUpperCase();
+        var body = match[2];
+        if (label === "W" || label === "C") {
+          if (current === null && para.length) { factor.preamble.push(para.join(" ")); para = []; }
+          current = { C: body, R: "", I: "", line: number };
+          factor.entries.push(current);
+          lastField = "C";
+        } else if (current === null || current[label]) {
+          factor.orphans.push(number);
+        } else {
+          current[label] = body;
+          lastField = label;
+        }
+        continue;
+      }
+      if (strip(line) === "") {
+        if (current === null && para.length) { factor.preamble.push(para.join(" ")); para = []; }
+        continue;
+      }
+      if (current === null) para.push(strip(line));
+      else if (lastField) current[lastField] = strip(current[lastField] + " " + strip(line));
+    }
+    if (current === null && para.length) factor.preamble.push(para.join(" "));
+    return factor;
+  }
+
+  function complete(entry) {
+    return !!(strip(entry.C) && strip(entry.R) && strip(entry.I));
+  }
+
+  // ------------------------------------------------------------- structure
+
+  function checkStructure(factor, minEntries, whatLabel) {
+    var out = [];
+    var other = whatLabel === "C" ? "W" : "C";
+    var mismatched = countMatches(factor.text, LABEL_STYLE_RE[other]);
+    if (mismatched) {
+      out.push(finding("WARNING", "LABEL_STYLE", factor.key,
+        mismatched + " entries start with '" + other + ":'; this pay pool's Contribution label is '" +
+        whatLabel + ":'"));
+    }
+    var lowercase = countMatches(factor.text, LOWER_LABEL_RE);
+    if (lowercase) {
+      out.push(finding("WARNING", "LABEL_CASE", factor.key,
+        lowercase + " labels are lowercase; write them as C:, R:, I:"));
+    }
+    factor.entries.forEach(function (entry) {
+      if (!complete(entry)) {
+        var missing = ["C", "R", "I"].filter(function (k) { return !strip(entry[k]); }).join(", ");
+        out.push(finding("CRITICAL", "ENTRY_INCOMPLETE", factor.key,
+          "entry starting line " + entry.line + " is missing " + missing,
+          lineAt(factor.text, entry.line)));
+      }
+    });
+    factor.orphans.forEach(function (number) {
+      out.push(finding("CRITICAL", "ORPHAN_LABEL", factor.key,
+        "line " + number + ": R or I label outside a C-R-I entry, or repeated",
+        lineAt(factor.text, number)));
+    });
+    var done = factor.entries.filter(complete).length;
+    if (done < minEntries) {
+      out.push(finding("CRITICAL", "MIN_ENTRIES", factor.key,
+        done + " complete C-R-I; minimum is " + minEntries));
+    }
+    return out;
+  }
+
+  function checkMandatory(factors, acq, fm, supervisor) {
+    var out = [];
+    var ja = factors.JA;
+    var ms = factors.MS;
+    if (supervisor && !(ja.preamble.length && SUPERVISOR_RE.test(ja.preamble[0]))) {
+      out.push(finding("CRITICAL", "SUPERVISOR_STATEMENT", "JA",
+        "first JA paragraph must state 'I supervise X military, Y civilians, and manage Z contractors.' " +
+        "before any C-R-I"));
+    }
+    var expected = [];
+    if (acq) {
+      expected.push(["ACQ_CERT", "acquisition certification statement", function (p) {
+        return CERT_RE.test(p) && ACQ_RE.test(p) && !FM_RE.test(p);
+      }]);
+    }
+    if (fm) {
+      expected.push(["FM_CERT", "DoD FM certification statement", function (p) {
+        return CERT_RE.test(p) && FM_RE.test(p);
+      }]);
+    }
+    expected.forEach(function (item, position) {
+      if (ms.preamble.length <= position || !item[2](ms.preamble[position])) {
+        out.push(finding("CRITICAL", item[0], "MS",
+          "MS paragraph " + (position + 1) + " must be the " + item[1] + ", before any C-R-I"));
+      }
+    });
+    return out;
+  }
+
+  function checkLength(factor) {
+    var count = charCount(factor.text);
+    var out = [finding("INFO", "CHAR_COUNT", factor.key, count + " characters (line breaks count as 2)")];
+    if (count > HARD_LIMIT) {
+      out.push(finding("CRITICAL", "CHAR_LIMIT", factor.key, count + " characters exceeds " + HARD_LIMIT));
+    } else if (count > SOFT_LIMIT) {
+      out.push(finding("WARNING", "CHAR_SOFT_LIMIT", factor.key, count + " characters exceeds " + SOFT_LIMIT));
+    }
+    return out;
+  }
+
+  // ------------------------------------------------------------- repeats
+
+  function segments(text, allow) {
+    var body = String(text).replace(/\r\n/g, "\n").replace(LABEL_PREFIX_RE, "\u0000");
+    body = body.replace(/\n[ \t]*\n/g, "\u0000");
+    (allow || []).forEach(function (phrase) {
+      var value = strip(phrase);
+      if (value) body = body.replace(new RegExp(reEscape(value), "gi"), "\u0000");
+    });
+    return body.split("\u0000").map(function (part) {
+      return part.toLowerCase().match(/[a-z0-9]+/g) || [];
+    });
+  }
+
+  function shingles(segs, n) {
+    var out = Object.create(null);
+    segs.forEach(function (toks) {
+      for (var i = 0; i + n <= toks.length; i++) out[toks.slice(i, i + n).join("\u0001")] = true;
+    });
+    return out;
+  }
+
+  function sharedRuns(segs, other, n) {
+    var runs = [];
+    segs.forEach(function (toks) {
+      var start = null;
+      var end = null;
+      for (var i = 0; i + n <= toks.length; i++) {
+        if (other[toks.slice(i, i + n).join("\u0001")]) {
+          if (start === null || i > end) {
+            if (start !== null) runs.push(toks.slice(start, end).join(" "));
+            start = i;
+          }
+          end = i + n;
+        }
+      }
+      if (start !== null) runs.push(toks.slice(start, end).join(" "));
+    });
+    return runs;
+  }
+
+  function checkPrior(factors, prior, allow) {
+    var out = [];
+    if (!strip(prior || "")) return out;
+    var other = shingles(segments(prior, allow), PRIOR_RUN);
+    FACTOR_KEYS.forEach(function (key) {
+      sharedRuns(segments(factors[key].text, allow), other, PRIOR_RUN).forEach(function (run) {
+        out.push(finding("CRITICAL", "PRIOR_REPEAT", key,
+          run.split(" ").length + "-word run also in the prior or midpoint text: \"" + run + "\"", run));
+      });
+    });
+    return out;
+  }
+
+  function checkCross(factors, allow) {
+    var out = [];
+    for (var i = 0; i < FACTOR_KEYS.length; i++) {
+      for (var j = i + 1; j < FACTOR_KEYS.length; j++) {
+        var a = FACTOR_KEYS[i];
+        var b = FACTOR_KEYS[j];
+        var other = shingles(segments(factors[b].text, allow), CROSS_RUN);
+        sharedRuns(segments(factors[a].text, allow), other, CROSS_RUN).forEach(function (run) {
+          out.push(finding("CRITICAL", "CROSS_FACTOR_REPEAT", a,
+            run.split(" ").length + "-word run also in " + b + ": \"" + run + "\"", run));
+        });
+      }
+    }
+    return out;
+  }
+
+  // ------------------------------------------------------------- names
+
+  function rosterNames(text) {
+    var lines = String(text).replace(/\r\n/g, "\n").split("\n");
+    var table = lines.some(function (line) { return strip(line).indexOf("|") === 0; });
+    var names = [];
+    if (!table) {
+      lines.forEach(function (line) {
+        var value = strip(line);
+        if (value && value.charAt(0) !== "#") names.push(value);
+      });
+      return names;
+    }
+    var nameCol = null;
+    lines.forEach(function (line) {
+      if (strip(line).indexOf("|") !== 0) return;
+      var trimmed = strip(line).replace(/^\|/, "").replace(/\|$/, "");
+      var cells = trimmed.split("|").map(strip);
+      if (nameCol === null) {
+        var lowered = cells.map(function (c) { return c.toLowerCase(); });
+        if (lowered.indexOf("name") >= 0) nameCol = lowered.indexOf("name");
+        return;
+      }
+      var joined = cells.join("");
+      if (joined.split("").every(function (ch) { return "-: ".indexOf(ch) >= 0; })) return;
+      if (nameCol < cells.length && cells[nameCol]) names.push(cells[nameCol]);
+    });
+    return names;
+  }
+
+  function namePatterns(names) {
+    var terms = [];
+    names.forEach(function (full) {
+      terms.push(full);
+      var parts = words(full);
+      var last = parts.length ? parts[parts.length - 1] : "";
+      if (codePoints(last) >= 4 && last !== full) terms.push(last);
+    });
+    var unique = [];
+    terms.forEach(function (t) { if (unique.indexOf(t) < 0) unique.push(t); });
+    unique = stableSort(unique, function (a, b) { return codePoints(b) - codePoints(a); });
+    // Full names match in any case; a last name alone must be capitalized so common words pass.
+    return unique.map(function (t) {
+      var flags = names.indexOf(t) >= 0 ? "i" : "";
+      return [t, new RegExp("(^|[^A-Za-z])" + reEscape(t) + "(?![A-Za-z])", flags)];
+    });
+  }
+
+  function checkNames(factors, names) {
+    var out = [];
+    var patterns = namePatterns(names || []);
+    FACTOR_KEYS.forEach(function (key) {
+      patterns.forEach(function (pair) {
+        if (pair[1].test(factors[key].text)) {
+          out.push(finding("CRITICAL", "NAME_IN_TEXT", key,
+            "roster name '" + pair[0] + "' appears; use title, organization, or a count", pair[0]));
+        }
+      });
+    });
+    return out;
+  }
+
+  // ------------------------------------------------------------- style
+
+  function checkStyle(factor) {
+    var out = [];
+    var text = factor.text;
+    BANNED.forEach(function (word) {
+      var rx = new RegExp("\\b" + reEscape(word) + "\\b", "i");
+      if (rx.test(text)) {
+        out.push(finding("WARNING", "BANNED_WORD", factor.key, "banned word '" + word + "'",
+          lineMatching(text, new RegExp("\\b" + reEscape(word) + "\\b", "i"))));
+      }
+    });
+    ONCE_ONLY.forEach(function (pair) {
+      var count = countMatches(text, new RegExp(pair[1], "gi"));
+      if (count > 1) {
+        out.push(finding("WARNING", "OVERUSED_WORD", factor.key,
+          "'" + pair[0] + "' used " + count + " times (max 1)",
+          lineMatching(text, new RegExp(pair[1], "i"))));
+      }
+    });
+    if (EM_DASH_RE.test(text)) {
+      out.push(finding("WARNING", "EM_DASH", factor.key, "em dash found; use a comma, colon, or period",
+        lineMatching(text, EM_DASH_RE)));
+    }
+    if (SMART_QUOTES_RE.test(text)) {
+      out.push(finding("WARNING", "SMART_QUOTES", factor.key, "smart quotes found; use straight quotes",
+        lineMatching(text, SMART_QUOTES_RE)));
+    }
+    if (MARKDOWN_RE.test(text)) {
+      out.push(finding("WARNING", "MARKDOWN", factor.key, "Markdown characters found; CAS2Net is plain text",
+        lineMatching(text, MARKDOWN_RE)));
+    }
+    factor.entries.forEach(function (entry) {
+      var count = words(entry.C).length;
+      if (count > CONTRIBUTION_MAX_WORDS) {
+        out.push(finding("WARNING", "CONTRIBUTION_TOO_LONG", factor.key,
+          "Contribution at line " + entry.line + " has " + count + " words (max " + CONTRIBUTION_MAX_WORDS + ")",
+          lineAt(factor.text, entry.line)));
+      }
+    });
+    return out;
+  }
+
+  // ------------------------------------------------------------- orchestration
+
+  function minEntriesFor(mode) { return mode === "annual" ? 3 : 1; }
+
+  function runChecks(options) {
+    var opts = options || {};
+    var texts = opts.factors || {};
+    var whatLabel = opts.whatLabel === "W" ? "W" : "C";
+    var minEntries = typeof opts.minEntries === "number" ? opts.minEntries : minEntriesFor(opts.mode || "annual");
+    var allow = opts.allow || [];
+    var factors = {};
+    FACTOR_KEYS.forEach(function (key) { factors[key] = parseFactor(key, texts[key] || ""); });
+    var findings = [];
+    FACTOR_KEYS.forEach(function (key) {
+      findings = findings.concat(checkStructure(factors[key], minEntries, whatLabel));
+      findings = findings.concat(checkLength(factors[key]));
+      findings = findings.concat(checkStyle(factors[key]));
+    });
+    findings = findings.concat(checkMandatory(factors, !!opts.acq, !!opts.fm, !!opts.supervisor));
+    findings = findings.concat(checkPrior(factors, stripBom(opts.prior || ""), allow));
+    findings = findings.concat(checkCross(factors, allow));
+    findings = findings.concat(checkNames(factors, opts.names || []));
+    findings = stableSort(findings, function (a, b) {
+      if (SEVERITY_ORDER[a.severity] !== SEVERITY_ORDER[b.severity]) {
+        return SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+      }
+      if (a.factor !== b.factor) return a.factor < b.factor ? -1 : 1;
+      if (a.code !== b.code) return a.code < b.code ? -1 : 1;
+      return 0;
+    });
+    return { factors: factors, findings: findings };
+  }
+
+  return {
+    HARD_LIMIT: HARD_LIMIT,
+    SOFT_LIMIT: SOFT_LIMIT,
+    FACTOR_KEYS: FACTOR_KEYS,
+    FACTOR_NAMES: FACTOR_NAMES,
+    SEVERITY_ORDER: SEVERITY_ORDER,
+    charCount: charCount,
+    parseFactor: parseFactor,
+    rosterNames: rosterNames,
+    minEntriesFor: minEntriesFor,
+    runChecks: runChecks
+  };
+}());
+// ENGINE:END
+</script>
+
+<script type="application/json" id="fixtures">
+<!-- FIXTURES:START -->
+[
+  {
+    "name": "clean annual draft",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "midpoint needs only one entry",
+    "mode": "midpoint",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "closeout needs only one entry",
+    "mode": "closeout",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "two entries in an annual draft",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "MIN_ENTRIES"
+    ]
+  },
+  {
+    "name": "fourth entry has no result or impact",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n\nC: Drafted a data dictionary for the estimating library.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "ENTRY_INCOMPLETE"
+    ]
+  },
+  {
+    "name": "repeated result label inside an entry",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nR: Also finished a second pass on the model.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "ORPHAN_LABEL"
+    ]
+  },
+  {
+    "name": "older W labels for contribution",
+    "mode": "annual",
+    "factors": {
+      "JA": "W: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nW: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nW: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "LABEL_STYLE"
+    ]
+  },
+  {
+    "name": "lowercase labels",
+    "mode": "annual",
+    "factors": {
+      "JA": "c: Rebuilt the branch cost model in Python for the fighter portfolio.\nr: Cut the monthly refresh from two days to twenty minutes.\ni: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "LABEL_CASE"
+    ]
+  },
+  {
+    "name": "factor just over the soft limit",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "CHAR_SOFT_LIMIT"
+    ]
+  },
+  {
+    "name": "factor over the hard limit",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "CHAR_LIMIT"
+    ]
+  },
+  {
+    "name": "banned word",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Seamlessly freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "BANNED_WORD",
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "overused word",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Built a robust index table behind a robust monthly check.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "OVERUSED_WORD"
+    ]
+  },
+  {
+    "name": "em dash",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year \u2014 real analysis time.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "EM_DASH"
+    ]
+  },
+  {
+    "name": "smart quotes",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Leadership called it \u201cthe cleanest model yet\u201d this year.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "SMART_QUOTES"
+    ]
+  },
+  {
+    "name": "markdown characters",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: **Freed** roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "MARKDOWN"
+    ]
+  },
+  {
+    "name": "contribution over thirty five words",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word\nR: Finished the work.\nI: Saved review time.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "CONTRIBUTION_TOO_LONG"
+    ]
+  },
+  {
+    "name": "run repeated from the prior cycle",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Reconciled contractor cost reports with the program office again this year.\nR: Closed every open reconciliation before the year end lock.\nI: The funding picture matched the accounting system at close.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "Reconciled contractor cost reports with the program office every quarter.",
+    "expect": [
+      "CHAR_COUNT",
+      "PRIOR_REPEAT"
+    ]
+  },
+  {
+    "name": "run repeated across two factors",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Automated the quarterly data pull for every program estimate in the branch.\nR: Saved a day each quarter.\nI: Estimates refresh on demand.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Automated the quarterly data pull for every program estimate in the branch.\nR: Trained the branch on it.\nI: Everyone pulls the same numbers.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "expect": [
+      "CHAR_COUNT",
+      "CROSS_FACTOR_REPEAT"
+    ]
+  },
+  {
+    "name": "roster name in the text",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt with Quill the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "names": [
+      "Jordan Quill",
+      "Avery Lee"
+    ],
+    "expect": [
+      "CHAR_COUNT",
+      "NAME_IN_TEXT"
+    ]
+  },
+  {
+    "name": "supervisor statement missing",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "supervisor": true,
+    "expect": [
+      "CHAR_COUNT",
+      "SUPERVISOR_STATEMENT"
+    ]
+  },
+  {
+    "name": "supervisor statement present",
+    "mode": "annual",
+    "factors": {
+      "JA": "I supervise 0 military, 3 civilians, and manage 2 contractors. I held monthly feedback sessions and completed every required personnel action on time.\n\nC: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "supervisor": true,
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "acquisition certification statement missing",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "acq": true,
+    "expect": [
+      "ACQ_CERT",
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "financial management certification statement missing",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "fm": true,
+    "expect": [
+      "CHAR_COUNT",
+      "FM_CERT"
+    ]
+  },
+  {
+    "name": "both certification statements in order",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Stood up a shared library of reusable estimating routines.\nR: Eleven analysts adopted it within one quarter.\nI: New estimates start from vetted math instead of a blank sheet.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "I am fully certified in BUS-CE (Advanced) as of 20 Aug 2024 and have completed 80 Continuous Learning Points (CLPs) for the cycle ending 30 Sep 2026.\n\nI am fully certified at DoD FM Level 2. I have met my requirement of 40 CETs for the current cycle ending 30 Sep 2026.\n\nC: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "",
+    "acq": true,
+    "fm": true,
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  },
+  {
+    "name": "allowed phrase is not a prior repeat",
+    "mode": "annual",
+    "factors": {
+      "JA": "C: Rebuilt the branch cost model in Python for the fighter portfolio.\nR: Cut the monthly refresh from two days to twenty minutes.\nI: Freed roughly 180 analyst hours a year for real analysis.\n\nC: Wrote a regression check that catches bad escalation indices.\nR: Caught four index errors before they reached a briefing.\nI: Protected the credibility of the estimate with the program office.\n\nC: Briefed the Office of the Regional Cost Estimating Directorate leadership.\nR: Got a decision in one meeting.\nI: The estimate moved forward that week.\n",
+      "CT": "C: Briefed quarterly estimate results to the program office and the comptroller.\nR: Answered every question in the room without a follow up action.\nI: Leadership approved the funding position on the first pass.\n\nC: Taught a two hour class on the new data pipeline.\nR: Sixteen people attended and nine started using the pipeline that month.\nI: Spread the method beyond one branch without adding staff.\n\nC: Mentored two junior analysts through their first independent estimates.\nR: Both delivered on time with no rework from review.\nI: Grew bench depth for a mission area with a single expert.\n",
+      "MS": "C: Took over the team collaboration site and rewrote its permission structure.\nR: Closed nine stale access grants and documented the owner of record.\nI: Removed an audit finding risk that had sat open since last year.\n\nC: Served as the office representative for the records management push.\nR: Filed every required record type ahead of the deadline.\nI: The office passed its review with no corrective action.\n\nC: Volunteered for the recruiting booth at two hiring events.\nR: Screened forty applications and forwarded eleven to the hiring official.\nI: Two of those candidates accepted offers in the estimating branch.\n"
+    },
+    "prior": "Supported the Office of the Regional Cost Estimating Directorate staff.",
+    "allow": [
+      "Office of the Regional Cost Estimating Directorate"
+    ],
+    "expect": [
+      "CHAR_COUNT"
+    ]
+  }
+]
+<!-- FIXTURES:END -->
+</script>
+
+<script>
+(function () {
+  "use strict";
+  // Split so the file holds each marker line exactly once.
+  var START = "<!-- FIXTURES" + ":START -->";
+  var END = "<!-- FIXTURES" + ":END -->";
+
+  function el(id) { return document.getElementById(id); }
+  function lines(value) {
+    return value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(function (s) { return s !== ""; });
+  }
+
+  function readForm() {
+    return {
+      mode: el("mode").value,
+      path: el("path").value,
+      whatLabel: el("whatLabel").value,
+      supervisor: el("supervisor").checked,
+      acq: el("acq").checked,
+      fm: el("fm").checked,
+      factors: { JA: el("JA").value, CT: el("CT").value, MS: el("MS").value },
+      prior: el("prior").value,
+      names: ACQ_ENGINE.rosterNames(el("names").value),
+      allow: lines(el("allow").value),
+      ledger: el("ledger").value
+    };
+  }
+
+  function updateCounters() {
+    ACQ_ENGINE.FACTOR_KEYS.forEach(function (key) {
+      var count = ACQ_ENGINE.charCount(el(key).value);
+      var node = el("count-" + key);
+      node.textContent = count + " / " + ACQ_ENGINE.SOFT_LIMIT;
+      node.className = "counter" + (count > ACQ_ENGINE.HARD_LIMIT ? " over" : count > ACQ_ENGINE.SOFT_LIMIT ? " warn" : "");
+    });
+  }
+
+  function counts(findings) {
+    return {
+      CRITICAL: findings.filter(function (f) { return f.severity === "CRITICAL"; }).length,
+      WARNING: findings.filter(function (f) { return f.severity === "WARNING"; }).length,
+      INFO: findings.filter(function (f) { return f.severity === "INFO"; }).length
+    };
+  }
+
+  function render(findings) {
+    var tally = counts(findings);
+    el("summary").textContent = "check: " + tally.CRITICAL + " CRITICAL, " + tally.WARNING +
+      " WARNING, " + tally.INFO + " INFO";
+    var groups = el("groups");
+    groups.textContent = "";
+    ["CRITICAL", "WARNING", "INFO"].forEach(function (severity) {
+      var rows = findings.filter(function (f) { return f.severity === severity; });
+      if (!rows.length) return;
+      var box = document.createElement("div");
+      box.className = "group";
+      var head = document.createElement("h3");
+      head.textContent = severity + " (" + rows.length + ")";
+      box.appendChild(head);
+      var list = document.createElement("ul");
+      list.className = "findings";
+      rows.forEach(function (f) {
+        var item = document.createElement("li");
+        item.className = f.severity;
+        var code = document.createElement("span");
+        code.className = "code";
+        code.textContent = f.code;
+        item.appendChild(code);
+        var where = document.createElement("span");
+        where.className = "where";
+        where.textContent = " " + (ACQ_ENGINE.FACTOR_NAMES[f.factor] || f.factor);
+        item.appendChild(where);
+        var body = document.createElement("div");
+        body.textContent = f.message;
+        item.appendChild(body);
+        if (f.snippet) {
+          var pre = document.createElement("pre");
+          pre.textContent = f.snippet;
+          item.appendChild(pre);
+        }
+        list.appendChild(item);
+      });
+      box.appendChild(list);
+      groups.appendChild(box);
+    });
+    if (!findings.length) {
+      var none = document.createElement("p");
+      none.textContent = "Nothing to report yet.";
+      groups.appendChild(none);
+    }
+  }
+
+  function plainText(form, findings) {
+    var tally = counts(findings);
+    var out = [];
+    out.push("AcqDemo checker findings");
+    out.push("stage: " + form.mode + ", career path: " + form.path.toUpperCase() +
+      ", supervisor: " + (form.supervisor ? "yes" : "no") +
+      ", acquisition certification: " + (form.acq ? "yes" : "no") +
+      ", DoD FM certification: " + (form.fm ? "yes" : "no"));
+    out.push("characters: " + ACQ_ENGINE.FACTOR_KEYS.map(function (key) {
+      return key + " " + ACQ_ENGINE.charCount(form.factors[key]);
+    }).join(", ") + " of " + ACQ_ENGINE.SOFT_LIMIT);
+    out.push("check: " + tally.CRITICAL + " CRITICAL, " + tally.WARNING + " WARNING, " + tally.INFO + " INFO");
+    out.push("");
+    findings.forEach(function (f) {
+      out.push("[" + f.severity + "] " + f.factor + " " + f.code + ": " + f.message);
+    });
+    if (form.ledger.trim()) {
+      out.push("");
+      out.push("ledger:");
+      out.push(form.ledger.trim());
+    }
+    return out.join("\n");
+  }
+
+  var latest = { form: null, findings: [] };
+
+  function check() {
+    var form = readForm();
+    var result = ACQ_ENGINE.runChecks(form);
+    latest = { form: form, findings: result.findings };
+    updateCounters();
+    render(result.findings);
+  }
+
+  var timer = null;
+  function schedule() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(check, 250);
+  }
+
+  function copyFindings() {
+    // Flush the pending debounce, or a copy within 250 ms of a keystroke ships the previous findings.
+    if (timer) { clearTimeout(timer); timer = null; }
+    check();
+    var text = plainText(latest.form || readForm(), latest.findings);
+    var box = el("copyText");
+    box.value = text;
+    el("copyPanel").hidden = false;
+    box.focus();
+    box.select();
+    var note = el("copyNote");
+    var copied = false;
+    try { copied = document.execCommand("copy"); } catch (err) { copied = false; }
+    note.textContent = copied
+      ? "Copied. Paste it into your agent."
+      : "Copy did not work in this browser. Select the text below and copy it.";
+  }
+
+  function fixtures() {
+    var raw = el("fixtures").textContent;
+    var from = raw.indexOf(START);
+    var to = raw.indexOf(END);
+    if (from < 0 || to < 0) throw new Error("fixture markers missing");
+    return JSON.parse(raw.slice(from + START.length, to));
+  }
+
+  // Maintenance only. The corpus proves the engine behaves inside a locked-down
+  // browser, which pytest cannot reach. It says nothing about the user's own draft,
+  // so it is never built unless the URL asks for it.
+  function selfTestWanted() {
+    var search = String(window.location.search || "");
+    var hash = String(window.location.hash || "");
+    return search.indexOf("selftest=1") >= 0 || hash === "#selftest";
+  }
+
+  function buildSelfTestPanel() {
+    var panel = document.createElement("section");
+    panel.className = "panel";
+    var head = document.createElement("h2");
+    head.textContent = "Engine self-test (maintenance)";
+    panel.appendChild(head);
+    var note = document.createElement("p");
+    note.className = "lede";
+    note.textContent = "Built-in sample drafts that check the rule engine in this browser. " +
+      "They have nothing to do with the text in the boxes above, and all of them passing is the expected result.";
+    panel.appendChild(note);
+    var summary = document.createElement("p");
+    summary.className = "summary";
+    summary.id = "selftestSummary";
+    panel.appendChild(summary);
+    var table = document.createElement("table");
+    table.className = "selftest";
+    var body = document.createElement("tbody");
+    body.id = "selftestRows";
+    table.appendChild(body);
+    panel.appendChild(table);
+    document.querySelector("main").appendChild(panel);
+  }
+
+  function selfTest() {
+    if (!el("selftestRows")) buildSelfTestPanel();
+    var rows = el("selftestRows");
+    rows.textContent = "";
+    var data;
+    try {
+      data = fixtures();
+    } catch (err) {
+      el("selftestSummary").textContent = "could not read the fixtures: " + err.message;
+      return;
+    }
+    var failed = 0;
+    data.forEach(function (fixture) {
+      var result = ACQ_ENGINE.runChecks({
+        mode: fixture.mode,
+        factors: fixture.factors,
+        prior: fixture.prior || "",
+        names: fixture.names || [],
+        allow: fixture.allow || [],
+        acq: !!fixture.acq,
+        fm: !!fixture.fm,
+        supervisor: !!fixture.supervisor,
+        whatLabel: fixture.whatLabel || "C"
+      });
+      var got = [];
+      result.findings.forEach(function (f) { if (got.indexOf(f.code) < 0) got.push(f.code); });
+      got.sort();
+      var want = (fixture.expect || []).slice().sort();
+      var ok = got.join(",") === want.join(",");
+      if (!ok) failed += 1;
+      var row = document.createElement("tr");
+      var status = document.createElement("td");
+      status.className = ok ? "pass" : "fail";
+      status.textContent = ok ? "pass" : "FAIL";
+      row.appendChild(status);
+      var name = document.createElement("td");
+      name.textContent = fixture.name;
+      var detail = document.createElement("div");
+      detail.className = "where";
+      detail.textContent = "expected " + (want.join(", ") || "no findings") +
+        ", got " + (got.join(", ") || "no findings");
+      name.appendChild(detail);
+      row.appendChild(name);
+      rows.appendChild(row);
+    });
+    el("selftestSummary").textContent = failed === 0
+      ? "all " + data.length + " fixtures pass"
+      : failed + " of " + data.length + " fixtures fail";
+    el("selftestSummary").className = "summary " + (failed === 0 ? "pass" : "fail");
+  }
+
+  ["JA", "CT", "MS", "prior", "names", "allow"].forEach(function (id) {
+    el(id).addEventListener("input", schedule);
+  });
+  el("ledger").addEventListener("input", function () { updateCounters(); });
+  ["mode", "path", "whatLabel"].forEach(function (id) {
+    el(id).addEventListener("change", check);
+  });
+  ["supervisor", "acq", "fm"].forEach(function (id) {
+    el(id).addEventListener("change", check);
+  });
+  el("run").addEventListener("click", check);
+  el("copy").addEventListener("click", copyFindings);
+
+  updateCounters();
+  check();
+  window.ACQ_SELFTEST = selfTest;
+  if (selfTestWanted()) selfTest();
+}());
+</script>
+</body>
+</html>

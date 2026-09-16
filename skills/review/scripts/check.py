@@ -325,8 +325,14 @@ def read_text(path: Path) -> str:
     data = path.read_bytes()
     if data.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)):
         return data.decode("utf-16")
-    if len(data) >= 2 and data.count(0) >= len(data) // 4:  # UTF-16 saved without a BOM
-        return data.decode("utf-16-le" if data[1::2].count(0) >= data[0::2].count(0) else "utf-16-be")
+    # UTF-16 saved without a BOM: an even length, and NUL bytes, at least a quarter of the file.
+    # Every part matters. Without the NUL floor a 2-byte ASCII file decodes to one wrong character
+    # and without the even-length test a 3-byte file raises "truncated data".
+    if len(data) >= 2 and len(data) % 2 == 0 and data.count(0) >= max(1, len(data) // 4):
+        try:
+            return data.decode("utf-16-le" if data[1::2].count(0) >= data[0::2].count(0) else "utf-16-be")
+        except UnicodeDecodeError:
+            pass  # NUL bytes in something that is not UTF-16; fall through rather than crash
     try:
         return data.decode("utf-8-sig")
     except UnicodeDecodeError:

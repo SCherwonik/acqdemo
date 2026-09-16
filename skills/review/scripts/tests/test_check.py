@@ -312,6 +312,32 @@ def test_read_text_detects_utf16_without_bom(tmp_path):
         assert check.read_text(path) == "C: Built a tool.\n"
 
 
+def test_read_text_reads_tiny_ascii_files(tmp_path):
+    """A 2- or 3-byte file is ASCII, not UTF-16, whatever the NUL ratio works out to.
+
+    b"ab" and b"   " are the regression cases, one per clause of the guard: b"ab" is even
+    length and used to decode as one wrong CJK character before the NUL floor was added, and
+    b"   " is odd length and used to raise "truncated data" before the even-length test.
+    b"a" and b"" only exercise the `len(data) >= 2` check and pass either way, so they stay as
+    guards against that check being dropped, not as evidence the fix works.
+    """
+    regressions = (("two.txt", b"ab"), ("three-spaces.txt", b"   "))
+    guards = (("one.txt", b"a"), ("empty.txt", b""))
+    for name, blob in regressions + guards:
+        path = tmp_path / name
+        path.write_bytes(blob)
+        assert check.read_text(path) == blob.decode("ascii"), f"{name} did not read back as ASCII"
+
+
+def test_read_text_falls_back_when_nul_bytes_are_not_utf16(tmp_path):
+    """NUL bytes in something that is not UTF-16 must not crash the run."""
+    path = tmp_path / "odd.txt"
+    path.write_bytes(b"a\x00\x00\xd8")  # decodes to a lone surrogate under utf-16-le
+    # utf-16-le raises on the lone surrogate and utf-8-sig raises on the 0xd8, so the bytes
+    # come back through cp1252, NULs and all, rather than as an exception or an empty string.
+    assert check.read_text(path) == "a\x00\x00" + chr(0xd8)
+
+
 def test_full_names_match_in_any_case(tmp_path):
     ja = factor_text("alpha", 2) + "C: Worked with jordan quill daily.\nR: Done.\nI: Growth.\n"
     findings = check.run_checks(write_dir(tmp_path, ja=ja), 3, names=check.roster_names(ROSTER))

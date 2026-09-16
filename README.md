@@ -543,7 +543,7 @@ python -m pytest
 |---|---|
 | `tools/hooks/tests/test_scan_pii.py` | Clean files pass; SSNs, dates of birth, banners, sensitive names, and SSNs inside `.docx` and `.pdf` block; the scanner does not match its own source |
 | `tools/sync/tests/test_sync_public.py` | Marker stripping (including malformed blocks), path exclusion (folders, wildcards, file globs), tracked-files-only mirroring, denylist and PII aborts with nothing written, stale-file deletion, dry run |
-| `tools/probe/tests/test_run_probe.py` | The sandbox copies the plugin and leaves the workspace behind, keeps templates that share workspace file names, and refuses a plugin folder that is also a workspace; the tripwire sees added, changed, and removed files, ignores git and caches, and reports without deleting; a probe cannot run with its plugin folder or working directory inside the repository |
+| `tools/probe/tests/test_run_probe.py` | The sandbox copies the plugin and leaves the workspace behind, keeps templates that share workspace file names, and refuses a plugin folder that is also a workspace; the tripwire sees added, changed, and removed files, empty folders, permission changes, and a commit made behind the worktree's back (it fingerprints `.git/HEAD`, the index, the refs, and the resolved commit), skips caches, and reports without deleting; a probe cannot run with its plugin folder or working directory inside the repository |
 
 Planned skill validation (from the design spec):
 - **A.** Unit tests for the deterministic draft checker.
