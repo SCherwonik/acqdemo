@@ -10,7 +10,7 @@ Have these open:
 
 - `gen_ai/gemini/orchestrator.md`, the primary agent's instructions.
 - `gen_ai/gemini/starter-prompts.md`, the three Personalization prompts.
-- `gen_ai/gemini/subagents/`, five files, one per subagent. Each file holds a Name, a Description, and an Instructions block ready to paste.
+- `gen_ai/gemini/subagents/`, six files, one per subagent. Each file holds a Name, a Description, and an Instructions block ready to paste.
 - `gen_ai/knowledge/`, the files that go in the Knowledge panel.
 
 Two files in this pack are **not** uploaded anywhere, and both have to reach the employee some other way. `gen_ai/checker/acqdemo-checker.html` is opened directly in a browser when it is time to check a draft. `gen_ai/worksheets/brain-dump-worksheet.md` is filled in offline by the employee and uploaded into a chat, not into the agent.
@@ -59,15 +59,16 @@ Two files in this pack are **not** uploaded anywhere, and both have to reach the
 
 9. Save the agent.
 
-## Part 2: Add the five subagents on the Flow canvas
+## Part 2: Add the six subagents on the Flow canvas
 
 Open the Flow canvas for the AcqDemo Assistant. The primary agent is the root node. Each subagent is added as a child of it.
 
-Add these five, in this order. The order does not change behavior, but it makes the canvas readable later.
+Add these six, in this order. The order does not change behavior, but it makes the canvas readable later.
 
 | Node | Paste from | Model |
 |---|---|---|
 | Document Extractor | `subagents/document-extractor.md` | Fast tier |
+| Draft Intake | `subagents/draft-intake.md` | Strongest available |
 | Ledger Keeper | `subagents/ledger-keeper.md` | Fast tier |
 | Factor Drafter | `subagents/factor-drafter.md` | Strongest available |
 | Evidence Auditor | `subagents/evidence-auditor.md` | Strongest available |
@@ -76,7 +77,7 @@ Add these five, in this order. The order does not change behavior, but it makes 
 For each one:
 
 1. Add a subagent node as a child of AcqDemo Assistant.
-2. **Name.** Type the name from the Node column of the table above, exactly as it appears there: `Document Extractor`, `Ledger Keeper`, `Factor Drafter`, `Evidence Auditor`, `Panel Reader`. These five names are the canonical ones. They match the Name line in each subagent file and they match the names the orchestrator instructions call out to. Do not add a prefix, do not add "AcqDemo", and do not make them more descriptive. A renamed subagent is a subagent that never gets called, and the failure is silent: the primary agent simply does the work badly by itself.
+2. **Name.** Type the name from the Node column of the table above, exactly as it appears there: `Document Extractor`, `Draft Intake`, `Ledger Keeper`, `Factor Drafter`, `Evidence Auditor`, `Panel Reader`. These six names are the canonical ones. They match the Name line in each subagent file and they match the names the orchestrator instructions call out to. Do not add a prefix, do not add "AcqDemo", and do not make them more descriptive. A renamed subagent is a subagent that never gets called, and the failure is silent: the primary agent simply does the work badly by itself.
 3. **Description.** Copy the Description block from the file, exactly, and do not improve it.
 
    Subagent descriptions are routing keys, not summaries. The primary agent chooses which child to hand work to by reading these. Two rules follow from that, and both were learned the expensive way. Never name another subagent's subject matter in a description, even to exclude it: writing "does not draft factor text" in the Document Extractor's description reliably attracts drafting requests to the Document Extractor, because the match is on the words, not on the negation. And never write a description that describes the agent's quality rather than its trigger; "carefully reviews text" matches nothing in particular, while "called when a draft needs every claim traced back to evidence" matches exactly one situation.
@@ -86,14 +87,14 @@ For each one:
 6. **Connectors.** **Remove Enterprise Web Search from this subagent too.** It is attached by default to every agent, including children, and it has to come off every one of them for the same reason it came off the primary. A subagent that reaches the open web while summarizing a document will quietly blend a web page's version of an AcqDemo rule into its output, and the primary agent has no way to tell that happened.
 7. Save the node.
 
-Repeat for all five. Then look at the canvas: AcqDemo Assistant at the root, five children, no other nodes.
+Repeat for all six. Then look at the canvas: AcqDemo Assistant at the root, six children, no other nodes.
 
 ## Part 3: Verify before you use it
 
 Walk this list. It takes two minutes and catches the failures that are hard to diagnose later.
 
 1. Open each of the six agents and confirm the Connectors list is empty. This is the one to double-check, because the default reattaches on some builds when an agent is duplicated.
-2. Confirm all five subagent names match the names used in the orchestrator instructions: Document Extractor, Ledger Keeper, Factor Drafter, Evidence Auditor, Panel Reader.
+2. Confirm all six subagent names match the names used in the orchestrator instructions: Document Extractor, Draft Intake, Ledger Keeper, Factor Drafter, Evidence Auditor, Panel Reader.
 3. Confirm the primary agent's Instructions field ends with the same line the orchestrator file ends with.
 4. Confirm the Knowledge panel lists every file from `gen_ai/knowledge/` and none of the employee's own documents.
 5. Confirm the three starter prompts are in place.
@@ -119,6 +120,8 @@ Fifth test: give it two broadband levels in one sentence. Type "I am an NH-III a
 Sixth test: hand it a year-old certification. Type "last year's appraisal says I hold an acquisition practitioner certification, status met, 40 continuous learning points." That statement should land in Profile marked `confirmed: no` with the document and the cycle it came from, and a certification refresh line should appear in `open_questions`, rather than being recorded as this cycle's certification. Then answer whatever the agent asks until it has your position basics. Before it starts asking about individual pieces of work it should run the special-situation pass: five numbered questions covering broadband level, supervisor, any closeout document, an organization change, and a certification change. Certifications arriving as settled fact means CERTIFICATIONS ARE REFRESHED, NEVER CARRIED did not paste. The five questions never arriving means THE SPECIAL-SITUATION PASS did not paste, and that section is the one that catches a promotion, a supervisor change, or a move, every one of which changes what the finished text has to say.
 
 Seventh test: say you supervise nobody. Type "I supervise no one, no military, no civilians, no contractors." Later, when the agent settles the mandatory paragraphs, there should be no supervisory paragraph at all, and nothing resembling a supervisory objective should appear in the workspace block's `# Pay pool` section. A supervisory paragraph written for an employee with zero counts is an invented requirement, and on a live run the same reply wrote that invention into the Pay pool section, where every later session reads it back as the employee's own pay pool policy. Every line in that section should name where it came from, either a document or the employee, or say it is an unconfirmed toolkit default.
+
+Seventh test, the shortcut path. Start a new conversation and click the third starter prompt, "I already wrote my self-assessment and I want it checked. Here is the draft." The agent should ask you to paste your factors and wait. It should not run the document ask and send you off to pull your appraisal export, which is what an earlier version of that prompt did and the reason Step 1 now has a third exception. Paste any two or three C-R-I statements. What comes back should be one candidate entry per statement, a note on which mandatory opening paragraphs the text has, a short list of grammar and tense problems, and the characters each factor uses against the limit. It should not score the text, judge it against descriptors, or rewrite it; those come later from other agents. If it rewrites your text, Draft Intake's Instructions did not paste. If nothing happens and the primary agent answers by itself, check the subagent is named exactly `Draft Intake`.
 
 ## Part 5: Give the employee the two files, and five instructions
 
