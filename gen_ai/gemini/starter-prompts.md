@@ -23,24 +23,20 @@ Leads to the same engine with the midpoint differences applied, starting with th
 ## Slot 3
 
 ```
-I already wrote my self-assessment and I want it checked. Here is the draft.
+I have a saved session from last time. Ask me for my blocks so we can pick up where we left off.
 ```
 
-Leads to the shortcut path, and it is the only route to it. Someone who arrives here has already written the whole thing, this cycle's or a previous cycle's, because they did the thinking in their head rather than in a conversation. Their draft is their ledger. The Draft Intake subagent reads it back into entries, reports which mandatory paragraphs the text contains, flags grammar and sentence mechanics, and says how many characters each factor uses against the limit. Then the same three check layers run that the long path runs, so the shortcut loses none of the rigor.
+Leads to the resume path. The wording matters here more than in the other two slots, and it was changed after a review caught the failure. A clicked starter prompt sends its sentence and nothing else: no file, no pasted text. The earlier wording, "Here is my saved ledger block", promised an attachment that was never there, and the agent's resume branch is gated on a block actually being present, so the click landed on the full document ask and the user was asked to pull their appraisal again.
 
-The wording carries a lesson from the slot that used to sit here. A clicked starter prompt sends its sentence and nothing else: no file, no pasted text. An earlier prompt promised an attachment that was never there, the branch behind it was gated on that attachment, and the click fell through to the wrong path. So "Here is the draft" is an invitation, not a claim that something is attached, and the orchestrator asks for the draft and waits.
+This wording asks the agent to ask. The agent requests both blocks by name, the `ledger` block and the `workspace` block holding Profile, Pay pool, Roster, and Session state, the user pastes them or uploads the document they kept them in, and only then does the agent read Session state, say in two lines what step it stopped on and what the ledger already holds, and continue from next_action without re-asking anything the blocks already answer.
 
-**This prompt is the gate.** Draft Intake is reachable from here and from a user who supplies complete factor text and asks for it read in, and from nowhere else. It is never called during a normal writing session, on a midpoint, on a closeout, or on an uploaded document, which is the Document Extractor's work. The two agents both read text and return candidate entries, so the only thing keeping them apart is which path reached them. The reason is the stance: the shortcut takes the user's words as settled, asserted work, and applying that to a half-formed sentence someone is still thinking through would turn a draft thought into a claim.
+The orchestrator handles the other order too: a user who pastes a block into their very first message skips straight past the ask. And a user who brings only the ledger is told plainly that the evidence is there but the profile is not, and gets one short round to rebuild the career path, levels, and pay pool rules before drafting.
 
-### What happened to the resume prompt
-
-This slot used to hold "I have a saved session from last time." It was written when losing the chat meant losing the work, and the file argued it was load bearing for that reason. It is not any more: chats on this platform persist and carry their own history, so the ordinary way back into an unfinished session is to reopen it. The capability is unchanged and only the button is gone. A user who pastes a `ledger` block into their first message still skips straight to the resume branch, and a user who types the request still gets asked for both blocks by name. That matters most for work carried in from elsewhere, another chat or the Claude Code toolkit, which uses the same ledger format.
+This slot is mainly for work carried in from elsewhere: another chat, or the Claude Code version of the toolkit, which uses the same ledger format. Reopening a chat on this platform resumes it with its own history, so most people will never need it, and it costs nothing to keep.
 
 ## If a slot is ever freed up
 
-Only three slots exist, and slot 3 now keeps one of them for a reason the other two do not share: it is the only way to reach Draft Intake. The annual and midpoint paths are both reachable by typing, and so is resume. Reassigning slot 3 would not make the shortcut path harder to find, it would close it.
-
-These are the strongest candidates if slot 1 or slot 2 is ever reassigned:
+Only three slots exist, and the resume prompt keeps one of them: it is the only route back into work that started somewhere else, in another chat or in the Claude Code toolkit, and without file writes there is no other handle on it. Everything else the agent does is reachable by typing. These two are the strongest candidates if the annual or midpoint slot is ever reassigned:
 
 ```
 I want to write down one win while it is fresh.
@@ -49,7 +45,7 @@ I want to write down one win while it is fresh.
 Leads to the one-win capture: one candidate entry, at most six numbered questions, a ledger block, and done. No long path.
 
 ```
-I have a saved session from last time. Ask me for my blocks so we can pick up where we left off.
+Review the self-assessment draft I already wrote.
 ```
 
-The prompt that used to sit in slot 3. Worth restoring only for someone routinely carrying work in from another chat or from the Claude Code toolkit, since reopening a chat on this platform already resumes it.
+Leads to the check. The agent says up front that a draft arriving with no evidence ledger behind it cannot go through the middle layer as it stands, and offers the choice: spend a round or two building a minimal ledger from the draft so every claim can be traced, or run the checker and the Panel Reader only and accept that nothing has been traced. Then the offline checker, the Evidence Auditor if there is a ledger, and the Panel Reader.
