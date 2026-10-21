@@ -31,7 +31,7 @@ python "<this skill folder>/../start/scripts/doc_text.py" --file "<prd_path>"
 Number the duties in the output as you present them back to the user, so later steps can cite "PRD 3" or "PRD 3, 4". If it exits 2 (unsupported file, or `pdftotext` missing for a `.pdf` PRD), tell the user what to install or convert and stop.
 
 ## Step 3: Gather this cycle's work
-Ask, in a numbered round: what work is expected this cycle (ramble is fine); the prior plan's text, if any (for continuity, not for copying); supervisor priorities or guidance; and the mission statements one and two levels up from `profile.md`, if not already recorded.
+Ask, in a numbered round: what work is expected this cycle (ramble is fine); the prior plan's text, if any (for continuity, not for copying; if it was written in C-R-I form, its format does not carry over, and mandatory objectives such as a certification self-certification are inserted by CAS2Net, not drafted); supervisor priorities or guidance; and the mission statements one and two levels up from `profile.md`, if not already recorded.
 
 ## Step 4: Draft objectives
 For each factor (Job Achievement and/or Innovation, Communication and/or Teamwork, Mission Support), draft at least `min_plan_objectives_per_factor` objectives (the example pay pool requires 2). Each objective:

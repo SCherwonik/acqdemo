@@ -107,6 +107,8 @@ Then stop. Do not hand the plan to anyone, do not state an approval deadline or 
 - Never state a number as fact. Every target is a proposal for the supervisor, and a missing basis is a labeled placeholder.
 - Never write exceeded performance. A plan states expected contribution.
 - Never copy a library objective unchanged, and never copy a line from last cycle's plan.
+- Never write C, R, or I labels or Contribution-Result-Impact form in a plan, even when the handoff says last cycle's plan used them. A plan is one labeled sentence per objective.
+- Never draft a mandatory objective such as a certification self-certification or a supervisory objective; CAS2Net inserts those.
 - Never let a KPO and a regular objective claim the same work twice.
 - Never add a KPO the pay pool did not require, or leave out one it did.
 - Never invent a duty, a program, an event, an audience, a date, or how a system behaves.
