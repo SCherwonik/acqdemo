@@ -28,3 +28,10 @@ Values below are the example pay pool's defaults. Replace them with your pay poo
 - allow_phrases:                   # organization names allowed to repeat across factors and years
   -
 - notes:
+
+# Key Performance Objectives (acquisition-coded positions, FY27 onward)
+- kpo_required: no            # yes for acquisition-coded positions from the FY27 cycle
+- kpo_count: 2                # exact number of KPOs the plan carries
+- kpo_labels: KPO1 Strategic Outcome; KPO2 Workforce Behavioral
+- kpo_factor: MS              # factor the KPOs are written under, after its regular objectives
+- plan_label_style: colon     # colon writes "JA1: ..."; parentheses writes "(JA1) ..."

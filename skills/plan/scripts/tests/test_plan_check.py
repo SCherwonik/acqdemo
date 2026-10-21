@@ -265,3 +265,222 @@ def test_heading_variants_match():
 def test_prose_line_with_time_is_not_an_objective():
     ja = JA_GOOD.replace("PRD: 3, 4\n", "PRD: 3, 4\nat 10: 30 each Monday the team syncs.\n")
     assert codes(run(plan_text(ja=ja)), "CRITICAL") == []
+
+
+# ---------------------------------------------------------------- label styles
+
+def paren_plan(text):
+    import re
+    return re.sub(r"^(JA|CT|MS|KPO)(\d+): ", r"(\1\2) ", text, flags=re.M)
+
+
+def test_parenthesis_label_style_is_recognized():
+    assert codes(run(paren_plan(plan_text()))) == []
+
+
+def test_parenthesis_style_still_flags_missing_minimum():
+    ja_one = """Job Achievement and/or Innovation
+(JA1) Lead the regression tool rebuild for the estimating branch.
+KPI: 40 analysts trained by Q2, measured by attendance log.
+PRD: 3, 4
+"""
+    assert "MIN_OBJECTIVES" in codes(run(plan_text(ja=ja_one)), "CRITICAL")
+
+
+def test_parenthesis_style_duplicate_label_flagged():
+    text = paren_plan(plan_text()).replace("(JA2)", "(JA1)")
+    assert "DUPLICATE_LABEL" in codes(run(text), "CRITICAL")
+
+
+# ---------------------------------------------------------------- KPO checks
+
+MS_WITH_KPO = """Mission Support
+MS1: Maintain the cost estimating tool release pipeline.
+KPI: 6 releases shipped with zero critical defects.
+PRD: 8
+
+MS2: Track budget execution for the branch portfolio.
+KPI: Reports delivered within 5 business days each quarter.
+PRD: 9
+
+KPO1: Deliver cost estimates that support acquisition decisions, 12 estimates by Q3 with a midpoint target of 6.
+KPI: 12 estimates delivered, 6 by the midpoint.
+PRD: 3
+
+KPO2: Engage end users on tool needs and apply their feedback, 4 sessions by Q4.
+KPI: 4 sessions held and 3 changes adopted.
+PRD: 6
+"""
+
+
+def kpo_run(text, **kwargs):
+    kwargs.setdefault("kpo_count", 2)
+    kwargs.setdefault("kpo_factor", "MS")
+    return run(text, **kwargs)
+
+
+def test_clean_kpo_plan_has_no_findings():
+    assert kpo_run(plan_text(ms=MS_WITH_KPO)) == []
+
+
+def test_clean_kpo_plan_in_parenthesis_style():
+    assert kpo_run(paren_plan(plan_text(ms=MS_WITH_KPO))) == []
+
+
+def test_kpo_lowercase_and_spaced_labels():
+    ms = MS_WITH_KPO.replace("KPO1:", "KPO 1:").replace("KPO2:", "kpo2:")
+    assert kpo_run(plan_text(ms=ms)) == []
+
+
+def test_default_kpo_count_zero_ignores_kpos():
+    assert run(plan_text(ms=MS_WITH_KPO)) == []
+    assert run(plan_text()) == []
+
+
+def test_missing_kpo_names_each_absent_label():
+    findings = kpo_run(plan_text())
+    missing = [f for f in findings if f.code == "MISSING_KPO"]
+    assert {f.severity for f in missing} == {"CRITICAL"}
+    joined = " ".join(f.message for f in missing)
+    assert "KPO1" in joined and "KPO2" in joined
+
+
+def test_missing_kpo_names_only_the_absent_one():
+    ms = MS_WITH_KPO.split("KPO2:")[0]
+    findings = kpo_run(plan_text(ms=ms))
+    missing = [f for f in findings if f.code == "MISSING_KPO"]
+    assert len(missing) == 1 and "KPO2" in missing[0].message and "KPO1" not in missing[0].message
+
+
+def test_kpo_count_flags_extra_kpo():
+    ms = MS_WITH_KPO + "\nKPO3: Brief leaders on estimate risk, 2 briefings by Q4.\nKPI: 2 briefings.\nPRD: 6\n"
+    findings = kpo_run(plan_text(ms=ms))
+    extra = [f for f in findings if f.code == "KPO_COUNT"]
+    assert extra and extra[0].severity == "CRITICAL"
+
+
+def test_kpo_factor_warning_when_under_other_factor():
+    ct = CT_GOOD + """
+KPO1: Deliver cost estimates that support acquisition decisions, 12 estimates by Q3.
+KPI: 12 estimates delivered.
+PRD: 3
+
+KPO2: Engage end users on tool needs and apply their feedback, 4 sessions by Q4.
+KPI: 4 sessions held.
+PRD: 6
+"""
+    findings = kpo_run(plan_text(ct=ct))
+    wrong = [f for f in findings if f.code == "KPO_FACTOR"]
+    assert len(wrong) == 2 and all(f.severity == "WARNING" for f in wrong)
+    assert "LABEL_FACTOR_MISMATCH" not in codes(findings)
+    assert "MISSING_KPO" not in codes(findings)
+
+
+def test_kpo_factor_not_checked_without_flag():
+    ct = CT_GOOD + "\nKPO1: Deliver 12 estimates by Q3.\nKPI: 12 estimates.\nPRD: 3\n"
+    findings = kpo_run(plan_text(ct=ct), kpo_count=1, kpo_factor=None)
+    assert "KPO_FACTOR" not in codes(findings)
+
+
+def test_kpo_order_warning_when_kpo_precedes_regular_objectives():
+    ms = """Mission Support
+KPO1: Deliver cost estimates that support acquisition decisions, 12 estimates by Q3.
+KPI: 12 estimates delivered.
+PRD: 3
+
+KPO2: Engage end users on tool needs and apply their feedback, 4 sessions by Q4.
+KPI: 4 sessions held.
+PRD: 6
+
+MS1: Maintain the cost estimating tool release pipeline.
+KPI: 6 releases shipped with zero critical defects.
+PRD: 8
+
+MS2: Track budget execution for the branch portfolio.
+KPI: Reports delivered within 5 business days each quarter.
+PRD: 9
+"""
+    findings = kpo_run(plan_text(ms=ms))
+    order = [f for f in findings if f.code == "KPO_ORDER"]
+    assert order and order[0].severity == "WARNING"
+    assert "MIN_OBJECTIVES" not in codes(findings)
+
+
+def test_kpo_without_measure_gets_measurability_warnings():
+    ms = MS_WITH_KPO.replace("KPI: 12 estimates delivered, 6 by the midpoint.",
+                             "KPI: Better estimates for leaders.").replace(
+        "KPI: 4 sessions held and 3 changes adopted.\n", "")
+    findings = kpo_run(plan_text(ms=ms))
+    assert any(f.code == "KPI_NOT_MEASURABLE" and "KPO1" in f.message for f in findings)
+    assert any(f.code == "NO_KPI" and "KPO2" in f.message for f in findings)
+
+
+def test_kpos_do_not_count_toward_min_objectives():
+    ms = """Mission Support
+MS1: Maintain the cost estimating tool release pipeline.
+KPI: 6 releases shipped with zero critical defects.
+PRD: 8
+
+KPO1: Deliver 12 estimates by Q3.
+KPI: 12 estimates.
+PRD: 3
+
+KPO2: Hold 4 end-user sessions by Q4.
+KPI: 4 sessions.
+PRD: 6
+"""
+    findings = kpo_run(plan_text(ms=ms))
+    assert any(f.code == "MIN_OBJECTIVES" and f.factor == "MS" for f in findings)
+
+
+def test_duplicate_kpo_label_flagged():
+    ms = MS_WITH_KPO.replace("KPO2:", "KPO1:")
+    findings = kpo_run(plan_text(ms=ms))
+    assert "DUPLICATE_LABEL" in codes(findings, "CRITICAL")
+
+
+def test_main_kpo_flags(tmp_path):
+    path = write_plan(tmp_path, plan_text(ms=MS_WITH_KPO))
+    assert plan_check.main(["--file", str(path), "--kpo-count", "2", "--kpo-factor", "MS"]) == 0
+    plain = write_plan(tmp_path, plan_text(), name="plain.txt")
+    assert plan_check.main(["--file", str(plain)]) == 0
+    assert plan_check.main(["--file", str(plain), "--kpo-count", "2", "--kpo-factor", "MS"]) == 1
+
+
+# ---------------------------------------------------------------- unfilled placeholders
+
+def test_placeholder_in_objective_is_critical():
+    ja = JA_GOOD.replace("Lead the regression tool rebuild", "Deliver [N] production pipelines")
+    found = run(plan_text(ja=ja))
+    assert "PLACEHOLDER" in codes(found, "CRITICAL")
+
+
+def test_placeholder_hidden_by_a_date_is_still_caught():
+    """A date supplies the digit KPI_NOT_MEASURABLE wants, so an unfilled count slipped through."""
+    ja = JA_GOOD.replace("KPI: 40 analysts trained by Q2", "KPI: [N] analysts trained by 30 Sep 2027")
+    found = run(plan_text(ja=ja))
+    assert "KPI_NOT_MEASURABLE" not in codes(found)
+    assert "PLACEHOLDER" in codes(found, "CRITICAL")
+
+
+def test_confirm_note_is_a_placeholder():
+    ms = MS_GOOD.replace("Track budget execution for the branch portfolio.",
+                         "[CONFIRM: classified deployment or an additional duty]")
+    assert "PLACEHOLDER" in codes(run(plan_text(ms=ms)), "CRITICAL")
+
+
+def test_template_insert_slot_is_a_placeholder():
+    ja = JA_GOOD.replace("for the estimating branch", "for <Insert Program(s) Here>")
+    assert "PLACEHOLDER" in codes(run(plan_text(ja=ja)), "CRITICAL")
+
+
+def test_each_placeholder_is_reported_with_its_line():
+    ja = JA_GOOD.replace("Lead the regression tool", "Lead [N] tools").replace("Mentor two", "Mentor [N]")
+    found = [f for f in run(plan_text(ja=ja)) if f.code == "PLACEHOLDER"]
+    assert len(found) == 2
+    assert all("line " in f.message for f in found)
+
+
+def test_less_than_sign_is_not_a_placeholder():
+    ct = CT_GOOD.replace("100 percent on schedule", "100 percent on schedule, each < 5 days late")
+    assert "PLACEHOLDER" not in codes(run(plan_text(ct=ct)))

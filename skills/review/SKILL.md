@@ -47,6 +47,7 @@ Match each C-R-I to its ledger entry by content.
 | WARNING | Same fact or number in two factors, or the same mission phrase in two Impacts of one factor | The checker catches only repeated wording; compare numbers and phrases across entries |
 | WARNING | Reads below the target level | Compare with the target level's descriptors; no recognizable descriptor language or scope |
 | WARNING | Not ordered by impact | Scope x organizational level x novelty |
+| WARNING | KPO not addressed, or addressed as activity (only when `paypool.md` has `kpo_required: yes`) | The plan's KPO1 and KPO2 must both be addressed in the draft, in the factor `kpo_factor` names. Each claim against a KPO must be an outcome achieved or behavior demonstrated with evidence from the ledger, not a process step. A missing KPO affects the final score, so say so plainly. No checker rule exists for this; the FY27 form layout is not known |
 | INFO | Passive voice; uncovered discriminators per factor; raise vs. award balance; missing plan tags | |
 
 With no ledger, turn the number-basis and role checks into questions for the user.

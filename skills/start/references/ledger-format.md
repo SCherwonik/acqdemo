@@ -62,6 +62,7 @@ Field rules:
 - `numbers`: every number that may appear in text needs a line with `source:` (`stated`, `git`, `estimate`, `calendar`, or `document`) and `basis:`.
 - `sustained`: `yes` or `one-time`.
 - `prior_cycle_overlap`: `none`, or `continuing (cycle delta: ...)`. An entry that repeats a prior-cycle achievement with no delta is `rejected`.
+- `plan_tag`: free text, not validated by the ledger checker. A plan objective label (`JA1`, `CT2`, `MS1`), or `KPO1` or `KPO2` for an entry that evidences a Key Performance Objective (pay pools with `kpo_required: yes`; see `kpo.md`). An entry may carry an objective label and a KPO tag, for example `MS1, KPO1`.
 - `allocated`: `JA`, `CT`, `MS`, `bench`, or empty. An entry whose project appears in more than one factor lists each, primary factor first: `JA, MS`.
 - Blank means not asked yet; `none` means asked and does not apply. `ledger_check.py` lists blank fields as `OPEN_FIELDS` (INFO) on every entry and warns (`READY_INCOMPLETE`) when a `ready` entry still has any, so nothing stays blank by accident.
 - Names of people may appear in `audience`, `notes`, and `evidence`; they never pass into factor files.

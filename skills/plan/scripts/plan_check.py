@@ -1,10 +1,12 @@
 """Deterministic checks for an AcqDemo contribution plan.
 
 Usage:
-    python plan_check.py --file PATH [--min-objectives N] [--json]
+    python plan_check.py --file PATH [--min-objectives N] [--kpo-count N]
+                         [--kpo-factor JA|CT|MS] [--json]
 
 The plan file has one heading per factor, each followed by labeled
-objectives (JA1, CT1, MS1, ...), each with a KPI: line and a PRD: line:
+objectives (JA1, CT1, MS1, ...), each with a KPI: line and a PRD: line.
+Labels are written either "JA1: text" or "(JA1) text":
 
     Job Achievement and/or Innovation
     JA1: <objective>
@@ -13,6 +15,11 @@ objectives (JA1, CT1, MS1, ...), each with a KPI: line and a PRD: line:
 
     Communication and/or Teamwork
     CT1: ...
+
+Key Performance Objectives (KPO1, KPO2, ...) are checked only when
+--kpo-count is above 0. They are labeled like any objective and sit under
+the --kpo-factor heading after that factor's regular objectives. KPO labels
+never count toward --min-objectives.
 
 Exit code 1 if any CRITICAL finding, otherwise 0.
 """
@@ -43,8 +50,10 @@ HEADING_KEYS = {normalize_heading(heading): key for heading, key in FACTOR_HEADI
 FACTOR_ORDER = ["JA", "CT", "MS"]
 DEFAULT_MIN_OBJECTIVES = 2
 
-# Tolerates "JA 1:" and "ja1:"; only the three factor prefixes count, so prose like "at 10:" is ignored.
-OBJECTIVE_RE = re.compile(r"^\s*(JA|CT|MS)\s*(\d+)\s*:\s*(.*)$", re.I)
+# Tolerates "JA 1:", "ja1:" and "(JA1) text"; only the factor and KPO prefixes count,
+# so prose like "at 10:" is ignored.
+OBJECTIVE_RE = re.compile(
+    r"^\s*(?:\(\s*(JA|CT|MS|KPO)\s*(\d+)\s*\)\s*:?|(JA|CT|MS|KPO)\s*(\d+)\s*:)\s*(.*)$", re.I)
 KPI_RE = re.compile(r"^\s*KPI\s*:\s*(.*)$", re.I)
 PRD_RE = re.compile(r"^\s*PRD\s*:\s*(.*)$", re.I)
 COUNT_WORD_RE = re.compile(r"\d|\b(number|count|percent|hours)\b", re.I)
@@ -91,7 +100,9 @@ def parse_plan(text: str) -> tuple[list[Objective], set[str]]:
             continue
         match = OBJECTIVE_RE.match(line)
         if match:
-            prefix, num, body = match.group(1).upper(), match.group(2), match.group(3).strip()
+            prefix = (match.group(1) or match.group(3)).upper()
+            num = match.group(2) or match.group(4)
+            body = match.group(5).strip()
             current_obj = Objective(label=f"{prefix}{num}", prefix=prefix, factor=current_factor,
                                     text=body, line=number)
             objectives.append(current_obj)
@@ -140,10 +151,36 @@ def check_label_mismatch(objectives: list[Objective]) -> list[Finding]:
         if obj.factor is None:
             out.append(Finding("CRITICAL", "LABEL_FACTOR_MISMATCH", obj.prefix,
                                f"{obj.label} at line {obj.line} appears before any factor heading"))
-        elif obj.prefix != obj.factor:
+        elif obj.prefix != obj.factor and obj.prefix != "KPO":
             out.append(Finding("CRITICAL", "LABEL_FACTOR_MISMATCH", obj.factor,
                                f"{obj.label} at line {obj.line} is labeled {obj.prefix} but appears "
                                f"under the {HEADING_BY_KEY[obj.factor]} heading"))
+    return out
+
+
+def check_kpos(objectives: list[Objective], kpo_count: int, kpo_factor: str | None) -> list[Finding]:
+    kpos = [o for o in objectives if o.prefix == "KPO"]
+    out = []
+    present = {o.label for o in kpos}
+    home = kpo_factor or "KPO"
+    for n in range(1, kpo_count + 1):
+        if f"KPO{n}" not in present:
+            out.append(Finding("CRITICAL", "MISSING_KPO", home, f"KPO{n} is required and was not found"))
+    if len(present) > kpo_count:
+        out.append(Finding("CRITICAL", "KPO_COUNT", home,
+                           f"{len(present)} KPO labels found; the pay pool requires exactly {kpo_count}"))
+    for obj in kpos:
+        if kpo_factor and obj.factor is not None and obj.factor != kpo_factor:
+            out.append(Finding("WARNING", "KPO_FACTOR", obj.factor,
+                               f"{obj.label} at line {obj.line} sits under the {HEADING_BY_KEY[obj.factor]} "
+                               f"heading; the pay pool places KPOs under {HEADING_BY_KEY[kpo_factor]}"))
+        if obj.factor is not None:
+            later_regular = [o for o in objectives
+                             if o.prefix == obj.factor and o.factor == obj.factor and o.line > obj.line]
+            if later_regular:
+                out.append(Finding("WARNING", "KPO_ORDER", obj.factor,
+                                   f"{obj.label} at line {obj.line} appears before the "
+                                   f"{HEADING_BY_KEY[obj.factor]} regular objectives; write KPOs after them"))
     return out
 
 
@@ -184,6 +221,29 @@ def check_prd(objectives: list[Objective]) -> list[Finding]:
     return out
 
 
+# Square brackets never appear in finished plan text, so any bracketed span is an unfilled gap:
+# "[N]", "[TBD]", "[CONFIRM: ...]". Angle brackets count only when they enclose words, the way
+# the pay pool templates write their slots ("<Insert Program(s) Here>"), so "< 5 days" survives.
+PLACEHOLDER_RE = re.compile(r"\[[^\]\n]*\]|<[^<>\n]*[A-Za-z][^<>\n]*>")
+
+
+def check_placeholders(text: str) -> list[Finding]:
+    """An unfilled placeholder must never reach CAS2Net.
+
+    The plan skill leaves a labeled placeholder rather than invent a number, which is right,
+    but a date elsewhere on the line supplies the digit KPI_NOT_MEASURABLE looks for, so
+    "[N] pipelines by 30 Sep 2027" passed every other check. CRITICAL because the fix is
+    always the same and always the user's: supply the value.
+    """
+    out: list[Finding] = []
+    for number, line in enumerate(text.split("\n"), 1):
+        for match in PLACEHOLDER_RE.finditer(line):
+            out.append(Finding("CRITICAL", "PLACEHOLDER", "-",
+                               f"line {number}: unfilled placeholder '{match.group(0)}'; "
+                               "fill it before the plan goes into CAS2Net"))
+    return out
+
+
 def check_em_dash(text: str) -> list[Finding]:
     if EM_DASH_RE.search(text):
         return [Finding("WARNING", "EM_DASH", "-", "em dash found; use a comma, colon, or period")]
@@ -200,16 +260,21 @@ def read_text(path: Path) -> str:
         return data.decode("cp1252", errors="replace")
 
 
-def run_checks(text: str, min_objectives: int = DEFAULT_MIN_OBJECTIVES) -> list[Finding]:
+def run_checks(text: str, min_objectives: int = DEFAULT_MIN_OBJECTIVES,
+               kpo_count: int = 0, kpo_factor: str | None = None) -> list[Finding]:
     text = text.replace("\r\n", "\n")
     objectives, found_factors = parse_plan(text)
+    if kpo_count <= 0:
+        objectives = [o for o in objectives if o.prefix != "KPO"]
     findings: list[Finding] = []
     findings += check_missing_factor(found_factors)
     findings += check_duplicate_labels(objectives)
     findings += check_label_mismatch(objectives)
+    findings += check_kpos(objectives, kpo_count, kpo_factor)
     findings += check_min_objectives(objectives, found_factors, min_objectives)
     findings += check_kpi(objectives)
     findings += check_prd(objectives)
+    findings += check_placeholders(text)
     findings += check_em_dash(text)
     return sorted(findings, key=lambda f: (SEVERITY_ORDER[f.severity], f.factor, f.code))
 
@@ -228,11 +293,15 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--file", type=Path, required=True)
     ap.add_argument("--min-objectives", type=int, default=DEFAULT_MIN_OBJECTIVES)
+    ap.add_argument("--kpo-count", type=int, default=0,
+                    help="exact number of KPOs the plan carries; 0 turns KPO checks off")
+    ap.add_argument("--kpo-factor", choices=FACTOR_ORDER, type=str.upper, default=None,
+                    help="factor the KPOs are written under")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     text = read_text(args.file)
-    findings = run_checks(text, args.min_objectives)
+    findings = run_checks(text, args.min_objectives, args.kpo_count, args.kpo_factor)
     if args.json:
         print(json.dumps([asdict(f) for f in findings], indent=2))
     else:
