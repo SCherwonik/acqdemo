@@ -43,6 +43,10 @@ Pull these if you can. Any of them can arrive later and none of them blocks the 
    View, List; sort or filter to the period; select the first meeting, Shift-click the last, Ctrl+C,
    paste into Notepad, save as .txt. Never from a classified system.
 
+If you are writing a contribution plan instead, you need only your **Position Requirements
+Document** (the PRD, or just your duties pasted as text) and last cycle's plan if you had one. Go
+to the plan stage at the end of this file after Stage 0.
+
 Also get `acqdemo-checker.html` and, if you want it, `brain-dump-worksheet.md`, from whoever gave
 you this pack. You need the checker at Stage 7.
 
@@ -124,6 +128,8 @@ state, no profile, no roster in this block; it has to stay machine-checkable. En
 - prior_cycle_overlap: none, or "continuing (cycle delta: ...)"
 - allocated: JA, CT, MS, bench, or empty
 - notes
+plan_tag is free text: a plan objective label such as JA1 or MS1, or KPO1 or KPO2 for an entry that
+evidences a Key Performance Objective, or both, such as "MS1, KPO1".
 Only status, dates, and what are required. Blank means not asked yet; write "none" when it was
 asked and does not apply. Ids only increase and are never reused.
 
@@ -140,7 +146,10 @@ overall contribution score or my broadband level changed mid-cycle, each value g
 with its own date range; never blend two into one number.
 # Pay pool: pay_pool, business_rules_source, what_label (C or W), mandatory_paragraph_order,
 min_entries_annual, min_entries_midpoint, midpoint_window, employee_due, supervisor_due,
-promotion_window_days, char_limit, allow_phrases. Nothing goes in this section that I did not tell
+promotion_window_days, char_limit, allow_phrases, min_plan_objectives_per_factor, kpo_required
+(yes or no), kpo_count, kpo_labels (such as "KPO1 Strategic Outcome; KPO2 Workforce Behavioral"),
+kpo_factor (JA, CT, or MS), plan_label_style (colon writes "JA1: text", parentheses writes
+"(JA1) text"). A blank kpo_required is not a no: ask me. Nothing goes in this section that I did not tell
 you or that you did not read in a document, and every line says which, ending in
 "| source: 2026 contribution plan p. 1" or "| toolkit default, not confirmed". An invented rule recorded here becomes my pay pool's policy for
 every chat after this one, and nobody ever questions it again.
@@ -574,3 +583,62 @@ jump point for the annual, which will need a delta rather than a repeat.
 
 For a closeout, remember the 30-day deadline, and that the gaining supervisor reads it when
 recommending the annual score.
+
+---
+
+## The plan stage: a contribution plan, instead of Stages 1 to 9
+
+Paste Stage 0 first, as always. Then paste your PRD, or your duties as text, and last cycle's plan if
+you have one, and send this:
+
+```
+I am writing this cycle's contribution plan. You draft it yourself, in this order, and you do not
+write assessment text (Contribution, Result, Impact) at any point: a plan is short and
+decision-driven, and a plan states expected contribution, never exceeded performance.
+
+1. Number my PRD duties (PRD 1, PRD 2, and so on) and show them back to me. Ask, numbered, for any
+   pay pool plan rule you do not have: the fewest objectives per factor, whether Key Performance
+   Objectives (KPOs) are required, how many, their labels, the factor they sit under, and the label
+   style. Write each answer into the Pay pool section with its source. Do not assume any of them.
+   Also ask my career path, my level and the level I am targeting, and my functional area if KPOs
+   are required.
+2. Do not make me write a plan from a blank page. Propose numbered candidate objectives from my
+   duties and anything I have said, each naming the duty it comes from and a measure to try, grouped
+   under Job Achievement and/or Innovation, Communication and/or Teamwork, and Mission Support. I
+   correct, delete, and add. Then stop and wait for me.
+3. Draft at least the minimum labeled objectives under each factor (JA1, JA2, CT1, MS1, and so on).
+   Each is one sentence with its measure and its timeframe inside the sentence, tied to a PRD duty,
+   in my target level's descriptor language. No people's names, no em dashes.
+4. If KPOs are required: exactly the required number, with the required labels, under the required
+   factor and after that factor's regular objectives. Start from the model objective for my
+   functional area, tailor it to my work (KPO category, specific task or behavior, measurable
+   outcome, timeframe), never copy a model unchanged, avoid vague verbs such as assist and
+   participate, keep it within my grade and authority, and name the performance information that
+   will show it was met. Give each a midpoint milestone and a year-end target. A KPO and a regular
+   objective must not claim the same work twice.
+5. Every number is a target to agree with my supervisor. Where I have no basis, write a bracketed
+   placeholder with a label, never a figure, and list every placeholder. A plan with a placeholder
+   or an unfilled template slot such as "<Insert Program(s) Here>" is not ready to paste, and you
+   say so.
+6. Before you hand it over, run this self-check and show me the result as a numbered list: objective
+   count per factor, labels sequential and under the right factor, exactly the required KPOs with
+   the right labels in the right place, a measure and a timeframe in every sentence, no
+   placeholders, no names, no em dashes, the right label style. Say that you checked by reading it.
+7. Give me two things: the paste-ready plan (factor headings, then one sentence per label in my
+   label style, nothing else), and a short traceability list I keep and do not paste, mapping each
+   label to its PRD duties and measure, and each KPO also to its midpoint milestone, year-end
+   target, and performance information.
+```
+
+Nothing else in this file checks a plan, and the offline checker checks assessments only, so read the
+plan against that list yourself before it goes to your supervisor. Keep the approved plan: you will
+paste it back in at the midpoint and the annual, and tag each new ledger entry with the label it
+supports.
+
+If your pay pool requires KPOs, also add this to the drafting prompts for the midpoint and the annual:
+tag the entries that evidence a KPO (plan_tag KPO1 or KPO2), check that each KPO has at least one
+entry before you allocate, and ask me questions rather than draft around a gap. A pay pool template
+states that failing to address KPOs in both the midpoint and the annual lowers the final contribution
+score and the payout. Report progress against the midpoint milestone at the midpoint, and final
+impacts at the annual, inside the factor the plan placed the KPOs under, and tell me to check whether
+my FY27 assessment form has dedicated KPO fields.

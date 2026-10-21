@@ -208,6 +208,15 @@ COPIES: list[tuple[str, str, str]] = [
         "the level's descriptors.",
     ),
     (
+        "kpo.md",
+        "Key Performance Objectives for civilian acquisition workforce members from the FY27 "
+        "cycle: the two types, the SMART writing formula, the performance information that shows "
+        "one was met, model objectives by functional area, the pitfalls, and what changes at the "
+        "midpoint and annual.",
+        "The pay pool requires KPOs: drafting them in a contribution plan, or addressing them in a "
+        "midpoint or annual.",
+    ),
+    (
         "writing-style.md",
         "Paste ready output format, the character budget, ordering, framing policy, role verbs, "
         "vocabulary, the impact ladder, one project across three factors, and the repeat rule, "
@@ -364,6 +373,21 @@ REWRITES: list[Rewrite] = [
         "writing-style.md",
         "Pull phrases from the target level's descriptors in `descriptors/<path>.md`",
         "Pull phrases from the target level's descriptors in `descriptors-<path>.md`",
+    ),
+    # The KPO reference names skills and a workspace file. Here the stages are stages and the
+    # overlay is the `# Pay pool` section of the workspace block.
+    Rewrite(
+        "kpo.md",
+        "Shared reference for the plan, midpoint, and annual skills.",
+        "Shared reference for the contribution plan, the midpoint, and the annual.",
+    ),
+    Rewrite(
+        "kpo.md",
+        "Read `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, and `plan_label_style` from "
+        "`paypool.md`. Never assume them.",
+        "Read `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, and `plan_label_style` from "
+        "the `# Pay pool` section of the workspace block. Never assume them, and if a line is "
+        "missing, ask the user.",
     ),
     # ----------------------------------------------------------------------------------
     # No microphone. The Claude version is driven by dictation; this one is typed.

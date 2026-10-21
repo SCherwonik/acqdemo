@@ -29,6 +29,7 @@ EXPECTED = {
     "cert-templates.md",
     "intake-checklist.md",
     "writing-style.md",
+    "kpo.md",
     "ledger-format.md",
     "examples-nh2-supervisor.md",
     "examples-nj3-engineer.md",
@@ -171,6 +172,20 @@ def test_the_claude_sources_keep_their_voice_and_git_instructions():
     assert "by voice" in question_bank
     assert "git counts" in question_bank
     assert "PII guard" in (SRC / "intake-checklist.md").read_text(encoding="utf-8")
+
+
+# ---------- Key Performance Objectives ----------
+
+def test_the_kpo_reference_is_in_the_bundle_and_the_index(built):
+    files = read_all(built)
+    assert "Key Performance Objectives" in files["kpo.md"]
+    assert "kpo.md" in files["INDEX.md"]
+    # The five overlay fields are named, and the overlay is the workspace block, not a file.
+    for field in ("kpo_required", "kpo_count", "kpo_labels", "kpo_factor", "plan_label_style"):
+        assert field in files["kpo.md"]
+    assert "`# Pay pool` section of the workspace block" in files["kpo.md"]
+    assert "midpoint, and annual skills" not in files["kpo.md"]
+    assert "from `paypool.md`" not in files["kpo.md"]
 
 
 # ---------- the two blocks the user saves ----------
