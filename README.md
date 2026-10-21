@@ -4,6 +4,7 @@ A recipe, a set of Claude Code skills, and supporting tools that help a Departme
 
 You talk (voice-to-text rambling is encouraged). The assistant asks a lot of questions, reminds you of work you forgot, keeps a running evidence ledger, and writes paste-ready C-R-I statements for each of the three AcqDemo factors, plus a crib sheet your supervisor can use at the pay pool panel.
 
+
 ---
 
 ## Table of contents
@@ -45,6 +46,7 @@ You talk (voice-to-text rambling is encouraged). The assistant asks a lot of que
 | Live run of the port against a real cycle, with 26 findings applied (`docs/superpowers/validation/gen-ai-live-run.md`) | Done |
 
 All six skills are installable as a Claude Code plugin (Section 10.5). The repo is also useful on its own as a reference (the design, the recipe, the rules summaries, and the source documents) and as a template for keeping your own evaluation workspace safe in git.
+
 
 ---
 
@@ -152,7 +154,7 @@ Apply the "so what?" test to every entry.
 | `acqdemo:extract` | "Pull what I did from git and my calendar for my AcqDemo" | Mines your git repos, calendar export, and prior documents for the rating period and creates candidate ledger entries |
 | `acqdemo:annual` | "Let's do my annual" | Runs the full annual intake and drafting workflow (Section 5.3) |
 | `acqdemo:midpoint` | "Midpoint time" | Same engine with midpoint minimums and framing; also writes closeouts after a supervisor or position change |
-| `acqdemo:plan` | "Write my plan" | Drafts a contribution plan from your PRD duties with labeled objectives (JA1, CT1, MS1) and KPIs |
+| `acqdemo:plan` | "Write my plan" | Drafts a contribution plan from your PRD duties with labeled objectives (JA1, CT1, MS1), KPIs, and the KPOs your pay pool requires, sized to each factor's CAS2Net field |
 | `acqdemo:review` | "Check my draft" | Runs deterministic checks plus a panel-style read, then offers to fix what it finds |
 
 Each smaller skill runs on its own when you only have part of the inputs.
@@ -381,6 +383,7 @@ skills/
 tests/                plugin structure, references, and skill tests
 ```
 
+
 ---
 
 ## 10. Getting started
@@ -466,6 +469,7 @@ During the year, add a ledger entry for each win as it happens, `acqdemo:plan` w
     claude plugin install acqdemo@acqdemo
 
 Maintainers testing local changes can add the repository folder instead: `claude plugin marketplace add "<path to your clone>"`, or load it for one session with `claude --plugin-dir "<path to your clone>"`.
+
 
 ---
 

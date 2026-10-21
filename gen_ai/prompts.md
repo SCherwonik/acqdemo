@@ -136,6 +136,8 @@ asked and does not apply. Ids only increase and are never reused.
 A block labeled workspace, holding exactly four headings in this order:
 # Profile: career_path (NH, NJ, NK), level, target_level, series_and_title, organization,
 first_cycle, rating_period, eocs (expected overall contribution score), value_of_position,
+plan_detail (lean or full: how much of each factor's plan field to use; lean averages at least 200
+characters per objective, full at least 300),
 supervises (counts by category, such as "0 military, 4 civilians, 2 contractors", never yes or no),
 supervisor, prior_supervisors, certifications with status, dates and point counts, promotions,
 mission statements one and two levels up. A certification statement you read out of a completed
