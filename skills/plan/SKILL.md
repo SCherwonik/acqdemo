@@ -10,7 +10,7 @@ Drafts a contribution plan from the Position Requirements Document (PRD) plus ex
 ## Inputs
 - `<workspace>/profile.md`: career path, level, `target_level`, organization, mission statements, `prd_path`.
 - `<workspace>/paypool.md`: `min_plan_objectives_per_factor`, `plan_due_days`, `plan_change_lock_days`, and the KPO fields `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`.
-- KPO reference: `../start/references/kpo.md` (read it only when `kpo_required` is `yes`).
+- KPO reference: `../start/references/kpo.md` (read it only when `kpo_required` is `yes`). It points at two companions: `../start/references/kpo-library.md` (the model objectives by functional area) and `../start/references/kpo-guidance.md` (the SMART table and the performance information types).
 - Program rules: `../start/references/rules/ccas-core.md` ("Contribution plans").
 - Descriptor language for the target level: `../start/references/descriptors/` (the file for the user's career path).
 - KPI examples: `../start/references/question-bank.md`.
@@ -46,7 +46,7 @@ Plans reflect expected contribution, not exceeded performance. Set each target a
 Read `../start/references/kpo.md` first. Then draft exactly `kpo_count` Key Performance Objectives, labeled as `kpo_labels` says (the example overlay is `KPO1` Strategic Outcome and `KPO2` Workforce Behavioral), and place them under the `kpo_factor` heading after that factor's regular objectives.
 
 For each KPO:
-1. Start from the library model objective for the user's functional area (the table in `kpo.md`; use the cross-functional menu if no area fits). Strategic Outcome KPOs say what the user delivers; Workforce Behavioral KPOs say how.
+1. Start from the library model objective for the user's functional area (the tables in `../start/references/kpo-library.md`; use its cross-functional menu if no area fits). Take the SMART table and the performance information types from `../start/references/kpo-guidance.md`. Strategic Outcome KPOs say what the user delivers; Workforce Behavioral KPOs say how.
 2. Tailor it to the user's actual work from the PRD and Step 3, using the SMART formula: KPO category + specific task or behavior + measurable outcome + timeframe. Never copy a library objective unchanged.
 3. Write it as one sentence with the measure and the timeframe embedded in it. Avoid vague verbs such as "assist" and "participate"; say what the user does.
 4. Set two checkpoints: a midpoint milestone and a year-end target, because the midpoint review is where progress is discussed.

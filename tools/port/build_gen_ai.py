@@ -210,11 +210,32 @@ COPIES: list[tuple[str, str, str]] = [
     (
         "kpo.md",
         "Key Performance Objectives for civilian acquisition workforce members from the FY27 "
-        "cycle: the two types, the SMART writing formula, the performance information that shows "
-        "one was met, model objectives by functional area, the pitfalls, and what changes at the "
-        "midpoint and annual.",
-        "The pay pool requires KPOs: drafting them in a contribution plan, or addressing them in a "
-        "midpoint or annual.",
+        "cycle, as an overview: who is covered and the authority, the two types, the SMART "
+        "formula in one line, the pitfalls, what changes at the midpoint and annual, and which "
+        "workspace fields set the local rules. It points at the two files below for the detail.",
+        "The pay pool requires KPOs: start here when drafting them in a contribution plan, or "
+        "addressing them in a midpoint or annual.",
+    ),
+    (
+        "kpo-library.md",
+        "The Warfighting Acquisition University KPO Library, a US Government work, converted in "
+        "full: model Strategic Outcome and Workforce Behavioral objectives as tables for Auditing "
+        "and Oversight, Business (Cost Estimating and Financial Management), Contracting, "
+        "Engineering and Technical Management, Life Cycle Logistics, Program Management, and Test "
+        "and Evaluation, the model supervisory objective, the cross-functional innovation and "
+        "mission outcome menu, and the tailoring formula.",
+        "Choosing the model objective a KPO starts from, for the user's functional area or from "
+        "the cross-functional menu, before tailoring it to the user's work.",
+    ),
+    (
+        "kpo-guidance.md",
+        "The Warfighting Acquisition University KPO Implementation Guidance for Supervisors, a US "
+        "Government work, converted in full with the one-page factsheet folded in: the statutory "
+        "basis, terminology, the SMART table and formula with examples, the performance "
+        "information types, how KPO performance is assessed, the lifecycle table, and the "
+        "supervisor checklist.",
+        "Writing the measure and timeframe of a KPO, choosing the performance information that "
+        "shows it was met, or checking how KPO performance is assessed.",
     ),
     (
         "writing-style.md",

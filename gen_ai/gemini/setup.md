@@ -10,7 +10,7 @@ Have these open:
 
 - `gen_ai/gemini/orchestrator.md`, the primary agent's instructions.
 - `gen_ai/gemini/starter-prompts.md`, the three Personalization prompts.
-- `gen_ai/gemini/subagents/`, five files, one per subagent. Each file holds a Name, a Description, and an Instructions block ready to paste.
+- `gen_ai/gemini/subagents/`, six files, one per subagent. Each file holds a Name, a Description, and an Instructions block ready to paste.
 - `gen_ai/knowledge/`, the files that go in the Knowledge panel.
 
 Two files in this pack are **not** uploaded anywhere, and both have to reach the employee some other way. `gen_ai/checker/acqdemo-checker.html` is opened directly in a browser when it is time to check a draft. `gen_ai/worksheets/brain-dump-worksheet.md` is filled in offline by the employee and uploaded into a chat, not into the agent.
@@ -51,7 +51,9 @@ Two files in this pack are **not** uploaded anywhere, and both have to reach the
 
    Remove any other connector that is attached by default too. This agent needs none of them. Uploads arrive through the chat window.
 
-7. **Knowledge.** Upload every file from `gen_ai/knowledge/`, which is 16 files including `INDEX.md`. These are the references the agent looks things up in rather than reciting: the factor descriptors for each career path, the question bank, the CCAS program rules, the Key Performance Objectives reference, the certification statement templates, the CAS2Net document retrieval steps, and the worked examples. The folder is generated; after any change to the reference material, run `python tools/port/build_gen_ai.py` and upload what it writes, never a hand edit.
+7. **Knowledge.** Upload every file from `gen_ai/knowledge/`, which is 18 files including `INDEX.md`. These are the references the agent looks things up in rather than reciting: the factor descriptors for each career path, the question bank, the CCAS program rules, the Key Performance Objectives reference, the certification statement templates, the CAS2Net document retrieval steps, and the worked examples. The folder is generated; after any change to the reference material, run `python tools/port/build_gen_ai.py` and upload what it writes, never a hand edit.
+
+   An organization that has its own plan template may upload a private file of its local rules and option menus to its own agent, for example the objectives its template offers or the labels it requires. That file is the organization's own, it is uploaded only to that organization's agent, and it is never part of this public pack.
 
    These are public reference material that ships with the toolkit. Do not upload the employee's own documents here. Their appraisal, midpoint, plan, and calendar export go into the chat as uploads, one conversation at a time, because they carry PII and often salary and they do not belong in an agent's permanent Knowledge panel.
 
@@ -59,43 +61,44 @@ Two files in this pack are **not** uploaded anywhere, and both have to reach the
 
 9. Save the agent.
 
-## Part 2: Add the five subagents on the Flow canvas
+## Part 2: Add the six subagents on the Flow canvas
 
 Open the Flow canvas for the AcqDemo Assistant. The primary agent is the root node. Each subagent is added as a child of it.
 
-Add these five, in this order. The order does not change behavior, but it makes the canvas readable later.
+Add these six, in this order. The order does not change behavior, but it makes the canvas readable later.
 
 | Node | Paste from | Model |
 |---|---|---|
 | Document Extractor | `subagents/document-extractor.md` | Fast tier |
 | Ledger Keeper | `subagents/ledger-keeper.md` | Fast tier |
 | Factor Drafter | `subagents/factor-drafter.md` | Strongest available |
+| Plan Drafter | `subagents/plan-drafter.md` | Strongest available |
 | Evidence Auditor | `subagents/evidence-auditor.md` | Strongest available |
 | Panel Reader | `subagents/panel-reader.md` | Strongest available |
 
 For each one:
 
 1. Add a subagent node as a child of AcqDemo Assistant.
-2. **Name.** Type the name from the Node column of the table above, exactly as it appears there: `Document Extractor`, `Ledger Keeper`, `Factor Drafter`, `Evidence Auditor`, `Panel Reader`. These five names are the canonical ones. They match the Name line in each subagent file and they match the names the orchestrator instructions call out to. Do not add a prefix, do not add "AcqDemo", and do not make them more descriptive. A renamed subagent is a subagent that never gets called, and the failure is silent: the primary agent simply does the work badly by itself.
+2. **Name.** Type the name from the Node column of the table above, exactly as it appears there: `Document Extractor`, `Ledger Keeper`, `Factor Drafter`, `Plan Drafter`, `Evidence Auditor`, `Panel Reader`. These six names are the canonical ones. They match the Name line in each subagent file and they match the names the orchestrator instructions call out to. Do not add a prefix, do not add "AcqDemo", and do not make them more descriptive. A renamed subagent is a subagent that never gets called, and the failure is silent: the primary agent simply does the work badly by itself.
 3. **Description.** Copy the Description block from the file, exactly, and do not improve it.
 
    Subagent descriptions are routing keys, not summaries. The primary agent chooses which child to hand work to by reading these. Two rules follow from that, and both were learned the expensive way. Never name another subagent's subject matter in a description, even to exclude it: writing "does not draft factor text" in the Document Extractor's description reliably attracts drafting requests to the Document Extractor, because the match is on the words, not on the negation. And never write a description that describes the agent's quality rather than its trigger; "carefully reviews text" matches nothing in particular, while "called when a draft needs every claim traced back to evidence" matches exactly one situation.
 
 4. **Instructions.** Paste the Instructions block from the file.
-5. **Model.** Set it per the table above. The builder defaults subagents to a faster model than the primary, which is right for the Document Extractor and the Ledger Keeper and wrong for the other three. The Document Extractor reads long documents and extracts structure, and the Ledger Keeper moves text into labeled fields; both are mechanical and benefit from being fast and cheap. The Factor Drafter, the Evidence Auditor, and the Panel Reader all exercise judgment about what a claim is worth, and each one is the last line of defense on something the employee will have to defend in person. Put them on the strongest model available.
+5. **Model.** Set it per the table above. The builder defaults subagents to a faster model than the primary, which is right for the Document Extractor and the Ledger Keeper and wrong for the other four. The Document Extractor reads long documents and extracts structure, and the Ledger Keeper moves text into labeled fields; both are mechanical and benefit from being fast and cheap. The Factor Drafter, the Plan Drafter, the Evidence Auditor, and the Panel Reader all exercise judgment, about what a claim is worth or how a library objective fits someone's actual duties, and each one is the last line of defense on something the employee will have to defend in person. Put them on the strongest model available.
 6. **Connectors.** **Remove Enterprise Web Search from this subagent too.** It is attached by default to every agent, including children, and it has to come off every one of them for the same reason it came off the primary. A subagent that reaches the open web while summarizing a document will quietly blend a web page's version of an AcqDemo rule into its output, and the primary agent has no way to tell that happened.
 7. Save the node.
 
-Repeat for all five. Then look at the canvas: AcqDemo Assistant at the root, five children, no other nodes.
+Repeat for all six. Then look at the canvas: AcqDemo Assistant at the root, six children, no other nodes.
 
 ## Part 3: Verify before you use it
 
 Walk this list. It takes two minutes and catches the failures that are hard to diagnose later.
 
-1. Open each of the six agents and confirm the Connectors list is empty. This is the one to double-check, because the default reattaches on some builds when an agent is duplicated.
-2. Confirm all five subagent names match the names used in the orchestrator instructions: Document Extractor, Ledger Keeper, Factor Drafter, Evidence Auditor, Panel Reader.
+1. Open each of the seven agents and confirm the Connectors list is empty. This is the one to double-check, because the default reattaches on some builds when an agent is duplicated.
+2. Confirm all six subagent names match the names used in the orchestrator instructions: Document Extractor, Ledger Keeper, Factor Drafter, Plan Drafter, Evidence Auditor, Panel Reader.
 3. Confirm the primary agent's Instructions field ends with the same line the orchestrator file ends with.
-4. Confirm the Knowledge panel lists all 16 files from `gen_ai/knowledge/`, `kpo.md` among them, and none of the employee's own documents.
+4. Confirm the Knowledge panel lists all 18 files from `gen_ai/knowledge/`, `kpo.md`, `kpo-library.md`, and `kpo-guidance.md` among them, and none of the employee's own documents.
 5. Confirm the three starter prompts are in place.
 
 ## Part 4: Smoke test
@@ -121,6 +124,8 @@ Sixth test: hand it a year-old certification. Type "last year's appraisal says I
 Seventh test: say you supervise nobody. Type "I supervise no one, no military, no civilians, no contractors." Later, when the agent settles the mandatory paragraphs, there should be no supervisory paragraph at all, and nothing resembling a supervisory objective should appear in the workspace block's `# Pay pool` section. A supervisory paragraph written for an employee with zero counts is an invented requirement, and on a live run the same reply wrote that invention into the Pay pool section, where every later session reads it back as the employee's own pay pool policy. Every line in that section should name where it came from, either a document or the employee, or say it is an unconfirmed toolkit default.
 
 Eighth test, the plan starter prompt: start a new conversation and click the third starter prompt. The first message should be the plan's document ask, for the Position Requirements Document and last cycle's contribution plan, in plain paragraphs. It should not ask for the Salary Appraisal export, a midpoint, or a calendar, and it should not ask which document you are writing, because the click already said. Then say you are an NH-III in contracting and that your pay pool requires two KPOs, labeled KPO1 Strategic Outcome and KPO2 Workforce Behavioral, under Mission Support, in colon style, with at least two objectives per factor. Paste a few duties as text. A correct agent records those pay pool lines with you as the source, proposes numbered candidate objectives against numbered duties for you to correct, and stops. After you answer, a finished plan should have the three factor headings, at least two labeled objectives under each, and exactly two KPOs, KPO1 and KPO2, under Mission Support after its regular objectives, each one sentence with a measure and a timeframe inside it. Any number you could not support should appear as a bracketed placeholder listed by label, with the agent saying the plan is not ready to paste, and the final plan should carry none. The agent should also show its numbered self-check. A plan with a placeholder handed over as ready, a KPO count or label that is wrong, or KPOs ahead of the regular objectives means the plan branch of Step 4 did not paste.
+
+   One more check, on the canvas rather than the chat. A plan drafted while the Plan Drafter is missing or misnamed comes from a primary agent that drafts by itself, with no KPO reference files in front of it and no drafter to stop and ask, so it tends to copy a model objective or invent a target. Confirm that the Plan Drafter exists on the Flow canvas under that exact name, that its Name line matches `subagents/plan-drafter.md`, and that the plan you just watched was returned by it: the reply should show the plan, a traceability list, the placeholders by label, and a numbered self-check, in that shape. If the shape is different, fix the name first.
 
 ## Part 5: Give the employee the two files, and five instructions
 

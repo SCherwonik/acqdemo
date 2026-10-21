@@ -30,6 +30,8 @@ EXPECTED = {
     "intake-checklist.md",
     "writing-style.md",
     "kpo.md",
+    "kpo-library.md",
+    "kpo-guidance.md",
     "ledger-format.md",
     "examples-nh2-supervisor.md",
     "examples-nj3-engineer.md",
@@ -186,6 +188,31 @@ def test_the_kpo_reference_is_in_the_bundle_and_the_index(built):
     assert "`# Pay pool` section of the workspace block" in files["kpo.md"]
     assert "midpoint, and annual skills" not in files["kpo.md"]
     assert "from `paypool.md`" not in files["kpo.md"]
+
+
+def test_the_kpo_library_and_guidance_are_in_the_bundle_and_the_index(built):
+    files = read_all(built)
+    index = files["INDEX.md"]
+    for name in ("kpo-library.md", "kpo-guidance.md"):
+        assert name in files, f"{name} is not in the bundle"
+        assert f"`{name}`" in index, f"INDEX.md does not list {name}"
+    # The real model objectives, one table per functional area, not a paraphrase.
+    library = files["kpo-library.md"]
+    for area in ("Auditing and Oversight", "Business - Cost Estimating",
+                 "Business - Financial Management", "Contracting",
+                 "Engineering and Technical Management", "Life Cycle Logistics",
+                 "Program Management", "Test and Evaluation"):
+        assert f"### {area}" in library, area
+    assert "| Type | Model Objective |" in library
+    assert "Recommended tailoring formula" in library
+    guidance = files["kpo-guidance.md"]
+    for heading in ("## 3. Common Terminology", "## 10. Supervisor Checklist",
+                    "### Step 3 - Apply SMART Criteria"):
+        assert heading in guidance, heading
+    assert "US Government" in library and "US Government" in guidance
+    # The overview points at both, and no longer carries the paraphrased table.
+    assert "`kpo-library.md`" in files["kpo.md"] and "`kpo-guidance.md`" in files["kpo.md"]
+    assert "Paraphrased starting points" not in files["kpo.md"]
 
 
 # ---------- the two blocks the user saves ----------

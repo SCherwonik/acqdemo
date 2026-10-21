@@ -589,7 +589,22 @@ recommending the annual score.
 ## The plan stage: a contribution plan, instead of Stages 1 to 9
 
 Paste Stage 0 first, as always. Then paste your PRD, or your duties as text, and last cycle's plan if
-you have one, and send this:
+you have one.
+
+If your pay pool requires Key Performance Objectives (KPOs), also paste three things from the pack,
+because a plain chat has no Knowledge panel to read them from. From `kpo-library.md`, the section for
+your functional area plus the cross-functional section. From `kpo-guidance.md`, the SMART table and
+formula and the performance information types. And the descriptors for your target level, as in
+Stage 0. `kpo.md` is the overview of those two files and is not needed in the chat. Put this line
+above them:
+
+```
+These are the model Key Performance Objectives for my functional area and the guidance for writing
+them. Start each KPO from the model, tailor it, and never copy a model unchanged. Do not write KPOs
+from memory.
+```
+
+Then send this:
 
 ```
 I am writing this cycle's contribution plan. You draft it yourself, in this order, and you do not
@@ -611,8 +626,8 @@ decision-driven, and a plan states expected contribution, never exceeded perform
    in my target level's descriptor language. No people's names, no em dashes.
 4. If KPOs are required: exactly the required number, with the required labels, under the required
    factor and after that factor's regular objectives. Start from the model objective for my
-   functional area, tailor it to my work (KPO category, specific task or behavior, measurable
-   outcome, timeframe), never copy a model unchanged, avoid vague verbs such as assist and
+   functional area in the library I pasted, tailor it to my work using the guidance I pasted (KPO
+   category, specific task or behavior, measurable outcome, timeframe), never copy a model unchanged, avoid vague verbs such as assist and
    participate, keep it within my grade and authority, and name the performance information that
    will show it was met. Give each a midpoint milestone and a year-end target. A KPO and a regular
    objective must not claim the same work twice.
@@ -631,7 +646,10 @@ decision-driven, and a plan states expected contribution, never exceeded perform
 ```
 
 Nothing else in this file checks a plan, and the offline checker checks assessments only, so read the
-plan against that list yourself before it goes to your supervisor. Keep the approved plan: you will
+plan against that list yourself before it goes to your supervisor. In the full build a separate Plan
+Drafter does this drafting and the primary agent only holds the conversation; here one chat does
+both, so it is more likely to copy a model objective or to state a target as fact. Read the KPOs
+against the model you pasted and check that every number is marked as a target to agree. Keep the approved plan: you will
 paste it back in at the midpoint and the annual, and tag each new ledger entry with the label it
 supports.
 
