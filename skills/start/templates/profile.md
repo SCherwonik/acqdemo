@@ -12,7 +12,7 @@
 - eocs:                   # number; if it changed, "82 until 2026-06-13, 88 after"
 - value_of_position:
 - prd_path:               # path to the Position Requirements Document in this workspace
-- plan_detail: lean       # lean or full: how much of each factor's plan field to use (lean at least 1,250 characters, full at least 2,500)
+- plan_detail: lean       # lean or full: how much of each factor's plan field to use (lean averages at least 200 characters per objective, full at least 300)
 - supervisor:             # current supervisor of record and start date
 - prior_supervisors:      # name, dates, closeout done yes/no
 - supervises:             # "0 military, 0 civilians, 0 contractors" or "no"

@@ -529,28 +529,46 @@ def test_main_char_limit_flag(tmp_path):
     assert plan_check.main(["--file", str(path), "--char-limit", "1000"]) == 1
 
 
-# ---------------------------------------------------------------- plan_detail floors
+# ---------------------------------------------------------------- plan_detail floors and run-on sentences
 
-def test_plan_detail_floors():
-    assert plan_check.PLAN_DETAIL_FLOORS == {"lean": 1250, "full": 2500}
+def ms_with_sentences(chars: int) -> str:
+    """MS_GOOD with each objective sentence padded to about `chars` characters."""
+    def pad(s):
+        return s[:-1] + " for the portfolio" * max(0, (chars - len(s)) // 18) + "."
+    return (MS_GOOD.replace("Maintain the cost estimating tool release pipeline.",
+                            pad("Maintain the cost estimating tool release pipeline."))
+                   .replace("Track budget execution for the branch portfolio.",
+                            pad("Track budget execution for the branch portfolio.")))
 
 
-def test_short_factor_warns_under_lean():
+def test_plan_detail_averages():
+    assert plan_check.PLAN_DETAIL_AVERAGES == {"lean": 200, "full": 300}
+    assert plan_check.SENTENCE_LIMITS == {"objective": 450, "kpo": 600}
+
+
+def test_short_factor_warns_under_lean_scaled_by_objective_count():
     found = plan_check.run_checks(plan_text(), plan_detail="lean")
     short = [f for f in found if f.code == "FACTOR_TOO_SHORT"]
     assert {f.factor for f in short} == {"JA", "CT", "MS"}
     assert all(f.severity == "WARNING" for f in short)
-    assert "1250" in short[0].message
+    assert "400" in short[0].message  # 2 objectives x 200
 
 
-def test_factor_at_floor_does_not_warn():
-    found = plan_check.run_checks(plan_text(ms=long_ms(80)), plan_detail="lean")
+def test_factor_meeting_lean_average_does_not_warn():
+    found = plan_check.run_checks(plan_text(ms=ms_with_sentences(260)), plan_detail="lean")
     assert "MS" not in {f.factor for f in found if f.code == "FACTOR_TOO_SHORT"}
 
 
-def test_full_floor_is_higher():
-    found = plan_check.run_checks(plan_text(ms=long_ms(80)), plan_detail="full")
+def test_full_average_is_higher():
+    found = plan_check.run_checks(plan_text(ms=ms_with_sentences(260)), plan_detail="full")
     assert "MS" in {f.factor for f in found if f.code == "FACTOR_TOO_SHORT"}
+
+
+def test_kpos_raise_their_factor_floor():
+    found = plan_check.run_checks(plan_text(ms=MS_WITH_KPO), kpo_count=2, kpo_factor="MS",
+                                  plan_detail="lean")
+    msg = next(f.message for f in found if f.code == "FACTOR_TOO_SHORT" and f.factor == "MS")
+    assert "800" in msg  # 4 labels x 200
 
 
 def test_no_plan_detail_means_no_floor():
@@ -560,3 +578,25 @@ def test_no_plan_detail_means_no_floor():
 def test_short_factor_does_not_fail_the_run(tmp_path):
     path = write_plan(tmp_path, plan_text())
     assert plan_check.main(["--file", str(path), "--plan-detail", "full"]) == 0
+
+
+def test_run_on_objective_warns():
+    found = plan_check.run_checks(plan_text(ms=ms_with_sentences(480)))
+    long = [f for f in found if f.code == "SENTENCE_TOO_LONG"]
+    assert len(long) == 2 and all(f.severity == "WARNING" for f in long)
+    assert "MS1" in long[0].message or "MS1" in long[1].message
+
+
+def test_objective_at_limit_does_not_warn():
+    assert "SENTENCE_TOO_LONG" not in codes(plan_check.run_checks(plan_text(ms=ms_with_sentences(440))))
+
+
+def test_kpo_gets_more_room():
+    kpo = "KPO1: Deliver cost estimates that support acquisition decisions" + " for the portfolio" * 28 + "."
+    ms = MS_WITH_KPO.replace(MS_WITH_KPO.split("\n")[9], kpo)
+    assert 450 < len(kpo) - 6 <= 600
+    found = plan_check.run_checks(plan_text(ms=ms), kpo_count=2, kpo_factor="MS")
+    assert "SENTENCE_TOO_LONG" not in codes(found)
+    longer = ms.replace(kpo, kpo[:-1] + " for the portfolio" * 6 + ".")
+    found = plan_check.run_checks(plan_text(ms=longer), kpo_count=2, kpo_factor="MS")
+    assert "SENTENCE_TOO_LONG" in codes(found)

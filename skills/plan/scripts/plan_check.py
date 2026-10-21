@@ -25,8 +25,9 @@ never count toward --min-objectives.
 Each factor's objective text (KPOs included, KPI: and PRD: lines excluded,
 since those stay in the working file) must fit --char-limit characters,
 3900 by default to leave room under CAS2Net's 4,000 per field. 0 turns it off.
---plan-detail lean|full adds a floor (1250 or 2500 characters per factor),
-reported as a WARNING.
+--plan-detail lean|full adds a floor per factor (an average of 200 or 300
+characters per objective, KPOs included), reported as a WARNING. Any objective
+over 450 characters, or KPO over 600, warns SENTENCE_TOO_LONG.
 
 Exit code 1 if any CRITICAL finding, otherwise 0.
 """
@@ -57,9 +58,13 @@ HEADING_KEYS = {normalize_heading(heading): key for heading, key in FACTOR_HEADI
 FACTOR_ORDER = ["JA", "CT", "MS"]
 DEFAULT_MIN_OBJECTIVES = 2
 DEFAULT_CHAR_LIMIT = 3900
-# Least objective text per factor for each profile plan_detail setting. A WARNING, never a block:
-# a short factor is fixed with confirmed context or a question to the user, never with filler.
-PLAN_DETAIL_FLOORS = {"lean": 1250, "full": 2500}
+# Least average characters per labeled objective (KPOs included) for each profile plan_detail
+# setting, so a factor's floor scales with how many objectives it holds. A WARNING, never a
+# block: a short factor is fixed with confirmed context or a question, never with filler.
+PLAN_DETAIL_AVERAGES = {"lean": 200, "full": 300}
+# Most characters in one objective sentence before it reads as a run-on. KPOs carry a midpoint
+# milestone and a year-end target, so they get more room.
+SENTENCE_LIMITS = {"objective": 450, "kpo": 600}
 
 # Tolerates "JA 1:", "ja1:" and "(JA1) text"; only the factor and KPO prefixes count,
 # so prose like "at 10:" is ignored.
@@ -284,17 +289,32 @@ def check_char_limit(text: str, char_limit: int) -> list[Finding]:
     return out
 
 
-def check_min_length(text: str, plan_detail: str | None) -> list[Finding]:
-    floor = PLAN_DETAIL_FLOORS.get(plan_detail or "")
-    if not floor:
+def check_min_length(text: str, objectives: list[Objective], plan_detail: str | None) -> list[Finding]:
+    average = PLAN_DETAIL_AVERAGES.get(plan_detail or "")
+    if not average:
         return []
     out = []
     for key, body in factor_texts(text).items():
-        if len(body) < floor:
+        n = sum(1 for o in objectives if o.factor == key)
+        floor = average * n
+        if n and len(body) < floor:
             out.append(Finding("WARNING", "FACTOR_TOO_SHORT", key,
                                f"{len(body)} characters of objective text; plan_detail {plan_detail} "
-                               f"aims for at least {floor}. Add confirmed context (why it matters, "
-                               f"scope, how it will be shown) or ask the user, never filler"))
+                               f"aims for at least {floor} ({n} objectives x {average}). Add confirmed "
+                               f"context (why it matters, scope, how it will be shown) or ask the user, "
+                               f"never filler"))
+    return out
+
+
+def check_sentence_length(objectives: list[Objective]) -> list[Finding]:
+    out = []
+    for obj in objectives:
+        limit = SENTENCE_LIMITS["kpo" if obj.prefix == "KPO" else "objective"]
+        if len(obj.text) > limit:
+            out.append(Finding("WARNING", "SENTENCE_TOO_LONG", obj.factor or obj.prefix,
+                               f"{obj.label} at line {obj.line} is {len(obj.text)} characters; past "
+                               f"{limit} it reads as a run-on. Cut a clause or split the work into "
+                               f"two objectives"))
     return out
 
 
@@ -332,7 +352,8 @@ def run_checks(text: str, min_objectives: int = DEFAULT_MIN_OBJECTIVES,
     findings += check_prd(objectives)
     findings += check_placeholders(text)
     findings += check_char_limit(text, char_limit)
-    findings += check_min_length(text, plan_detail)
+    findings += check_min_length(text, objectives, plan_detail)
+    findings += check_sentence_length(objectives)
     findings += check_em_dash(text)
     return sorted(findings, key=lambda f: (SEVERITY_ORDER[f.severity], f.factor, f.code))
 
@@ -357,9 +378,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="factor the KPOs are written under")
     ap.add_argument("--char-limit", type=int, default=DEFAULT_CHAR_LIMIT,
                     help="most characters of objective text per factor; 0 turns the check off")
-    ap.add_argument("--plan-detail", choices=sorted(PLAN_DETAIL_FLOORS), type=str.lower, default=None,
+    ap.add_argument("--plan-detail", choices=sorted(PLAN_DETAIL_AVERAGES), type=str.lower, default=None,
                     help="profile plan_detail; warns when a factor is under its floor "
-                         "(lean 1250, full 2500)")
+                         "(an average of 200 per objective for lean, 300 for full)")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
