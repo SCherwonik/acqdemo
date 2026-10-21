@@ -527,3 +527,36 @@ def test_main_char_limit_flag(tmp_path):
     path = write_plan(tmp_path, plan_text(ms=long_ms(100)))
     assert plan_check.main(["--file", str(path)]) == 0
     assert plan_check.main(["--file", str(path), "--char-limit", "1000"]) == 1
+
+
+# ---------------------------------------------------------------- plan_detail floors
+
+def test_plan_detail_floors():
+    assert plan_check.PLAN_DETAIL_FLOORS == {"lean": 1250, "full": 2500}
+
+
+def test_short_factor_warns_under_lean():
+    found = plan_check.run_checks(plan_text(), plan_detail="lean")
+    short = [f for f in found if f.code == "FACTOR_TOO_SHORT"]
+    assert {f.factor for f in short} == {"JA", "CT", "MS"}
+    assert all(f.severity == "WARNING" for f in short)
+    assert "1250" in short[0].message
+
+
+def test_factor_at_floor_does_not_warn():
+    found = plan_check.run_checks(plan_text(ms=long_ms(80)), plan_detail="lean")
+    assert "MS" not in {f.factor for f in found if f.code == "FACTOR_TOO_SHORT"}
+
+
+def test_full_floor_is_higher():
+    found = plan_check.run_checks(plan_text(ms=long_ms(80)), plan_detail="full")
+    assert "MS" in {f.factor for f in found if f.code == "FACTOR_TOO_SHORT"}
+
+
+def test_no_plan_detail_means_no_floor():
+    assert "FACTOR_TOO_SHORT" not in codes(plan_check.run_checks(plan_text()))
+
+
+def test_short_factor_does_not_fail_the_run(tmp_path):
+    path = write_plan(tmp_path, plan_text())
+    assert plan_check.main(["--file", str(path), "--plan-detail", "full"]) == 0

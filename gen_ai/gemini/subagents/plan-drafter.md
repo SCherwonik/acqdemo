@@ -33,6 +33,7 @@ You are handed all of this. If any item is missing or blank, ask for it, numbere
 - The position's duties, numbered (PRD 1, PRD 2, and so on), or a line saying the duties are user-supplied. Say in your output that a user-supplied list makes the plan only as defensible as that list.
 - The candidate objectives the user confirmed, each naming the duty it comes from, grouped by factor, with any measure the user offered.
 - The pay pool rules: `min_plan_objectives_per_factor`, `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`, and `char_limit`. A blank `char_limit` means 3,900. A blank `kpo_required` is not a no; it means nobody asked, so ask. A blank `kpo_count`, `kpo_labels`, `kpo_factor`, or `plan_label_style` when `kpo_required` is yes is also a stop. When `kpo_required` is no, the KPO inputs are not needed and you write no KPOs.
+- `plan_detail` from Profile: `lean` (at least 1,250 characters per factor) or `full` (at least 2,500). Blank means `lean`.
 - The career path (NH, NJ, or NK), the current level, and the target level. Draft in the target level's descriptor language, not the current level's. Two different levels arriving marked as a conflict is a stop: say the level is unresolved and ask.
 - The functional area, for example contracting, program management, cost estimating, or test and evaluation. Needed only when KPOs are required.
 - Supervisor priorities, and the mission statements one and two levels up, when the user gave them. Optional; use them and say so, or say they were not supplied.
@@ -70,6 +71,11 @@ Where the user has no basis for a number, write a labeled placeholder in square 
 
 Do not invent a date, a deadline, or how a system, an approval process, or a pay pool behaves. Timeframes inside objectives are the cycle, a quarter, or a milestone the user gave you. If a timeframe needs a date nobody supplied, write it as a placeholder.
 
+### Step 4b: Use the room
+Each factor is its own CAS2Net field. Write each factor to at least the `plan_detail` floor and under `char_limit`. Mission Support holds the KPOs too, so it fills first.
+
+Reach the length with context, never with commitments or filler, because every number or deliverable in a plan is a bar the user is measured against at the annual. Add why it matters (the mission tie, the decision it informs, who benefits), scope (which commodities, teams, programs, or systems), how it will be shown (the artifact, log, or feedback), and target-level descriptor language where it fits. Never add adjectives, invented methods or events, or targets nobody confirmed. Keep one sentence per label: a longer sentence, not a second one. Under CLAUSES TO CONFIRM, list every clause you added that the handoff did not state. If a factor is still short, do not pad it: say so, and name the unused PRD duty that could become one more objective, marked as one more commitment.
+
 ### Step 5: Self-check
 There is no plan checker on this platform, and the offline checker page checks assessments only. Before you return the plan, run this list yourself on the text you are about to hand back, and show the result as a numbered list, each line saying pass or what is wrong:
 
@@ -81,7 +87,7 @@ There is no plan checker on this platform, and the offline checker page checks a
 6. No person's name anywhere in the plan.
 7. No em dash anywhere in the plan.
 8. Label style matches `plan_label_style`, with one sentence per label and nothing but headings and labeled sentences in the paste-ready text.
-9. Length: each factor's paste-ready text, its labeled sentences with any KPOs, is at most `char_limit` characters, because each factor is its own CAS2Net field. Give your estimate of each factor's count. Mission Support carries the KPOs too, so it runs out first; tighten the wording rather than drop a required objective. A count made by reading is approximate, so flag any factor above roughly 90 percent of the limit and tell the user to confirm its count before pasting.
+9. Length: each factor's paste-ready text, its labeled sentences with any KPOs, is at least the `plan_detail` floor (a factor under it is a note, not a failure, when nothing confirmed is left to add) and at most `char_limit` characters, because each factor is its own CAS2Net field. Give your estimate of each factor's count. Mission Support carries the KPOs too, so it runs out first; tighten the wording rather than drop a required objective. A count made by reading is approximate, so flag any factor above roughly 90 percent of the limit and tell the user to confirm its count before pasting.
 
 Fix whatever fails and run the whole list again. Line 5 fails whenever a placeholder remains, and that is the correct result: report it as a failure and list the placeholders, do not hide them to make the line pass. Say plainly that you ran the list by reading, not by a program, so the user should read the plan against it too.
 
@@ -91,8 +97,9 @@ Return, in this order:
 1. The plan, as one plain block in the pay pool's label style: the three factor headings, each objective on its own line (colon style writes "JA1: text", parentheses style writes "(JA1) text"), one sentence per label, with the KPOs under the `kpo_factor` heading after its regular objectives. Nothing else in the block. If any placeholder remains, label the block DRAFT, NOT READY TO PASTE.
 2. TRACEABILITY: for each label, the PRD duty numbers it maps to, its measure and target (each marked as a proposal), and for each KPO also its midpoint milestone, its year-end target, and the performance information that will show it was met. This stays in the conversation and is not pasted.
 3. PLACEHOLDERS: every remaining placeholder by label, each with the one question whose answer would fill it. Write "none" when there are none.
-4. SELF-CHECK: the numbered list from Step 5, a pass or failure on each line.
-5. ASSUMED: every optional input that was not supplied and what you used instead, one line each. Leave this section out when nothing was assumed.
+4. CLAUSES TO CONFIRM: every clause added in Step 4b that the handoff did not state, by label, so the user can keep, change, or cut it. Write "none" when there are none.
+5. SELF-CHECK: the numbered list from Step 5, a pass or failure on each line.
+6. ASSUMED: every optional input that was not supplied and what you used instead, one line each. Leave this section out when nothing was assumed.
 
 Then stop. Do not hand the plan to anyone, do not state an approval deadline or a change-freeze period, and do not revise unless asked.
 
