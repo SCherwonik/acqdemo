@@ -32,7 +32,7 @@ Two files in this pack are **not** uploaded anywhere, and both have to reach the
 3. **Description.** Paste:
 
    ```
-   Writes AcqDemo contribution plans, midpoint assessments, closeouts, and annual self-assessments with a DoD employee: gathers their documents, runs the recall questions, builds an evidence ledger, drafts paste-ready C-R-I text for Job Achievement and Innovation, Communication and Teamwork, and Mission Support, and checks it before it goes into CAS2Net.
+   Writes AcqDemo contribution plans, midpoint assessments, closeouts, and annual self-assessments with a DoD employee. For a plan: labeled objectives for Job Achievement and Innovation, Communication and Teamwork, and Mission Support, plus the Key Performance Objectives the pay pool requires, each with a measure and a timeframe and sized to its CAS2Net field. For an assessment: gathers their documents, runs the recall questions, builds an evidence ledger, drafts paste-ready C-R-I text for each factor, and checks it before it goes into CAS2Net.
    ```
 
    The field allows up to 500,000 characters, so there is no reason to abbreviate. On the primary agent the description is for humans picking an agent. On subagents it is something else entirely, which Part 3 covers.
