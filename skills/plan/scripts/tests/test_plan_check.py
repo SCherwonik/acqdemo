@@ -484,3 +484,46 @@ def test_each_placeholder_is_reported_with_its_line():
 def test_less_than_sign_is_not_a_placeholder():
     ct = CT_GOOD.replace("100 percent on schedule", "100 percent on schedule, each < 5 days late")
     assert "PLACEHOLDER" not in codes(run(plan_text(ct=ct)))
+
+
+# ---------------------------------------------------------------- per-factor character limit
+
+def long_ms(words: int) -> str:
+    return MS_GOOD.replace("Track budget execution for the branch portfolio.",
+                           "Track budget execution " + "for the portfolio " * words + "each quarter.")
+
+
+def test_factor_over_char_limit_is_critical():
+    found = plan_check.run_checks(plan_text(ms=long_ms(300)), char_limit=3900)
+    over = [f for f in found if f.code == "FACTOR_TOO_LONG"]
+    assert len(over) == 1
+    assert over[0].severity == "CRITICAL" and over[0].factor == "MS"
+    assert "3900" in over[0].message
+
+
+def test_kpi_and_prd_lines_do_not_count_toward_the_limit():
+    """Those lines stay in the working file; CAS2Net only receives the objective sentences."""
+    padded = MS_GOOD.replace("KPI: 6 releases", "KPI: 6 releases " + "x" * 5000)
+    found = plan_check.run_checks(plan_text(ms=padded), char_limit=3900)
+    assert "FACTOR_TOO_LONG" not in codes(found)
+
+
+def test_kpos_count_toward_their_factor():
+    found = plan_check.run_checks(plan_text(ms=MS_WITH_KPO), kpo_count=2, kpo_factor="MS",
+                                  char_limit=len(MS_GOOD.split("\n")[1]) + 5)
+    assert any(f.code == "FACTOR_TOO_LONG" and f.factor == "MS" for f in found)
+
+
+def test_char_limit_defaults_to_3900():
+    assert "FACTOR_TOO_LONG" in codes(plan_check.run_checks(plan_text(ms=long_ms(300))))
+    assert "FACTOR_TOO_LONG" not in codes(plan_check.run_checks(plan_text()))
+
+
+def test_char_limit_zero_turns_the_check_off():
+    assert "FACTOR_TOO_LONG" not in codes(plan_check.run_checks(plan_text(ms=long_ms(300)), char_limit=0))
+
+
+def test_main_char_limit_flag(tmp_path):
+    path = write_plan(tmp_path, plan_text(ms=long_ms(100)))
+    assert plan_check.main(["--file", str(path)]) == 0
+    assert plan_check.main(["--file", str(path), "--char-limit", "1000"]) == 1

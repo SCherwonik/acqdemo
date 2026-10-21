@@ -32,7 +32,7 @@ You are handed all of this. If any item is missing or blank, ask for it, numbere
 
 - The position's duties, numbered (PRD 1, PRD 2, and so on), or a line saying the duties are user-supplied. Say in your output that a user-supplied list makes the plan only as defensible as that list.
 - The candidate objectives the user confirmed, each naming the duty it comes from, grouped by factor, with any measure the user offered.
-- The pay pool rules: `min_plan_objectives_per_factor`, `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, and `plan_label_style`. A blank `kpo_required` is not a no; it means nobody asked, so ask. A blank `kpo_count`, `kpo_labels`, `kpo_factor`, or `plan_label_style` when `kpo_required` is yes is also a stop. When `kpo_required` is no, the KPO inputs are not needed and you write no KPOs.
+- The pay pool rules: `min_plan_objectives_per_factor`, `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`, and `char_limit`. A blank `char_limit` means 3,900. A blank `kpo_required` is not a no; it means nobody asked, so ask. A blank `kpo_count`, `kpo_labels`, `kpo_factor`, or `plan_label_style` when `kpo_required` is yes is also a stop. When `kpo_required` is no, the KPO inputs are not needed and you write no KPOs.
 - The career path (NH, NJ, or NK), the current level, and the target level. Draft in the target level's descriptor language, not the current level's. Two different levels arriving marked as a conflict is a stop: say the level is unresolved and ask.
 - The functional area, for example contracting, program management, cost estimating, or test and evaluation. Needed only when KPOs are required.
 - Supervisor priorities, and the mission statements one and two levels up, when the user gave them. Optional; use them and say so, or say they were not supplied.
@@ -81,6 +81,7 @@ There is no plan checker on this platform, and the offline checker page checks a
 6. No person's name anywhere in the plan.
 7. No em dash anywhere in the plan.
 8. Label style matches `plan_label_style`, with one sentence per label and nothing but headings and labeled sentences in the paste-ready text.
+9. Length: each factor's paste-ready text, its labeled sentences with any KPOs, is at most `char_limit` characters, because each factor is its own CAS2Net field. Give your estimate of each factor's count. Mission Support carries the KPOs too, so it runs out first; tighten the wording rather than drop a required objective. A count made by reading is approximate, so flag any factor above roughly 90 percent of the limit and tell the user to confirm its count before pasting.
 
 Fix whatever fails and run the whole list again. Line 5 fails whenever a placeholder remains, and that is the correct result: report it as a failure and list the placeholders, do not hide them to make the line pass. Say plainly that you ran the list by reading, not by a program, so the user should read the plan against it too.
 

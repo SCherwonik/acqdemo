@@ -2,7 +2,7 @@
 
 Usage:
     python plan_check.py --file PATH [--min-objectives N] [--kpo-count N]
-                         [--kpo-factor JA|CT|MS] [--json]
+                         [--kpo-factor JA|CT|MS] [--char-limit N] [--json]
 
 The plan file has one heading per factor, each followed by labeled
 objectives (JA1, CT1, MS1, ...), each with a KPI: line and a PRD: line.
@@ -20,6 +20,10 @@ Key Performance Objectives (KPO1, KPO2, ...) are checked only when
 --kpo-count is above 0. They are labeled like any objective and sit under
 the --kpo-factor heading after that factor's regular objectives. KPO labels
 never count toward --min-objectives.
+
+Each factor's objective text (KPOs included, KPI: and PRD: lines excluded,
+since those stay in the working file) must fit --char-limit characters,
+3900 by default to leave room under CAS2Net's 4,000 per field. 0 turns it off.
 
 Exit code 1 if any CRITICAL finding, otherwise 0.
 """
@@ -49,6 +53,7 @@ def normalize_heading(line: str) -> str:
 HEADING_KEYS = {normalize_heading(heading): key for heading, key in FACTOR_HEADINGS.items()}
 FACTOR_ORDER = ["JA", "CT", "MS"]
 DEFAULT_MIN_OBJECTIVES = 2
+DEFAULT_CHAR_LIMIT = 3900
 
 # Tolerates "JA 1:", "ja1:" and "(JA1) text"; only the factor and KPO prefixes count,
 # so prose like "at 10:" is ignored.
@@ -244,6 +249,35 @@ def check_placeholders(text: str) -> list[Finding]:
     return out
 
 
+def factor_texts(text: str) -> dict[str, str]:
+    """The text each factor's CAS2Net field receives: every line under the heading except KPI: and PRD:."""
+    sections: dict[str, list[str]] = {}
+    current: str | None = None
+    for raw in text.split("\n"):
+        stripped = raw.strip()
+        if normalize_heading(stripped) in HEADING_KEYS:
+            current = HEADING_KEYS[normalize_heading(stripped)]
+            sections.setdefault(current, [])
+            continue
+        if current is None or not stripped or KPI_RE.match(raw) or PRD_RE.match(raw):
+            continue
+        sections[current].append(stripped)
+    return {key: "\n".join(lines) for key, lines in sections.items()}
+
+
+def check_char_limit(text: str, char_limit: int) -> list[Finding]:
+    """Each factor is its own CAS2Net field with a hard cap, and Mission Support carries the KPOs too."""
+    if char_limit <= 0:
+        return []
+    out = []
+    for key, body in factor_texts(text).items():
+        if len(body) > char_limit:
+            out.append(Finding("CRITICAL", "FACTOR_TOO_LONG", key,
+                               f"{len(body)} characters of objective text; the limit is {char_limit}. "
+                               f"Tighten the wording before it goes into CAS2Net"))
+    return out
+
+
 def check_em_dash(text: str) -> list[Finding]:
     if EM_DASH_RE.search(text):
         return [Finding("WARNING", "EM_DASH", "-", "em dash found; use a comma, colon, or period")]
@@ -261,7 +295,8 @@ def read_text(path: Path) -> str:
 
 
 def run_checks(text: str, min_objectives: int = DEFAULT_MIN_OBJECTIVES,
-               kpo_count: int = 0, kpo_factor: str | None = None) -> list[Finding]:
+               kpo_count: int = 0, kpo_factor: str | None = None,
+               char_limit: int = DEFAULT_CHAR_LIMIT) -> list[Finding]:
     text = text.replace("\r\n", "\n")
     objectives, found_factors = parse_plan(text)
     if kpo_count <= 0:
@@ -275,6 +310,7 @@ def run_checks(text: str, min_objectives: int = DEFAULT_MIN_OBJECTIVES,
     findings += check_kpi(objectives)
     findings += check_prd(objectives)
     findings += check_placeholders(text)
+    findings += check_char_limit(text, char_limit)
     findings += check_em_dash(text)
     return sorted(findings, key=lambda f: (SEVERITY_ORDER[f.severity], f.factor, f.code))
 
@@ -297,11 +333,13 @@ def main(argv: list[str] | None = None) -> int:
                     help="exact number of KPOs the plan carries; 0 turns KPO checks off")
     ap.add_argument("--kpo-factor", choices=FACTOR_ORDER, type=str.upper, default=None,
                     help="factor the KPOs are written under")
+    ap.add_argument("--char-limit", type=int, default=DEFAULT_CHAR_LIMIT,
+                    help="most characters of objective text per factor; 0 turns the check off")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
 
     text = read_text(args.file)
-    findings = run_checks(text, args.min_objectives, args.kpo_count, args.kpo_factor)
+    findings = run_checks(text, args.min_objectives, args.kpo_count, args.kpo_factor, args.char_limit)
     if args.json:
         print(json.dumps([asdict(f) for f in findings], indent=2))
     else:

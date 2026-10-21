@@ -9,7 +9,7 @@ Drafts a contribution plan from the Position Requirements Document (PRD) plus ex
 
 ## Inputs
 - `<workspace>/profile.md`: career path, level, `target_level`, organization, mission statements, `prd_path`.
-- `<workspace>/paypool.md`: `min_plan_objectives_per_factor`, `plan_due_days`, `plan_change_lock_days`, and the KPO fields `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`.
+- `<workspace>/paypool.md`: `min_plan_objectives_per_factor`, `plan_due_days`, `plan_change_lock_days`, `char_limit`, and the KPO fields `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`.
 - KPO reference: `../start/references/kpo.md` (read it only when `kpo_required` is `yes`). It points at two companions: `../start/references/kpo-library.md` (the model objectives by functional area) and `../start/references/kpo-guidance.md` (the SMART table and the performance information types).
 - Program rules: `../start/references/rules/ccas-core.md` ("Contribution plans").
 - Descriptor language for the target level: `../start/references/descriptors/` (the file for the user's career path).
@@ -81,10 +81,10 @@ PRD: <duty numbers>
 Run the checker at `scripts/plan_check.py` against the working file, the one that carries the KPI lines. Pass the KPO flags from the overlay:
 
 ```
-python "<this skill folder>/scripts/plan_check.py" --file "<working file>" --min-objectives <min_plan_objectives_per_factor> --kpo-count <kpo_count> --kpo-factor <kpo_factor>
+python "<this skill folder>/scripts/plan_check.py" --file "<working file>" --min-objectives <min_plan_objectives_per_factor> --kpo-count <kpo_count> --kpo-factor <kpo_factor> --char-limit <char_limit>
 ```
 
-Omit `--kpo-count` and `--kpo-factor` when `kpo_required` is `no`. Fix every CRITICAL finding (`MIN_OBJECTIVES`, `DUPLICATE_LABEL`, `LABEL_FACTOR_MISMATCH`, `MISSING_FACTOR`, `MISSING_KPO`, `KPO_COUNT`) before saving. `PLACEHOLDER` is the exception that proves the rule in Step 4a: a labeled placeholder is the right thing to write while a number waits on the user or their supervisor, so save the files with it and list every remaining placeholder for the user by label. What it may never do is reach CAS2Net, so the plan is not ready to paste until `PLACEHOLDER` is gone. It also catches a template slot left unfilled, such as `<Insert Program(s) Here>`. Address WARNING findings (`NO_KPI`, `KPI_NOT_MEASURABLE`, `NO_PRD_TIEBACK`, `EM_DASH`, `KPO_FACTOR`, `KPO_ORDER`) unless the user has a reason not to; a template may let an employee place a KPO under another factor when it fits better. Check the paste-ready file for em dashes and for any leftover `KPI:` or `PRD:` line before handing it over.
+Omit `--kpo-count` and `--kpo-factor` when `kpo_required` is `no`. `--char-limit` defaults to 3900 when the overlay has no `char_limit`. Each factor is its own CAS2Net field capped at 4,000 characters, and the check counts what goes into that field: the objective sentences, KPOs included, without the `KPI:` and `PRD:` lines. Fix every CRITICAL finding (`MIN_OBJECTIVES`, `DUPLICATE_LABEL`, `LABEL_FACTOR_MISMATCH`, `MISSING_FACTOR`, `MISSING_KPO`, `KPO_COUNT`, `FACTOR_TOO_LONG`) before saving. `PLACEHOLDER` is the exception that proves the rule in Step 4a: a labeled placeholder is the right thing to write while a number waits on the user or their supervisor, so save the files with it and list every remaining placeholder for the user by label. What it may never do is reach CAS2Net, so the plan is not ready to paste until `PLACEHOLDER` is gone. It also catches a template slot left unfilled, such as `<Insert Program(s) Here>`. Address WARNING findings (`NO_KPI`, `KPI_NOT_MEASURABLE`, `NO_PRD_TIEBACK`, `EM_DASH`, `KPO_FACTOR`, `KPO_ORDER`) unless the user has a reason not to; a template may let an employee place a KPO under another factor when it fits better. Check the paste-ready file for em dashes and for any leftover `KPI:` or `PRD:` line before handing it over.
 
 ## Step 6: Remind the user
 - The plan must be approved (in CAS2Net) within `plan_due_days` of the cycle start or the position/appraisal change.
@@ -94,3 +94,4 @@ Omit `--kpo-count` and `--kpo-factor` when `kpo_required` is `no`. Fix every CRI
 ## Rules
 - Never invent PRD duties, KPIs, or targets the user has not confirmed.
 - Objective text and KPIs contain no people's names.
+- Each factor's paste-ready text fits `char_limit` (3,900 by default). Mission Support carries the KPOs as well, so it runs out first: tighten wording rather than drop a required objective.
