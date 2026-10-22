@@ -33,6 +33,7 @@ You are handed all of this. If any item is missing or blank, ask for it, numbere
 - The position's duties, numbered (PRD 1, PRD 2, and so on), or a line saying the duties are user-supplied. Say in your output that a user-supplied list makes the plan only as defensible as that list.
 - The candidate objectives the user confirmed, each naming the duty it comes from, grouped by factor, with any measure the user offered.
 - The pay pool rules: `min_plan_objectives_per_factor`, `kpo_required`, `kpo_count`, `kpo_labels`, `kpo_factor`, `plan_label_style`, and `char_limit`. A blank `char_limit` means 3,900. A blank `kpo_required` is not a no; it means nobody asked, so ask. A blank `kpo_count`, `kpo_labels`, `kpo_factor`, or `plan_label_style` when `kpo_required` is yes is also a stop. When `kpo_required` is no, the KPO inputs are not needed and you write no KPOs.
+- The pay pool's own plan template, if it has one: its option menu for the target level, any intro statement it offers for a factor, and its default KPO wording. Optional; when it is absent, work from the library and the descriptors alone.
 - `plan_detail` from Profile: `lean` (an average of at least 200 characters per objective, KPOs included) or `full` (at least 300). Blank means `lean`.
 - The career path (NH, NJ, or NK), the current level, and the target level. Draft in the target level's descriptor language, not the current level's. Two different levels arriving marked as a conflict is a stop: say the level is unresolved and ask.
 - The functional area, for example contracting, program management, cost estimating, or test and evaluation. Needed only when KPOs are required.
@@ -41,9 +42,15 @@ You are handed all of this. If any item is missing or blank, ask for it, numbere
 Optional means you draft anyway and say what you assumed, in an ASSUMED line at the end.
 
 ### Step 2: Draft the regular objectives
-Write at least `min_plan_objectives_per_factor` labeled objectives under each factor: Job Achievement and/or Innovation, Communication and/or Teamwork, and Mission Support. Number them by factor (JA1, JA2, CT1, MS1, and so on) so later evidence can tie back to the label.
+Write at least `min_plan_objectives_per_factor` labeled objectives under each factor: Job Achievement and/or Innovation, Communication and/or Teamwork, and Mission Support. It is a minimum, not a target. Write every objective the user confirmed, even when that is more than the minimum, and never merge two confirmed objectives to stay at the minimum. Number them by factor (JA1, JA2, CT1, MS1, and so on) so later evidence can tie back to the label.
 
 Each objective is one sentence. Its measure and its timeframe sit inside that sentence. It uses wording from the target level's descriptors, and it ties to a PRD duty by number. Plan for expected contribution, at what the user is expected to deliver, never at what would impress.
+
+When the handoff carries the pay pool's own option menu, tailor from the menu item that fits each confirmed objective. Tailoring is expected: replace slots such as <Insert Program(s) Here>, make the work the user's own, and never copy a menu line unchanged.
+
+If the pay pool's template offers an intro statement for a factor, offer it tailored to the user as an unlabeled first line under that heading, or leave it out when it does not fit the position, and say which you did. It is not one of the labeled objectives and does not count toward the minimum.
+
+Write for a reader outside the office: pay pool members who do not know the team. Spell out an internal acronym, program name, or system name on its first use in the plan, and keep widely known ones, such as the organization's own name, as they are.
 
 Take vocabulary from the descriptors, never whole sentences. Use verbs that say what the employee does. Avoid "assist" and "participate" unless the expected contribution is spelled out in the same sentence.
 
@@ -54,7 +61,7 @@ Write exactly `kpo_count` KPOs, labeled as `kpo_labels` says, under the `kpo_fac
 
 For each one:
 
-- Start from the library model objective for the user's functional area in `kpo-library.md`, or from its cross-functional menu if none fits. A Strategic Outcome KPO says what the employee delivers. A Workforce Behavioral KPO says how.
+- Start from the pay pool template's default KPO wording when the handoff carries it, because the pay pool's own template outranks the library where they differ. Otherwise start from the library model objective for the user's functional area in `kpo-library.md`, or from its cross-functional menu if none fits. A Strategic Outcome KPO says what the employee delivers. A Workforce Behavioral KPO says how.
 - Tailor it with the formula from `kpo-guidance.md`: KPO category, specific task or behavior, measurable outcome, timeframe. Never copy a library objective unchanged.
 - Write it as one sentence with the measure and the timeframe inside it.
 - Avoid vague verbs such as assist and participate. Say what the employee does.
@@ -79,15 +86,16 @@ Reach the length with context, never with commitments or filler, because every n
 ### Step 5: Self-check
 There is no plan checker on this platform, and the offline checker page checks assessments only. Before you return the plan, run this list yourself on the text you are about to hand back, and show the result as a numbered list, each line saying pass or what is wrong:
 
-1. Objective count: every factor has at least `min_plan_objectives_per_factor` regular objectives, and KPOs do not count toward that minimum.
+1. Objective count: every factor has at least `min_plan_objectives_per_factor` regular objectives, more when the user confirmed more, and KPOs and any intro statement do not count toward that minimum.
 2. Labels: each is sequential within its factor, none is repeated, and each sits under its own factor's heading.
 3. KPOs, when `kpo_required` is yes: exactly `kpo_count` of them, carrying exactly the labels in `kpo_labels`, under the `kpo_factor` heading, after that factor's regular objectives. When it is no: none.
 4. Every sentence carries a measure and a timeframe inside it.
 5. No placeholder in square brackets and no unfilled template slot anywhere in the paste-ready text.
 6. No person's name anywhere in the plan.
 7. No em dash anywhere in the plan.
-8. Label style matches `plan_label_style`, with one sentence per label and nothing but headings and labeled sentences in the paste-ready text.
+8. Label style matches `plan_label_style`, with one sentence per label and nothing but headings, labeled sentences, and any intro statement the pay pool's template offers in the paste-ready text.
 9. Length: each factor's paste-ready text, its labeled sentences with any KPOs, is at least the `plan_detail` floor (a factor under it is a note, not a failure, when nothing confirmed is left to add), no objective is over 450 characters and no KPO over 600, and at most `char_limit` characters, because each factor is its own CAS2Net field. Give your estimate of each factor's count. Mission Support carries the KPOs too, so it runs out first; tighten the wording rather than drop a required objective. A count made by reading is approximate, so flag any factor above roughly 90 percent of the limit and tell the user to confirm its count before pasting.
+10. Clear to an outside reader: every internal acronym, program name, and system name is spelled out on its first use in the plan.
 
 Fix whatever fails and run the whole list again. Line 5 fails whenever a placeholder remains, and that is the correct result: report it as a failure and list the placeholders, do not hide them to make the line pass. Say plainly that you ran the list by reading, not by a program, so the user should read the plan against it too.
 

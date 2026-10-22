@@ -34,13 +34,17 @@ Number the duties in the output as you present them back to the user, so later s
 Ask, in a numbered round: what work is expected this cycle (ramble is fine); the prior plan's text, if any (for continuity, not for copying; if it was written in C-R-I form, its format does not carry over, and mandatory objectives such as a certification self-certification are inserted by CAS2Net, not drafted); supervisor priorities or guidance; and the mission statements one and two levels up from `profile.md`, if not already recorded.
 
 ## Step 4: Draft objectives
-For each factor (Job Achievement and/or Innovation, Communication and/or Teamwork, Mission Support), draft at least `min_plan_objectives_per_factor` objectives (the example pay pool requires 2). Each objective:
+For each factor (Job Achievement and/or Innovation, Communication and/or Teamwork, Mission Support), draft at least `min_plan_objectives_per_factor` objectives (the example pay pool requires 2). It is a minimum, not a target: draft every objective the user confirmed, and say that each one past the minimum is one more commitment. Each objective:
 - Is labeled sequentially by factor: `JA1`, `JA2`, ..., `CT1`, ..., `MS1`, ... Future ledger entries and assessments tie back to these labels.
 - Uses language from the target level's descriptor file in `../start/references/descriptors/` (the career path file, at `target_level`, not `level`, when they differ).
 - Carries exactly one measurable KPI: a count, percent, hours, or other number with a target (people trained, tool users, senior-leader briefings, estimates supported and dollar value, hours saved; see `question-bank.md`).
 - Cites the PRD duty numbers it maps to.
 
 Plans reflect expected contribution, not exceeded performance. Set each target at what the user is expected to deliver; inflated plans set targets that cannot be met.
+
+If the pay pool has its own plan template (`paypool.md` `plan_template`), draw candidates from its option menu for `target_level` as well as from the PRD, tailor every line (never copy one unchanged, fill every slot such as `<Insert Program(s) Here>`), and offer any intro statement it provides for a factor as an unlabeled first line under that heading, which does not count toward the minimum. Its default KPO wording comes before the library in Step 4a.
+
+Write for a reader outside the office, such as pay pool members: spell out internal acronyms, program names, and system names on first use in the plan.
 
 ## Step 4b: Use the room (`plan_detail`)
 Each factor is its own CAS2Net field. `plan_detail` sets how much of it the plan uses: `lean` aims for an average of at least 200 characters per objective, about what pay pool template examples run, `full` for at least 300, KPOs included, and every factor stays under `char_limit`. So a factor's floor grows with its objective count: three objectives is 600 characters under `lean` and 900 under `full`, and Mission Support with two KPOs is 1,000 or 1,500. A single sentence past 450 characters, or a KPO past 600, reads as a run-on (`SENTENCE_TOO_LONG`): cut a clause or split the work into two objectives.
@@ -57,7 +61,7 @@ Never reach the length with adjectives, invented methods or events, or targets t
 Read `../start/references/kpo.md` first. Then draft exactly `kpo_count` Key Performance Objectives, labeled as `kpo_labels` says (the example overlay is `KPO1` Strategic Outcome and `KPO2` Workforce Behavioral), and place them under the `kpo_factor` heading after that factor's regular objectives.
 
 For each KPO:
-1. Start from the library model objective for the user's functional area (the tables in `../start/references/kpo-library.md`; use its cross-functional menu if no area fits). Take the SMART table and the performance information types from `../start/references/kpo-guidance.md`. Strategic Outcome KPOs say what the user delivers; Workforce Behavioral KPOs say how.
+1. Start from the pay pool template's default KPO wording when `plan_template` provides one, since it outranks the library; otherwise start from the library model objective for the user's functional area (the tables in `../start/references/kpo-library.md`; use its cross-functional menu if no area fits). Take the SMART table and the performance information types from `../start/references/kpo-guidance.md`. Strategic Outcome KPOs say what the user delivers; Workforce Behavioral KPOs say how.
 2. Tailor it to the user's actual work from the PRD and Step 3, using the SMART formula: KPO category + specific task or behavior + measurable outcome + timeframe. Never copy a library objective unchanged.
 3. Write it as one sentence with the measure and the timeframe embedded in it. Avoid vague verbs such as "assist" and "participate"; say what the user does.
 4. Set two checkpoints: a midpoint milestone and a year-end target, because the midpoint review is where progress is discussed.

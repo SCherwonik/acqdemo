@@ -17,7 +17,8 @@ Values below are the example pay pool's defaults. Replace them with your pay poo
 - min_entries_annual: 3
 - min_entries_midpoint: 1
 - what_label: C                    # C (Contribution, current) or W (What, older guidance)
-- min_plan_objectives_per_factor: 2
+- min_plan_objectives_per_factor: 2   # a minimum, not a target; more are allowed
+- plan_template:                    # optional: path to the pay pool's own plan template notes (option menus, intro statements, default KPOs)
 - mandatory_paragraph_order:
   - JA: supervisory
   - MS: acquisition, dod-fm
